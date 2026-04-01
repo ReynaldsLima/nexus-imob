@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ImobiFlow — Project Canvas</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0a0c0f;
     --surface: #111318;
     --surface2: #181c23;
     --border: #1e2530;
-    --accent: #c8a96e;
+    --accent: #ffd700;
     --accent2: #4f9cf9;
     --accent3: #6ee7b7;
     --accent4: #f87171;
@@ -24,7 +24,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Exo 2', sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -46,7 +46,7 @@
   }
 
   .logo {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Rajdhani', sans-serif;
     font-size: 1.6rem;
     font-weight: 900;
     letter-spacing: -0.02em;
@@ -59,7 +59,7 @@
   }
 
   .badge {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Share Tech Mono', monospace;
     font-size: 0.7rem;
     color: var(--accent);
     border: 1px solid var(--accent);
@@ -92,7 +92,7 @@
     border-top: none;
     border-left: none;
     border-right: none;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Exo 2', sans-serif;
   }
 
   .nav-tab:hover { color: var(--text); }
@@ -117,7 +117,7 @@
   }
 
   .section-label {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Share Tech Mono', monospace;
     font-size: 0.68rem;
     color: var(--muted);
     letter-spacing: 0.12em;
@@ -126,7 +126,7 @@
   }
 
   .section-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Rajdhani', sans-serif;
     font-size: 2rem;
     font-weight: 700;
     color: var(--text);
@@ -194,11 +194,11 @@
     padding: 3px 9px;
     font-size: 0.72rem;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: 'Share Tech Mono', monospace;
   }
   .tag.blue { color: var(--accent2); border-color: rgba(79,156,249,0.3); background: rgba(79,156,249,0.06); }
   .tag.green { color: var(--accent3); border-color: rgba(110,231,183,0.3); background: rgba(110,231,183,0.06); }
-  .tag.gold { color: var(--accent); border-color: rgba(200,169,110,0.3); background: rgba(200,169,110,0.06); }
+  .tag.gold { color: var(--accent); border-color: rgba(255,215,0,0.25); background: rgba(255,215,0,0.06); }
   .tag.red { color: var(--accent4); border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.06); }
   .tag.purple { color: var(--accent5); border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.06); }
 
@@ -213,7 +213,7 @@
 
   .flow-title {
     font-size: 0.78rem;
-    font-family: 'DM Mono', monospace;
+    font-family: 'Share Tech Mono', monospace;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -288,11 +288,11 @@
     height: 10px;
     border-radius: 50%;
     background: var(--accent);
-    box-shadow: 0 0 12px rgba(200,169,110,0.6);
+    box-shadow: 0 0 12px rgba(255,215,0,0.60);
   }
 
   .phase-number {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Share Tech Mono', monospace;
     font-size: 0.65rem;
     color: var(--muted);
     letter-spacing: 0.1em;
@@ -307,10 +307,10 @@
   }
 
   .phase-duration {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Share Tech Mono', monospace;
     font-size: 0.7rem;
     color: var(--accent);
-    border: 1px solid rgba(200,169,110,0.3);
+    border: 1px solid rgba(255,215,0,0.25);
     padding: 2px 8px;
     border-radius: 4px;
     display: inline-block;
@@ -348,7 +348,7 @@
   }
 
   .stack-table th {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Share Tech Mono', monospace;
     font-size: 0.68rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -395,7 +395,7 @@
   }
 
   .metric-value {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Rajdhani', sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
     color: var(--accent);
@@ -406,7 +406,7 @@
   .metric-label {
     font-size: 0.75rem;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: 'Share Tech Mono', monospace;
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -420,8 +420,8 @@
 
   /* HIGHLIGHT BOX */
   .highlight-box {
-    background: linear-gradient(135deg, rgba(200,169,110,0.06) 0%, rgba(79,156,249,0.04) 100%);
-    border: 1px solid rgba(200,169,110,0.2);
+    background: linear-gradient(135deg, rgba(255,215,0,0.06) 0%, rgba(79,156,249,0.04) 100%);
+    border: 1px solid rgba(255,215,0,0.20);
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 24px;
@@ -451,7 +451,7 @@
     position: absolute;
     top: 12px;
     right: 16px;
-    font-family: 'DM Mono', monospace;
+    font-family: 'Share Tech Mono', monospace;
     font-size: 0.6rem;
     color: var(--muted);
     letter-spacing: 0.1em;
@@ -492,7 +492,7 @@
   .n-node-label {
     font-size: 0.62rem;
     color: var(--muted);
-    font-family: 'DM Mono', monospace;
+    font-family: 'Share Tech Mono', monospace;
   }
 
   .n-arrow { font-size: 1rem; color: var(--muted); margin-top: -4px; }

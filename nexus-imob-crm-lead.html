@@ -31,7 +31,7 @@
   --purple-dim: rgba(167,139,250,0.08);
 
   --text:       #e2e8f4;
-  --muted:      #4a5568;
+  --muted:      #a0aec0;
   --muted2:     #2d3748;
 
   --font-main:  'Exo 2', sans-serif;
@@ -1235,7 +1235,7 @@ body::before {
           <div class="info-icon">✉</div>
           <div class="info-content">
             <div class="info-label">E-mail</div>
-            <div class="info-value">fernanda@email.com</div>
+            <div class="info-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="46202334282728222706232b272f2a6825292b">[email&#160;protected]</a></div>
           </div>
         </div>
         <div class="info-row">
@@ -1606,7 +1606,7 @@ body::before {
   </div><!-- /content -->
 </div><!-- /main -->
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const glow = document.getElementById('glow');
 document.addEventListener('mousemove', e => {
   glow.style.left = e.clientX + 'px';
@@ -1638,16 +1638,4 @@ document.querySelectorAll('.filter-tab').forEach(tab => {
 document.querySelectorAll('.compose-type').forEach(ct => {
   ct.addEventListener('click', function() {
     document.querySelectorAll('.compose-type').forEach(c => c.classList.remove('sel'));
-    this.classList.add('sel');
-  });
-});
-
-// Animate score ring on load
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.querySelector('.score-fill').style.strokeDashoffset = '57';
-  }, 300);
-});
-</script>
-</body>
-</html>
+    this.classList

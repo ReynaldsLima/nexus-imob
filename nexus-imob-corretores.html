@@ -30,7 +30,7 @@
   --purple-dim:  rgba(167,139,250,0.08);
   --blue:        #4f9cf9;
   --blue-dim:    rgba(79,156,249,0.08);
-  --muted:       #4a5568;
+  --muted:       #a0aec0;
   --text:        #e2e8f4;
 
   --font-main:   'Exo 2', sans-serif;
@@ -648,7 +648,7 @@ body::before {
         <div class="detail-section">
           <div class="ds-title">Contato</div>
           <div class="contact-row"><div class="contact-icon">📱</div><div class="contact-val gold">(11) 99876-5432</div></div>
-          <div class="contact-row"><div class="contact-icon">✉</div><div class="contact-val">lucas.carvalho@nexusimob.com</div></div>
+          <div class="contact-row"><div class="contact-icon">✉</div><div class="contact-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1f736a7c7e6c317c7e6d697e7377705f717a676a6c7672707d317c7072">[email&#160;protected]</a></div></div>
           <div class="contact-row"><div class="contact-icon">📍</div><div class="contact-val">Zona Sul · Moema, Itaim, V. Olímpia</div></div>
         </div>
 
@@ -746,7 +746,7 @@ body::before {
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const glow = document.getElementById('glow');
 document.addEventListener('mousemove', e => { glow.style.left=e.clientX+'px'; glow.style.top=e.clientY+'px'; });
 
@@ -754,12 +754,4 @@ function setActive(el) { document.querySelectorAll('.nav-item').forEach(i=>i.cla
 
 document.querySelectorAll('.page-tab').forEach(t=>{ t.addEventListener('click',function(){ document.querySelectorAll('.page-tab').forEach(x=>x.classList.remove('active')); this.classList.add('active'); }); });
 
-function toggleChip(el) { document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); }
-
-function selectCorretor(el, id) {
-  document.querySelectorAll('.corretor-card').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');
-}
-</script>
-</body>
-</html>
+function toggleChip(el) { document.querySelectorAll('.filter-chip').forEach(c=>c.class
