@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ImobiFlow — Project Canvas</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --surface: #111318;
+    --surface2: #181c23;
+    --border: #1e2530;
+    --accent: #c8a96e;
+    --accent2: #4f9cf9;
+    --accent3: #6ee7b7;
+    --accent4: #f87171;
+    --accent5: #a78bfa;
+    --text: #e8eaf0;
+    --muted: #64748b;
+    --tag-bg: #1e2530;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, #0d1017 0%, transparent 100%);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+
+  .logo span {
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 20px 48px 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .nav-tab {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+    padding: 10px 20px 12px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* MAIN */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 48px 80px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* SECTION HEADER */
+  .section-header {
+    margin-bottom: 36px;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .section-title span { color: var(--accent); }
+
+  .section-desc {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.7;
+    max-width: 680px;
+  }
+
+  /* GRID CARDS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .card-icon {
+    font-size: 1.6rem;
+    margin-bottom: 14px;
+  }
+
+  .card-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .card-desc {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .card-accent-blue { border-left: 3px solid var(--accent2); }
+  .card-accent-green { border-left: 3px solid var(--accent3); }
+  .card-accent-gold { border-left: 3px solid var(--accent); }
+  .card-accent-red { border-left: 3px solid var(--accent4); }
+  .card-accent-purple { border-left: 3px solid var(--accent5); }
+
+  /* TAGS */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .tag {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 9px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .tag.blue { color: var(--accent2); border-color: rgba(79,156,249,0.3); background: rgba(79,156,249,0.06); }
+  .tag.green { color: var(--accent3); border-color: rgba(110,231,183,0.3); background: rgba(110,231,183,0.06); }
+  .tag.gold { color: var(--accent); border-color: rgba(200,169,110,0.3); background: rgba(200,169,110,0.06); }
+  .tag.red { color: var(--accent4); border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.06); }
+  .tag.purple { color: var(--accent5); border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.06); }
+
+  /* FLOW DIAGRAM */
+  .flow-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+
+  .flow-title {
+    font-size: 0.78rem;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .flow-node {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .flow-node.trigger { border-color: var(--accent4); color: var(--accent4); }
+  .flow-node.action { border-color: var(--accent2); color: var(--accent2); }
+  .flow-node.condition { border-color: var(--accent); color: var(--accent); border-radius: 0; transform: skewX(-8deg); }
+  .flow-node.condition span { display: inline-block; transform: skewX(8deg); }
+  .flow-node.output { border-color: var(--accent3); color: var(--accent3); }
+  .flow-node.ai { border-color: var(--accent5); color: var(--accent5); }
+
+  .flow-arrow {
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* PHASE TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent2) 50%, var(--accent3) 100%);
+  }
+
+  .phase {
+    position: relative;
+    margin-bottom: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+
+  .phase::before {
+    content: '';
+    position: absolute;
+    left: -27px;
+    top: 24px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(200,169,110,0.6);
+  }
+
+  .phase-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .phase-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  .phase-duration {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    border: 1px solid rgba(200,169,110,0.3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+
+  .phase-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .phase-items li {
+    font-size: 0.83rem;
+    color: var(--muted);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .phase-items li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent2);
+    font-size: 0.75rem;
+  }
+
+  /* STACK TABLE */
+  .stack-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+
+  .stack-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stack-table td {
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    border-bottom: 1px solid rgba(30,37,48,0.5);
+    vertical-align: middle;
+  }
+
+  .stack-table tr:last-child td { border-bottom: none; }
+  .stack-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .stack-name {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .stack-role {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  /* METRIC CARDS */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .metric-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .metric-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 32px 0;
+  }
+
+  /* HIGHLIGHT BOX */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(200,169,110,0.06) 0%, rgba(79,156,249,0.04) 100%);
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .highlight-box p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .highlight-box strong { color: var(--accent); }
+
+  /* N8N FLOW VISUAL */
+  .n8n-flow {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .n8n-flow::before {
+    content: 'N8N WORKFLOW';
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .n8n-flow-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .nodes-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .n-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .n-node-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-align: center;
+    min-width: 90px;
+  }
+
+  .n-node-label {
+    font-size: 0.62rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .n-arrow { font-size: 1rem; color: var(--muted); margin-top: -4px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    header, .nav-tabs, main { padding-left: 20px; padding-right: 20px; }
+    .grid-2, .grid-3, .grid-4, .metrics { grid-template-columns: 1fr; }
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section.active .card,
+  .section.active .phase,
+  .section.active .n8n-flow,
+  .section.active .highlight-box {
+    animation: fadeUp 0.35s ease both;
+  }
+
+  .section.active .card:nth-child(1) { animation-delay: 0.05s; }
+  .section.active .card:nth-child(2) { animation-delay: 0.10s; }
+  .section.active .card:nth-child(3) { animation-delay: 0.15s; }
+  .section.active .card:nth-child(4) { animation-delay: 0.20s; }
+  .section.active .card:nth-child(5) { animation-delay: 0.25s; }
+  .section.active .card:nth-child(6) { animation-delay: 0.30s; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Imobi<span>Flow</span></div>
+  <div style="display:flex; gap:12px; align-items:center;">
+    <span class="badge">v1.0 · Project Canvas</span>
+  </div>
+</header>
+
+<nav class="nav-tabs" id="navTabs">
+  <button class="nav-tab active" onclick="switchTab('visao')">🏛 Visão Geral</button>
+  <button class="nav-tab" onclick="switchTab('modulos')">🧩 Módulos</button>
+  <button class="nav-tab" onclick="switchTab('n8n')">⚡ Fluxos N8N</button>
+  <button class="nav-tab" onclick="switchTab('stack')">🔧 Stack Técnica</button>
+  <button class="nav-tab" onclick="switchTab('roadmap')">🗺 Roadmap</button>
+</nav>
+
+<main>
+
+  <!-- ═══════════════════════════════════ VISÃO GERAL ═══════════════════════════════════ -->
+  <section class="section active" id="visao">
+    <div class="section-header">
+      <div class="section-label">01 / Visão do Produto</div>
+      <h1 class="section-title">O que é o <span>ImobiFlow</span>?</h1>
+      <p class="section-desc">
+        Uma plataforma web para imobiliárias que centraliza leads, automatiza o atendimento via WhatsApp, 
+        gerencia o pipeline de imóveis e corretores — tudo integrado ao N8N como motor de automação.
+      </p>
+    </div>
+
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-value">6</div>
+        <div class="metric-label">Módulos Principais</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">8+</div>
+        <div class="metric-label">Fluxos N8N</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">3</div>
+        <div class="metric-label">Fases de Entrega</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">∞</div>
+        <div class="metric-label">Escalabilidade</div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <p>
+        <strong>Problema central:</strong> Imobiliárias perdem leads por atendimento lento, 
+        dados descentralizados entre WhatsApp/planilha/e-mail e falta de visibilidade do funil. 
+        O ImobiFlow resolve isso com um <strong>CRM visual + automação inteligente via N8N + 
+        atendimento 24h por WhatsApp com IA.</strong>
+      </p>
+    </div>
+
+    <div class="grid-3">
+      <div class="card card-accent-gold">
+        <div class="card-icon">🎯</div>
+        <div class="card-title">Público-Alvo</div>
+        <div class="card-desc">Imobiliárias pequenas e médias (2–30 corretores) que querem profissionalizar o atendimento sem grandes investimentos em tecnologia própria.</div>
+        <div class="tags">
+          <span class="tag gold">B2B SaaS</span>
+          <span class="tag gold">Imobiliárias</span>
+          <span class="tag gold">Corretores</span>
+        </div>
+      </div>
+      <div class="card card-accent-blue">
+        <div class="card-icon">💡</div>
+        <div class="card-title">Proposta de Valor</div>
+        <div class="card-desc">Lead capturado → qualificado pela IA → atribuído ao corretor → acompanhado até o fechamento. Tudo automatizado, sem perder o contato humano.</div>
+        <div class="tags">
+          <span class="tag blue">Automação</span>
+          <span class="tag blue">IA</span>
+          <span class="tag blue">WhatsApp</span>
+        </div>
+      </div>
+      <div class="card card-accent-green">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Modelo de Receita</div>
+        <div class="card-desc">SaaS recorrente por imobiliária (plano por corretores ativos) + setup fee + opcional: automações customizadas como serviço adicional.</div>
+        <div class="tags">
+          <span class="tag green">Recorrente</span>
+          <span class="tag green">Setup Fee</span>
+          <span class="tag green">Upsell</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-header">
+      <div class="section-label">Diferencial Competitivo</div>
+      <h2 class="section-title" style="font-size:1.4rem;">Por que <span>não</span> usar só um CRM pronto?</h2>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">❌ Soluções genéricas</div>
+        <div class="card-desc">CRMs como Pipedrive e HubSpot não entendem o fluxo imobiliário (visitas, documentação, CRECI, portais como OLX/ZAP). Automações custam caro ou não existem para WhatsApp.</div>
+      </div>
+      <div class="card card-accent-gold">
+        <div class="card-title">✅ ImobiFlow</div>
+        <div class="card-desc">Fluxo nativo para imobiliárias + automação real via N8N (sem black-box) + WhatsApp 24h com IA treinada no negócio + integrações com ZAP, OLX, VivaReal via webhook.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ MÓDULOS ═══════════════════════════════════ -->
+  <section class="section" id="modulos">
+    <div class="section-header">
+      <div class="section-label">02 / Arquitetura de Módulos</div>
+      <h1 class="section-title">Os <span>6 módulos</span> da plataforma</h1>
+      <p class="section-desc">Cada módulo é independente mas se comunica via API interna e aciona fluxos no N8N automaticamente.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card card-accent-red">
+        <div class="card-icon">🧲</div>
+        <div class="card-title">M1 · Captação de Leads</div>
+        <div class="card-desc">Centraliza leads de múltiplas fontes: portais imobiliários, formulários no site, WhatsApp direto, Meta Ads e Google Ads. Cada lead entra no pipeline automaticamente.</div>
+        <div class="tags">
+          <span class="tag red">ZAP Imóveis</span>
+          <span class="tag red">OLX</span>
+          <span class="tag red">VivaReal</span>
+          <span class="tag red">Meta Ads</span>
+          <span class="tag red">Webhook</span>
+        </div>
+      </div>
+
+      <div class="card card-accent-purple">
+        <div class="card-icon">🤖</div>
+        <div class="card-title">M2 · Atendimento IA (WhatsApp)</div>
+        <div class="card-desc">Bot inteligente via Evolution API que qualifica o lead, entende a necessidade (compra/aluguel, bairro, faixa de preço), agenda visitas e transfere ao corretor no momento certo.</div>
+        <div class="tags">
+          <span class="tag purple">Evolution API</span>
+          <span class="tag purple">Claude / GPT</span>
+          <span class="tag purple">N8N AI Agent</span>
+        </div>
+      </div>
+
+      <div class="card card-accent-blue">
+        <div class="card-icon">📋</div>
+        <div class="card-title">M3 · CRM & Pipeline</div>
+        <div class="card-desc">Kanban visual com estágios do funil imobiliário: Novo Lead → Qualificado → Visita Agendada → Proposta → Documentação → Fechado. Histórico completo de interações.</div>
+        <div class="tags">
+          <span class="tag blue">Kanban</span>
+          <span class="tag blue">Timeline</span>
+          <span class="tag blue">Notas</span>
+          <span class="tag blue">Tarefas</span>
+        </div>
+      </div>
+
+      <div class="card card-accent-gold">
+        <div class="card-icon">🏠</div>
+        <div class="card-title">M4 · Catálogo de Imóveis</div>
+        <div class="card-desc">Cadastro completo de imóveis com fotos, valores, características, localização. Motor de match automático: lead cadastrado → sistema sugere imóveis compatíveis.</div>
+        <div class="tags">
+          <span class="tag gold">Match IA</span>
+          <span class="tag gold">Galeria</span>
+          <span class="tag gold">Filtros</span>
+          <span class="tag gold">Mapa</span>
+        </div>
+      </div>
+
+      <div class="card card-accent-green">
+        <div class="card-icon">📅</div>
+        <div class="card-title">M5 · Agenda & Visitas</div>
+        <div class="card-desc">Calendário de visitas integrado com WhatsApp. Confirmação automática (24h e 1h antes), link do Google Maps para o cliente, follow-up pós-visita automatizado.</div>
+        <div class="tags">
+          <span class="tag green">Google Calendar</span>
+          <span class="tag green">Lembretes</span>
+          <span class="tag green">Follow-up</span>
+        </div>
+      </div>
+
+      <div class="card card-accent-red">
+        <div class="card-icon">📈</div>
+        <div class="card-title">M6 · Dashboard & Relatórios</div>
+        <div class="card-desc">Métricas em tempo real: leads por fonte, taxa de conversão por corretor, tempo médio de fechamento, imóveis mais visualizados. Relatório semanal automático por e-mail.</div>
+        <div class="tags">
+          <span class="tag red">KPIs</span>
+          <span class="tag red">Gráficos</span>
+          <span class="tag red">E-mail Report</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ N8N FLOWS ═══════════════════════════════════ -->
+  <section class="section" id="n8n">
+    <div class="section-header">
+      <div class="section-label">03 / Automações N8N</div>
+      <h1 class="section-title">Os <span>8 fluxos</span> principais</h1>
+      <p class="section-desc">Cada fluxo N8N é acionado por eventos da plataforma web via webhook. O N8N é o cérebro das automações, totalmente customizável.</p>
+    </div>
+
+    <div class="n8n-flow">
+      <div class="n8n-flow-title">🔴 Fluxo 1 · Recepção e Distribuição de Lead</div>
+      <div class="nodes-row">
+        <div class="n-node">
+          <div class="n-node-box flow-node trigger" style="min-width:100px;">Webhook<br>Recebe Lead</div>
+          <div class="n-node-label">TRIGGER</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node action">Salva no<br>Banco (API)</div>
+          <div class="n-node-label">HTTP REQUEST</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node condition"><span>Fonte do<br>Lead?</span></div>
+          <div class="n-node-label">IF / SWITCH</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node ai">IA Qualifica<br>Perfil</div>
+          <div class="n-node-label">AI AGENT</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node action">Atribui<br>Corretor</div>
+          <div class="n-node-label">ROUND-ROBIN</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node output">WhatsApp<br>Corretor</div>
+          <div class="n-node-label">EVOLUTION API</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="n8n-flow">
+      <div class="n8n-flow-title">🟣 Fluxo 2 · Atendimento IA via WhatsApp</div>
+      <div class="nodes-row">
+        <div class="n-node">
+          <div class="n-node-box flow-node trigger">Msg WhatsApp<br>Recebida</div>
+          <div class="n-node-label">WEBHOOK</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node ai">Claude/GPT<br>Processa</div>
+          <div class="n-node-label">AI AGENT</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node condition"><span>Pede<br>Humano?</span></div>
+          <div class="n-node-label">IF NODE</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node action">Responde<br>Automatico</div>
+          <div class="n-node-label">ou</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node output">Transfere<br>Corretor</div>
+          <div class="n-node-label">EVOLUTION API</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="n8n-flow">
+      <div class="n8n-flow-title">🟡 Fluxo 3 · Confirmação e Lembrete de Visita</div>
+      <div class="nodes-row">
+        <div class="n-node">
+          <div class="n-node-box flow-node trigger">Visita<br>Agendada</div>
+          <div class="n-node-label">WEBHOOK</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node action">Cria Evento<br>Google Cal.</div>
+          <div class="n-node-label">GOOGLE CAL.</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node action">Confirma<br>p/ Cliente</div>
+          <div class="n-node-label">WHATSAPP</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node trigger">⏰ 24h antes</div>
+          <div class="n-node-label">SCHEDULE</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node output">Lembrete<br>WhatsApp</div>
+          <div class="n-node-label">EVOLUTION API</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="n8n-flow">
+      <div class="n8n-flow-title">🟢 Fluxo 4 · Match Automático de Imóveis</div>
+      <div class="nodes-row">
+        <div class="n-node">
+          <div class="n-node-box flow-node trigger">Lead<br>Qualificado</div>
+          <div class="n-node-label">TRIGGER</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node action">Busca<br>Imóveis API</div>
+          <div class="n-node-label">HTTP REQUEST</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node ai">IA Rankeia<br>Matches</div>
+          <div class="n-node-label">AI AGENT</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node output">Envia Top 3<br>p/ Cliente</div>
+          <div class="n-node-label">WHATSAPP</div>
+        </div>
+        <div class="n-arrow">→</div>
+        <div class="n-node">
+          <div class="n-node-box flow-node action">Atualiza<br>CRM</div>
+          <div class="n-node-label">API INTERNA</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:16px;">
+      <div class="n8n-flow" style="margin-bottom:0;">
+        <div class="n8n-flow-title">📧 Fluxo 5 · Relatório Semanal</div>
+        <div class="tags" style="margin-top:8px;">
+          <span class="tag">Cron Monday</span>
+          <span class="tag blue">Busca KPIs</span>
+          <span class="tag purple">Gera HTML</span>
+          <span class="tag green">Envia E-mail</span>
+        </div>
+      </div>
+      <div class="n8n-flow" style="margin-bottom:0;">
+        <div class="n8n-flow-title">🔁 Fluxo 6 · Reengajamento de Lead Frio</div>
+        <div class="tags" style="margin-top:8px;">
+          <span class="tag red">Sem atividade 7d</span>
+          <span class="tag purple">IA gera msg</span>
+          <span class="tag green">WhatsApp</span>
+        </div>
+      </div>
+      <div class="n8n-flow" style="margin-bottom:0;">
+        <div class="n8n-flow-title">📑 Fluxo 7 · Gestão de Documentação</div>
+        <div class="tags" style="margin-top:8px;">
+          <span class="tag gold">Proposta aceita</span>
+          <span class="tag blue">Checklist docs</span>
+          <span class="tag green">Notifica partes</span>
+        </div>
+      </div>
+      <div class="n8n-flow" style="margin-bottom:0;">
+        <div class="n8n-flow-title">⭐ Fluxo 8 · NPS Pós-Visita</div>
+        <div class="tags" style="margin-top:8px;">
+          <span class="tag">2h após visita</span>
+          <span class="tag purple">Pesquisa WhatsApp</span>
+          <span class="tag blue">Salva feedback</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ STACK ═══════════════════════════════════ -->
+  <section class="section" id="stack">
+    <div class="section-header">
+      <div class="section-label">04 / Stack Técnica</div>
+      <h1 class="section-title">Tecnologia <span>recomendada</span></h1>
+      <p class="section-desc">Stack escolhida para equilíbrio entre velocidade de desenvolvimento, custo de infraestrutura e familiaridade com o ecossistema N8N/Evolution API.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card card-accent-blue">
+        <div class="card-title">🖥 Frontend (Web App)</div>
+        <table class="stack-table">
+          <tr><td><span class="stack-name">Next.js 14</span></td><td><span class="stack-role">Framework React com SSR</span></td></tr>
+          <tr><td><span class="stack-name">Tailwind CSS</span></td><td><span class="stack-role">Estilização rápida</span></td></tr>
+          <tr><td><span class="stack-name">Shadcn/UI</span></td><td><span class="stack-role">Componentes prontos</span></td></tr>
+          <tr><td><span class="stack-name">React Query</span></td><td><span class="stack-role">Cache e estado servidor</span></td></tr>
+          <tr><td><span class="stack-name">Zustand</span></td><td><span class="stack-role">Estado global</span></td></tr>
+        </table>
+      </div>
+
+      <div class="card card-accent-gold">
+        <div class="card-title">⚙️ Backend (API)</div>
+        <table class="stack-table">
+          <tr><td><span class="stack-name">Node.js + Fastify</span></td><td><span class="stack-role">API REST performática</span></td></tr>
+          <tr><td><span class="stack-name">PostgreSQL</span></td><td><span class="stack-role">Banco principal</span></td></tr>
+          <tr><td><span class="stack-name">Prisma ORM</span></td><td><span class="stack-role">Acesso ao banco</span></td></tr>
+          <tr><td><span class="stack-name">Redis</span></td><td><span class="stack-role">Sessões e cache</span></td></tr>
+          <tr><td><span class="stack-name">JWT + Tenants</span></td><td><span class="stack-role">Multi-imobiliária</span></td></tr>
+        </table>
+      </div>
+
+      <div class="card card-accent-purple">
+        <div class="card-title">⚡ Automação & IA</div>
+        <table class="stack-table">
+          <tr><td><span class="stack-name">N8N (self-hosted)</span></td><td><span class="stack-role">Motor de automação</span></td></tr>
+          <tr><td><span class="stack-name">Evolution API</span></td><td><span class="stack-role">WhatsApp Business</span></td></tr>
+          <tr><td><span class="stack-name">Claude / OpenAI</span></td><td><span class="stack-role">IA conversacional</span></td></tr>
+          <tr><td><span class="stack-name">Langchain (N8N)</span></td><td><span class="stack-role">AI Agents</span></td></tr>
+          <tr><td><span class="stack-name">Pinecone / pgvector</span></td><td><span class="stack-role">Embeddings imóveis</span></td></tr>
+        </table>
+      </div>
+
+      <div class="card card-accent-green">
+        <div class="card-title">☁️ Infraestrutura</div>
+        <table class="stack-table">
+          <tr><td><span class="stack-name">VPS Hostinger</span></td><td><span class="stack-role">N8N + Evolution API</span></td></tr>
+          <tr><td><span class="stack-name">Vercel</span></td><td><span class="stack-role">Deploy frontend</span></td></tr>
+          <tr><td><span class="stack-name">Railway / Supabase</span></td><td><span class="stack-role">PostgreSQL gerenciado</span></td></tr>
+          <tr><td><span class="stack-name">Cloudflare</span></td><td><span class="stack-role">DNS + CDN + WAF</span></td></tr>
+          <tr><td><span class="stack-name">S3 / Cloudflare R2</span></td><td><span class="stack-role">Fotos de imóveis</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="highlight-box">
+      <p>
+        <strong>Arquitetura Multi-Tenant:</strong> Cada imobiliária tem seu próprio <strong>workspace isolado</strong> 
+        (schema PostgreSQL separado por tenant_id). Os fluxos N8N usam variáveis de ambiente por tenant. 
+        A Evolution API cria uma instância WhatsApp por imobiliária. 
+        Isso permite escalar como <strong>SaaS sem interferência entre clientes.</strong>
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════ ROADMAP ═══════════════════════════════════ -->
+  <section class="section" id="roadmap">
+    <div class="section-header">
+      <div class="section-label">05 / Roadmap de Entrega</div>
+      <h1 class="section-title">3 fases de <span>desenvolvimento</span></h1>
+      <p class="section-desc">Estratégia de entrega incremental: MVP funcional em 6 semanas, produto completo em 4 meses.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="phase">
+        <div class="phase-number">FASE 01</div>
+        <div class="phase-title">🚀 MVP — Core do Negócio</div>
+        <div class="phase-duration">Semanas 1–6</div>
+        <ul class="phase-items">
+          <li>Setup da infraestrutura (VPS, domínio, banco, N8N, Evolution API)</li>
+          <li>Autenticação multi-tenant (login por imobiliária)</li>
+          <li>Cadastro de corretores e imóveis (CRUD completo)</li>
+          <li>Pipeline CRM com Kanban (5 estágios fixos)</li>
+          <li>Fluxo N8N: recepção de lead via formulário + WhatsApp</li>
+          <li>Fluxo N8N: atendimento básico via IA + transferência ao corretor</li>
+          <li>Dashboard com métricas essenciais (leads, corretores, conversão)</li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-number">FASE 02</div>
+        <div class="phase-title">⚙️ Automações Avançadas + Match IA</div>
+        <div class="phase-duration">Semanas 7–12</div>
+        <ul class="phase-items">
+          <li>Motor de match IA (lead → imóveis compatíveis ranqueados)</li>
+          <li>Agenda de visitas com Google Calendar integrado</li>
+          <li>Fluxos de lembrete (24h e 1h antes) e follow-up pós-visita</li>
+          <li>NPS automatizado via WhatsApp</li>
+          <li>Reengajamento de leads frios (régua automática)</li>
+          <li>Integração com portais: ZAP Imóveis e OLX (webhook)</li>
+          <li>Relatório semanal por e-mail (gerado pelo N8N)</li>
+        </ul>
+      </div>
+
+      <div class="phase">
+        <div class="phase-number">FASE 03</div>
+        <div class="phase-title">📈 Escala SaaS + Funcionalidades Premium</div>
+        <div class="phase-duration">Semanas 13–18</div>
+        <ul class="phase-items">
+          <li>Painel de onboarding self-service (imobiliária se cadastra sozinha)</li>
+          <li>Planos de assinatura com Stripe (básico / profissional / enterprise)</li>
+          <li>App mobile (PWA ou React Native) para corretores em campo</li>
+          <li>Assinatura digital de contratos (DocuSign / ZapSign)</li>
+          <li>Módulo financeiro básico (comissões por corretor)</li>
+          <li>White-label: imobiliária usa o sistema com sua própria marca</li>
+          <li>Marketplace de automações N8N customizáveis</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-header">
+      <div class="section-label">Próximos Passos</div>
+      <h2 class="section-title" style="font-size:1.3rem;">O que <span>decidir agora</span></h2>
+    </div>
+
+    <div class="grid-2">
+      <div class="card card-accent-gold">
+        <div class="card-icon">🎯</div>
+        <div class="card-title">Decisões Estratégicas</div>
+        <ul class="phase-items" style="margin-top:8px;">
+          <li>Construir para vender como SaaS ou uso próprio?</li>
+          <li>Qual nicho primeiro: venda ou locação?</li>
+          <li>IA: Claude API ou OpenAI?</li>
+          <li>Começar com 1 imobiliária cliente piloto</li>
+        </ul>
+      </div>
+      <div class="card card-accent-blue">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Ações Imediatas</div>
+        <ul class="phase-items" style="margin-top:8px;">
+          <li>Mapear os fluxos N8N em detalhe (node a node)</li>
+          <li>Definir schema do banco de dados</li>
+          <li>Prototipar as telas principais no Figma</li>
+          <li>Configurar VPS com N8N + Evolution API</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

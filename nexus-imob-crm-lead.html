@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Imob — CRM Lead</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0:       #060709;
+  --bg-1:       #0c0e13;
+  --bg-2:       #111520;
+  --bg-3:       #161b28;
+  --bg-4:       #1c2235;
+  --border:     rgba(255,255,255,0.06);
+  --border-glow:rgba(255,215,0,0.20);
+
+  --gold:       #ffd700;
+  --gold-dim:   rgba(255,215,0,0.10);
+  --gold-glow:  rgba(255,215,0,0.40);
+
+  --green:      #00ff88;
+  --green-dim:  rgba(0,255,136,0.08);
+  --yellow:     #ffcc00;
+  --yellow-dim: rgba(255,204,0,0.08);
+  --orange:     #ff7b00;
+  --orange-dim: rgba(255,123,0,0.08);
+  --red:        #ff4757;
+  --red-dim:    rgba(255,71,87,0.08);
+  --purple:     #a78bfa;
+  --purple-dim: rgba(167,139,250,0.08);
+
+  --text:       #e2e8f4;
+  --muted:      #4a5568;
+  --muted2:     #2d3748;
+
+  --font-main:  'Exo 2', sans-serif;
+  --font-nexus: 'Rajdhani', sans-serif;
+  --font-mono:  'Share Tech Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-0);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ════ SIDEBAR ════ */
+.sidebar {
+  width: 220px;
+  min-height: 100vh;
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.sidebar::after {
+  content: '';
+  position: absolute;
+  right: -1px; top: 80px; bottom: 80px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  opacity: 0.3;
+}
+
+.logo-wrap {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: var(--font-nexus);
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  width: 28px; height: 28px;
+  border: 1.5px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+
+.logo-icon-inner {
+  width: 10px; height: 10px;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+}
+
+.logo-sub {
+  font-family: var(--font-nexus);
+  font-size: 0.65rem;
+  color: var(--gold);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  display: block;
+}
+
+.status-badge {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--green);
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--border);
+}
+
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse-g 2s ease infinite;
+}
+
+@keyframes pulse-g {
+  0%,100% { box-shadow: 0 0 8px var(--green); }
+  50%      { box-shadow: 0 0 16px var(--green); }
+}
+
+.nav-section { padding: 16px 0 8px; }
+
+.nav-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0 20px;
+  margin-bottom: 6px;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px;
+  font-family: var(--font-nexus);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+
+.nav-item.active {
+  color: var(--gold);
+  background: var(--gold-dim);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 4px; bottom: 4px;
+  width: 2px;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+}
+
+.nav-icon { font-size: 0.9rem; width: 16px; text-align: center; }
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--gold-dim);
+  color: var(--gold);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  padding: 2px 7px;
+  border: 1px solid var(--border-glow);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.user-card { display: flex; align-items: center; gap: 10px; }
+
+.user-avatar {
+  width: 32px; height: 32px;
+  border: 1px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-nexus);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gold);
+  background: var(--gold-dim);
+}
+
+.user-name {
+  font-size: 0.8rem; font-weight: 600;
+  font-family: var(--font-nexus);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.user-role {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ════ MAIN ════ */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  height: 56px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  background: var(--bg-1);
+  flex-shrink: 0;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  transition: all 0.15s;
+}
+
+.back-btn:hover { color: var(--text); border-color: var(--border-glow); }
+
+.page-title {
+  font-family: var(--font-nexus);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.breadcrumb {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.stage-selector {
+  display: flex; gap: 4px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  padding: 4px;
+}
+
+.stage-btn {
+  font-family: var(--font-nexus);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--muted);
+  border: 1px solid transparent;
+}
+
+.stage-btn:hover { color: var(--text); }
+.stage-btn.active-stage { color: var(--bg-0); background: var(--gold); }
+
+/* ════ CONTENT ════ */
+.content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ════ LEFT PANEL — Lead Profile ════ */
+.lead-profile {
+  width: 300px;
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.lead-profile::-webkit-scrollbar { width: 3px; }
+.lead-profile::-webkit-scrollbar-thumb { background: var(--border-glow); }
+
+/* SCORE RING */
+.score-section {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.score-ring-wrap {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  margin-bottom: 16px;
+}
+
+.score-svg {
+  width: 110px;
+  height: 110px;
+  transform: rotate(-90deg);
+}
+
+.score-track {
+  fill: none;
+  stroke: var(--bg-3);
+  stroke-width: 6;
+}
+
+.score-fill {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 57; /* 283 * (1 - 0.8) = 56.6 = 80% */
+  filter: drop-shadow(0 0 6px var(--gold));
+  transition: stroke-dashoffset 1s ease;
+}
+
+.score-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-value {
+  font-family: var(--font-nexus);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  text-shadow: 0 0 16px var(--gold-glow);
+}
+
+.score-label {
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.lead-name-big {
+  font-family: var(--font-nexus);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.lead-type-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid;
+  margin-bottom: 4px;
+}
+
+.lead-type-badge.compra { color: var(--gold); border-color: var(--border-glow); background: var(--gold-dim); }
+.lead-type-badge.aluguel { color: var(--purple); border-color: rgba(167,139,250,0.3); background: var(--purple-dim); }
+
+.lead-origin {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+/* CONTACT INFO */
+.profile-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-section-title {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.info-icon {
+  font-size: 0.75rem;
+  width: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--muted);
+}
+
+.info-content { flex: 1; }
+
+.info-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1px;
+}
+
+.info-value {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.info-value.cyan { color: var(--gold); }
+
+/* PREFERÊNCIAS */
+.pref-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.pref-item {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+}
+
+.pref-key {
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.pref-val {
+  font-family: var(--font-nexus);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+
+/* AÇÕES RÁPIDAS */
+.actions-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.action-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 12px 8px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-nexus);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.action-btn:hover { background: var(--bg-3); color: var(--text); border-color: var(--border-glow); }
+.action-btn.primary { background: var(--gold-dim); border-color: var(--border-glow); color: var(--gold); }
+.action-btn.primary:hover { background: rgba(255,215,0,0.18); box-shadow: 0 0 16px var(--gold-glow); }
+.action-btn-icon { font-size: 1.1rem; }
+
+/* CORRETOR ATRIBUÍDO */
+.corretor-assigned {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.corretor-av-lg {
+  width: 36px; height: 36px;
+  border: 1px solid var(--border-glow);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-nexus);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--gold);
+  background: var(--gold-dim);
+}
+
+.corretor-info-sm { flex: 1; }
+.corretor-nm {
+  font-family: var(--font-nexus);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.corretor-meta-sm {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.corretor-change {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--gold);
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ════ CENTER — Timeline ════ */
+.timeline-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+
+.timeline-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-1);
+  flex-shrink: 0;
+}
+
+.panel-title {
+  font-family: var(--font-nexus);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-dot {
+  width: 5px; height: 5px;
+  background: var(--gold);
+  box-shadow: 0 0 6px var(--gold);
+}
+
+.filter-tabs {
+  display: flex; gap: 4px;
+}
+
+.filter-tab {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  cursor: pointer;
+  color: var(--muted);
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.filter-tab:hover { color: var(--text); }
+.filter-tab.active { color: var(--gold); border-color: var(--border-glow); background: var(--gold-dim); }
+
+/* COMPOSE BAR */
+.compose-bar {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: var(--bg-1);
+  flex-shrink: 0;
+}
+
+.compose-input {
+  flex: 1;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-main);
+  font-size: 0.82rem;
+  padding: 9px 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.compose-input:focus { border-color: var(--border-glow); }
+.compose-input::placeholder { color: var(--muted); }
+
+.compose-send {
+  background: var(--gold-dim);
+  border: 1px solid var(--border-glow);
+  color: var(--gold);
+  font-family: var(--font-nexus);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.compose-send:hover { background: rgba(255,215,0,0.20); box-shadow: 0 0 12px var(--gold-glow); }
+
+.compose-types {
+  display: flex; gap: 6px;
+}
+
+.compose-type {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--muted);
+  text-transform: uppercase;
+  transition: all 0.15s;
+}
+
+.compose-type:hover { color: var(--text); border-color: var(--border-glow); }
+.compose-type.sel { color: var(--gold); border-color: var(--border-glow); background: var(--gold-dim); }
+
+/* TIMELINE FEED */
+.timeline-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.timeline-feed::-webkit-scrollbar { width: 3px; }
+.timeline-feed::-webkit-scrollbar-thumb { background: var(--border-glow); }
+
+/* DATE DIVIDER */
+.date-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 16px;
+}
+
+.date-divider::before,
+.date-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.date-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+/* TIMELINE EVENT */
+.t-event {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 16px;
+  animation: fadeUp 0.3s ease both;
+}
+
+.t-event:hover .t-card { border-color: var(--border-glow); }
+
+.t-spine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 28px;
+}
+
+.t-node {
+  width: 28px;
+  height: 28px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.t-node.whatsapp { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+.t-node.ai       { border-color: var(--purple); background: var(--purple-dim); color: var(--purple); }
+.t-node.visita   { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
+.t-node.proposta { border-color: var(--orange); background: var(--orange-dim); color: var(--orange); }
+.t-node.nota     { border-color: var(--yellow); background: var(--yellow-dim); color: var(--yellow); }
+.t-node.sistema  { border-color: var(--muted2); background: rgba(45,55,72,0.4); color: var(--muted); }
+.t-node.fechado  { border-color: var(--green); background: var(--green-dim); color: var(--green); box-shadow: 0 0 12px rgba(0,255,136,0.3); }
+
+.t-line {
+  flex: 1;
+  width: 1px;
+  background: var(--border);
+  margin-top: 4px;
+  min-height: 16px;
+}
+
+.t-card {
+  flex: 1;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  transition: border-color 0.15s;
+  min-width: 0;
+}
+
+.t-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.t-type-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border: 1px solid;
+}
+
+.t-type-label.whatsapp { color: var(--green); border-color: rgba(0,255,136,0.3); background: var(--green-dim); }
+.t-type-label.ai       { color: var(--purple); border-color: rgba(167,139,250,0.3); background: var(--purple-dim); }
+.t-type-label.visita   { color: var(--gold); border-color: var(--border-glow); background: var(--gold-dim); }
+.t-type-label.proposta { color: var(--orange); border-color: rgba(255,123,0,0.3); background: var(--orange-dim); }
+.t-type-label.nota     { color: var(--yellow); border-color: rgba(255,204,0,0.3); background: var(--yellow-dim); }
+.t-type-label.sistema  { color: var(--muted); border-color: var(--border); background: var(--bg-3); }
+.t-type-label.fechado  { color: var(--green); border-color: rgba(0,255,136,0.4); background: var(--green-dim); }
+
+.t-time {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.t-text {
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.t-text strong {
+  font-family: var(--font-nexus);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.t-text .highlight { color: var(--gold); }
+
+/* WhatsApp bubble style */
+.wpp-bubble {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--text);
+  margin-top: 4px;
+  position: relative;
+  border-left: 2px solid var(--green);
+}
+
+.wpp-bubble.sent { border-left: 2px solid var(--gold); }
+
+.wpp-sender {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.wpp-sender.lead { color: var(--green); }
+.wpp-sender.bot  { color: var(--purple); }
+.wpp-sender.corretor { color: var(--gold); }
+
+/* Metrics inside card */
+.t-metrics {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.t-metric-pill {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-3);
+  color: var(--muted);
+}
+
+.t-metric-pill span { font-weight: 700; }
+.t-metric-pill.c { color: var(--gold); border-color: var(--border-glow); }
+.t-metric-pill.g { color: var(--green); border-color: rgba(0,255,136,0.2); }
+.t-metric-pill.o { color: var(--orange); border-color: rgba(255,123,0,0.2); }
+
+/* Match imóvel card */
+.match-card {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.match-card:hover { border-color: var(--border-glow); }
+
+.match-thumb {
+  width: 44px; height: 34px;
+  background: var(--bg-4);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+
+.match-info { flex: 1; }
+
+.match-name {
+  font-family: var(--font-nexus);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.match-meta {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.match-score {
+  text-align: right;
+}
+
+.match-pct {
+  font-family: var(--font-nexus);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.match-pct-label {
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ════ RIGHT PANEL — Imóveis Matchados ════ */
+.right-panel {
+  width: 260px;
+  background: var(--bg-1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.right-panel-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-1);
+}
+
+.right-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.right-scroll::-webkit-scrollbar { width: 3px; }
+.right-scroll::-webkit-scrollbar-thumb { background: var(--border-glow); }
+
+/* IMOVEL MATCH CARD */
+.imovel-match {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+}
+
+.imovel-match:hover { background: rgba(255,255,255,0.02); }
+
+.imovel-match-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.imovel-match-rank {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.imovel-match-score {
+  font-family: var(--font-nexus);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border: 1px solid;
+}
+
+.score-high  { color: var(--green); border-color: rgba(0,255,136,0.3); background: var(--green-dim); }
+.score-med   { color: var(--yellow); border-color: rgba(255,204,0,0.3); background: var(--yellow-dim); }
+
+.imovel-img {
+  width: 100%;
+  height: 70px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.imovel-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 60%, rgba(255,215,0,0.04));
+}
+
+.imovel-match-name {
+  font-family: var(--font-nexus);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.imovel-match-meta {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.imovel-match-price {
+  font-family: var(--font-nexus);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+}
+
+.imovel-match-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.imtag {
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.imtag.match { color: var(--green); border-color: rgba(0,255,136,0.2); background: var(--green-dim); }
+
+.imovel-match-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.im-btn {
+  font-family: var(--font-nexus);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--bg-2);
+}
+
+.im-btn:hover { color: var(--text); border-color: var(--border-glow); }
+.im-btn.primary { color: var(--gold); border-color: var(--border-glow); background: var(--gold-dim); }
+.im-btn.primary:hover { background: rgba(255,215,0,0.18); }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.t-event:nth-child(1) { animation-delay: 0.05s; }
+.t-event:nth-child(2) { animation-delay: 0.10s; }
+.t-event:nth-child(3) { animation-delay: 0.15s; }
+.t-event:nth-child(4) { animation-delay: 0.20s; }
+.t-event:nth-child(5) { animation-delay: 0.25s; }
+.t-event:nth-child(6) { animation-delay: 0.30s; }
+.t-event:nth-child(7) { animation-delay: 0.35s; }
+
+/* Cursor glow */
+.glow-cursor {
+  position: fixed;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,215,0,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: left 0.1s, top 0.1s;
+  z-index: 1;
+}
+</style>
+</head>
+<body>
+
+<div class="glow-cursor" id="glow"></div>
+
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo">
+      <div class="logo-icon"><div class="logo-icon-inner"></div></div>
+      NEXUS
+    </div>
+    <span class="logo-sub">Imob Platform</span>
+  </div>
+
+  <div class="status-badge">
+    <div class="status-dot"></div>
+    SISTEMA ONLINE
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬡</span> Dashboard</div>
+    <div class="nav-item active" onclick="setActive(this)">
+      <span class="nav-icon">◈</span> Pipeline CRM
+      <span class="nav-badge">47</span>
+    </div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◻</span> Imóveis</div>
+    <div class="nav-item" onclick="setActive(this)">
+      <span class="nav-icon">◎</span> Leads
+      <span class="nav-badge">12</span>
+    </div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◷</span> Agenda</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Gestão</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">△</span> Corretores</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬙</span> Automações N8N</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">▦</span> Relatórios</div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">RG</div>
+      <div>
+        <div class="user-name">Riguetti</div>
+        <div class="user-role">ADMIN · NEXUS IMOB</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ════ MAIN ════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn">← Pipeline</div>
+      <div class="page-title">CRM — Fernanda Rocha</div>
+      <div class="breadcrumb">NEXUS IMOB / PIPELINE / LEAD #0047</div>
+    </div>
+    <div class="topbar-right">
+      <div class="stage-selector">
+        <div class="stage-btn">Novo</div>
+        <div class="stage-btn">Qualif.</div>
+        <div class="stage-btn active-stage">Visita</div>
+        <div class="stage-btn">Proposta</div>
+        <div class="stage-btn">Fechado</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ═══ LEFT — PERFIL DO LEAD ═══ -->
+    <div class="lead-profile">
+
+      <!-- SCORE -->
+      <div class="score-section">
+        <div class="score-ring-wrap">
+          <svg class="score-svg" viewBox="0 0 110 110">
+            <circle class="score-track" cx="55" cy="55" r="45"/>
+            <circle class="score-fill" cx="55" cy="55" r="45"/>
+          </svg>
+          <div class="score-center">
+            <div class="score-value">80</div>
+            <div class="score-label">AI Score</div>
+          </div>
+        </div>
+        <div class="lead-name-big">Fernanda Rocha</div>
+        <div class="lead-type-badge compra">Compra</div>
+        <div class="lead-origin">Via ZAP Imóveis · há 4 dias</div>
+      </div>
+
+      <!-- CONTATO -->
+      <div class="profile-section">
+        <div class="profile-section-title">Contato</div>
+        <div class="info-row">
+          <div class="info-icon">📱</div>
+          <div class="info-content">
+            <div class="info-label">WhatsApp</div>
+            <div class="info-value cyan">(11) 98765-4321</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">✉</div>
+          <div class="info-content">
+            <div class="info-label">E-mail</div>
+            <div class="info-value">fernanda@email.com</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">💼</div>
+          <div class="info-content">
+            <div class="info-label">Profissão</div>
+            <div class="info-value">Médica · Hospital Albert Einstein</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PREFERÊNCIAS -->
+      <div class="profile-section">
+        <div class="profile-section-title">Preferências declaradas</div>
+        <div class="pref-grid">
+          <div class="pref-item">
+            <div class="pref-key">Tipo</div>
+            <div class="pref-val">Apartamento</div>
+          </div>
+          <div class="pref-item">
+            <div class="pref-key">Finalidade</div>
+            <div class="pref-val">Moradia</div>
+          </div>
+          <div class="pref-item">
+            <div class="pref-key">Bairro</div>
+            <div class="pref-val">Moema / Ibirapuera</div>
+          </div>
+          <div class="pref-item">
+            <div class="pref-key">Dormitórios</div>
+            <div class="pref-val">3 ou 4</div>
+          </div>
+          <div class="pref-item">
+            <div class="pref-key">Área mín.</div>
+            <div class="pref-val">100 m²</div>
+          </div>
+          <div class="pref-item">
+            <div class="pref-key">Vagas</div>
+            <div class="pref-val">2+</div>
+          </div>
+          <div class="pref-item" style="grid-column: 1/-1;">
+            <div class="pref-key">Orçamento máx.</div>
+            <div class="pref-val" style="color: var(--gold);">R$ 1.400.000</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AÇÕES RÁPIDAS -->
+      <div class="actions-section">
+        <div class="profile-section-title">Ações Rápidas</div>
+        <div class="action-btns">
+          <div class="action-btn primary">
+            <div class="action-btn-icon">💬</div>
+            WhatsApp
+          </div>
+          <div class="action-btn">
+            <div class="action-btn-icon">📅</div>
+            Agendar
+          </div>
+          <div class="action-btn">
+            <div class="action-btn-icon">📄</div>
+            Proposta
+          </div>
+          <div class="action-btn">
+            <div class="action-btn-icon">📎</div>
+            Docs
+          </div>
+        </div>
+      </div>
+
+      <!-- CORRETOR -->
+      <div class="profile-section">
+        <div class="profile-section-title">Corretor Responsável</div>
+        <div class="corretor-assigned">
+          <div class="corretor-av-lg">LC</div>
+          <div class="corretor-info-sm">
+            <div class="corretor-nm">Lucas Carvalho</div>
+            <div class="corretor-meta-sm">68% conversão · 3 fechamentos/mês</div>
+          </div>
+          <div class="corretor-change">trocar</div>
+        </div>
+      </div>
+
+    </div><!-- /lead-profile -->
+
+    <!-- ═══ CENTER — TIMELINE ═══ -->
+    <div class="timeline-panel">
+
+      <div class="timeline-header">
+        <div class="panel-title">
+          <div class="title-dot"></div>
+          Timeline de Interações
+        </div>
+        <div class="filter-tabs">
+          <div class="filter-tab active">Todos</div>
+          <div class="filter-tab">WhatsApp</div>
+          <div class="filter-tab">Visitas</div>
+          <div class="filter-tab">IA</div>
+          <div class="filter-tab">Notas</div>
+        </div>
+      </div>
+
+      <!-- COMPOSE -->
+      <div class="compose-bar">
+        <div class="compose-types">
+          <div class="compose-type sel">📝 Nota</div>
+          <div class="compose-type">📅 Visita</div>
+          <div class="compose-type">📄 Proposta</div>
+        </div>
+        <input class="compose-input" placeholder="Adicionar nota ou interação...">
+        <button class="compose-send">+ Registrar</button>
+      </div>
+
+      <!-- FEED -->
+      <div class="timeline-feed">
+
+        <!-- HOJE -->
+        <div class="date-divider"><span class="date-label">Hoje — 30 Mar 2026</span></div>
+
+        <!-- visita agendada -->
+        <div class="t-event">
+          <div class="t-spine">
+            <div class="t-node visita">📅</div>
+            <div class="t-line"></div>
+          </div>
+          <div class="t-card">
+            <div class="t-card-header">
+              <span class="t-type-label visita">Visita Agendada</span>
+              <span class="t-time">10:34 · Lucas C.</span>
+            </div>
+            <div class="t-text">
+              Visita agendada para <strong class="highlight">Amanhã 31/03 às 10h00</strong> — Apto Moema 120m².
+              Lembrete automático será enviado <span class="highlight">24h e 1h antes</span> via WhatsApp pelo N8N.
+            </div>
+            <div class="t-metrics">
+              <div class="t-metric-pill c">📍 Rua Abílio Soares, 150 · Moema</div>
+              <div class="t-metric-pill g">✅ Google Calendar criado</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- wpp recebido -->
+        <div class="t-event">
+          <div class="t-spine">
+            <div class="t-node whatsapp">💬</div>
+            <div class="t-line"></div>
+          </div>
+          <div class="t-card">
+            <div class="t-card-header">
+              <span class="t-type-label whatsapp">WhatsApp</span>
+              <span class="t-time">09:18</span>
+            </div>
+            <div class="wpp-bubble">
+              <div class="wpp-sender lead">Fernanda Rocha</div>
+              Oi Lucas! Pode ser amanhã de manhã? Tenho plantão à tarde. O apartamento tem churrasqueira?
+            </div>
+            <div class="wpp-bubble sent" style="margin-top:6px;">
+              <div class="wpp-sender corretor">Lucas Carvalho</div>
+              Bom dia Fernanda! Pode sim, confirmei amanhã às 10h. O apto tem área de lazer completa com churrasqueira no 4º andar. Te envio o link do endereço 😊
+            </div>
+          </div>
+        </div>
+
+        <!-- IA match -->
+        <div class="t-event">
+          <div class="t-spine">
+            <div class="t-node ai">🤖</div>
+            <div class="t-line"></div>
+          </div>
+          <div class="t-card">
+            <div class="t-card-header">
+              <span class="t-type-label ai">IA · Match Automático</span>
+              <span class="t-time">08:05 · N8N Fluxo 4</span>
+            </div>
+            <div class="t-text">
+              Motor IA encontrou <strong>3 novos imóveis compatíveis</strong> com o perfil de Fernanda.
+              Match baseado em: localização, faixa de preço, metragem e dormitórios.
+            </div>
+            <div class="match-card">
+              <div class="match-thumb">🏢</div>
+              <div class="match-info">
+                <div class="match-name">Apto Moema 120m²</div>
+                <div class="match-meta">3 dorm · 2 vagas · R$ 1.1M</div>
+              </div>
+              <div class="match-score">
+                <div class="match-pct">94%</div>
+                <div class="match-pct-label">match</div>
+              </div>
+            </div>
+            <div class="match-card">
+              <div class="match-thumb">🏗</div>
+              <div class="match-info">
+                <div class="match-name">Apto Ibirapuera 110m²</div>
+                <div class="match-meta">3 dorm · 1 vaga · R$ 980k</div>
+              </div>
+              <div class="match-score">
+                <div class="match-pct">81%</div>
+                <div class="match-pct-label">match</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ONTEM -->
+        <div class="date-divider"><span class="date-label">Ontem — 29 Mar 2026</span></div>
+
+        <!-- nota do corretor -->
+        <div class="t-event">
+          <div class="t-spine">
+            <div class="t-node nota">📝</div>
+            <div class="t-line"></div>
+          </div>
+          <div class="t-card">
+            <div class="t-card-header">
+              <span class="t-type-label nota">Nota Interna</span>
+              <span class="t-time">17:42 · Lucas C.</span>
+            </div>
+            <div class="t-text">
+              Fernanda demonstrou forte interesse no Moema 120m². Mencionou que está cansada de alugar e quer
+              fechar até abril. <strong>Prioridade alta.</strong> Verificar se aceita financiamento Caixa.
+            </div>
+          </div>
+        </div>
+
+        <!-- wpp ia -->
+        <div class="t-event">
+          <div class="t-spine">
+            <div class="t-node ai">🤖</div>
+            <div class="t-line"></div>
+          </div>
+          <div class="t-card">
+            <div class="t-card-header">
+              <span class="t-type-label ai">IA · Atendimento Automático</span>
+              <span class="t-time">09:12 · Claude Agent</span>
+            </div>
+            <div class="t-text">
+              NEXUS IA respondeu 4 mensagens de Fernanda durante a madrugada. Identificou perfil como
+              <span class="highlight">comprador qualificado premium</span>. Score elevado de 65 → <strong class="highlight">80</strong>.
+            </div>
+            <div class="wpp-bubble">
+              <div class="wpp-sender lead">Fernanda Rocha</div>
+              Quero um apartamento em Moema, 3 quartos, até 1.4 milhões. Pode ser com financiamento
+            </div>
+            <div class="wpp-bubble sent" style="margin-top:6px;">
+              <div class="wpp-sender bot">NEXUS IA</div>
+              Olá Fernanda! 😊 Que ótimo, Moema é uma das regiões mais valorizadas de SP. Temos opções incríveis nesse perfil. Você prefere imóvel pronto para morar ou aceita na planta também?
+            </div>
+            <div class="t-metrics" style="margin-top:10px;">
+              <div class="t-metric-pill">⏱ 4 msgs</div>
+              <div class="t-metric-pill c">🎯 Perfil: Premium</div>
+              <div class="t-metric-pill g">↑ Score +15pts</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 28 MAR -->
+        <div class="date-divider"><span class="date-label">28 Mar 2026</span></div>
+
+        <!-- sistema: lead criado -->
+        <div class="t-event">
+          <div class="t-spine">
+            <div class="t-node sistema">⚙</div>
+            <div class="t-line"></div>
+          </div>
+          <div class="t-card">
+            <div class="t-card-header">
+              <span class="t-type-label sistema">Sistema · N8N</span>
+              <span class="t-time">14:08 · Fluxo 1</span>
+            </div>
+            <div class="t-text">
+              Lead criado automaticamente via <strong>ZAP Imóveis</strong>. N8N Fluxo 1 acionado:
+              perfil salvo no banco, IA iniciou qualificação, corretor Lucas Carvalho atribuído via round-robin.
+            </div>
+            <div class="t-metrics">
+              <div class="t-metric-pill">📡 ZAP Imóveis</div>
+              <div class="t-metric-pill c">Lead #0047</div>
+              <div class="t-metric-pill">👤 Lucas C. atribuído</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /timeline-feed -->
+    </div><!-- /timeline-panel -->
+
+    <!-- ═══ RIGHT — IMÓVEIS MATCHADOS ═══ -->
+    <div class="right-panel">
+
+      <div class="right-panel-header">
+        <div class="panel-title" style="font-size:0.82rem;">
+          <div class="title-dot" style="background:var(--green);box-shadow:0 0 6px var(--green);"></div>
+          Imóveis Matchados
+        </div>
+        <div style="font-family:var(--font-mono);font-size:0.58rem;color:var(--green);margin-top:4px;letter-spacing:0.08em;">
+          🤖 3 matches · IA Score
+        </div>
+      </div>
+
+      <div class="right-scroll">
+
+        <!-- MATCH 1 -->
+        <div class="imovel-match">
+          <div class="imovel-match-header">
+            <div class="imovel-match-rank">MATCH 01</div>
+            <div class="imovel-match-score score-high">94% ↑</div>
+          </div>
+          <div class="imovel-img">🏢</div>
+          <div class="imovel-match-name">Apto Moema 120m²</div>
+          <div class="imovel-match-meta">3 dorm · 2 banheiros · 2 vagas · 8º andar</div>
+          <div class="imovel-match-price">R$ 1.100.000</div>
+          <div class="imovel-match-tags">
+            <span class="imtag match">✓ Moema</span>
+            <span class="imtag match">✓ 3 dorm</span>
+            <span class="imtag match">✓ Orçamento</span>
+            <span class="imtag">Churrasqueira</span>
+            <span class="imtag">Piscina</span>
+          </div>
+          <div class="imovel-match-actions">
+            <div class="im-btn primary">Ver detalhes</div>
+            <div class="im-btn">Enviar p/ lead</div>
+          </div>
+        </div>
+
+        <!-- MATCH 2 -->
+        <div class="imovel-match">
+          <div class="imovel-match-header">
+            <div class="imovel-match-rank">MATCH 02</div>
+            <div class="imovel-match-score score-high">81%</div>
+          </div>
+          <div class="imovel-img">🏗</div>
+          <div class="imovel-match-name">Ibirapuera 110m²</div>
+          <div class="imovel-match-meta">3 dorm · 2 banheiros · 1 vaga · 5º andar</div>
+          <div class="imovel-match-price">R$ 980.000</div>
+          <div class="imovel-match-tags">
+            <span class="imtag match">✓ Região</span>
+            <span class="imtag match">✓ 3 dorm</span>
+            <span class="imtag">1 vaga</span>
+          </div>
+          <div class="imovel-match-actions">
+            <div class="im-btn primary">Ver detalhes</div>
+            <div class="im-btn">Enviar p/ lead</div>
+          </div>
+        </div>
+
+        <!-- MATCH 3 -->
+        <div class="imovel-match">
+          <div class="imovel-match-header">
+            <div class="imovel-match-rank">MATCH 03</div>
+            <div class="imovel-match-score score-med">72%</div>
+          </div>
+          <div class="imovel-img">🏠</div>
+          <div class="imovel-match-name">Paraíso 135m²</div>
+          <div class="imovel-match-meta">4 dorm · 3 banheiros · 2 vagas · Casa</div>
+          <div class="imovel-match-price">R$ 1.380.000</div>
+          <div class="imovel-match-tags">
+            <span class="imtag match">✓ Orçamento</span>
+            <span class="imtag match">✓ 2 vagas</span>
+            <span class="imtag">Casa</span>
+            <span class="imtag">Bairro adj.</span>
+          </div>
+          <div class="imovel-match-actions">
+            <div class="im-btn primary">Ver detalhes</div>
+            <div class="im-btn">Enviar p/ lead</div>
+          </div>
+        </div>
+
+      </div><!-- /right-scroll -->
+    </div><!-- /right-panel -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top  = e.clientY + 'px';
+});
+
+function setActive(el) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Stage selector
+document.querySelectorAll('.stage-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.stage-btn').forEach(b => b.classList.remove('active-stage'));
+    this.classList.add('active-stage');
+  });
+});
+
+// Filter tabs
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Compose types
+document.querySelectorAll('.compose-type').forEach(ct => {
+  ct.addEventListener('click', function() {
+    document.querySelectorAll('.compose-type').forEach(c => c.classList.remove('sel'));
+    this.classList.add('sel');
+  });
+});
+
+// Animate score ring on load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelector('.score-fill').style.strokeDashoffset = '57';
+  }, 300);
+});
+</script>
+</body>
+</html>

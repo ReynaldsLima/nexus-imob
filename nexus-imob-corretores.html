@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Imob — Corretores</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0:        #060709;
+  --bg-1:        #0c0e13;
+  --bg-2:        #111520;
+  --bg-3:        #161b28;
+  --bg-4:        #1c2235;
+  --border:      rgba(255,255,255,0.06);
+  --border-gold: rgba(255,215,0,0.22);
+
+  --gold:        #ffd700;
+  --gold-dim:    rgba(255,215,0,0.10);
+  --gold-glow:   rgba(255,215,0,0.40);
+  --gold-soft:   rgba(255,215,0,0.05);
+
+  --green:       #00ff88;
+  --green-dim:   rgba(0,255,136,0.08);
+  --red:         #ff4757;
+  --red-dim:     rgba(255,71,87,0.08);
+  --orange:      #ff7b00;
+  --orange-dim:  rgba(255,123,0,0.08);
+  --purple:      #a78bfa;
+  --purple-dim:  rgba(167,139,250,0.08);
+  --blue:        #4f9cf9;
+  --blue-dim:    rgba(79,156,249,0.08);
+  --muted:       #4a5568;
+  --text:        #e2e8f4;
+
+  --font-main:   'Exo 2', sans-serif;
+  --font-nexus:  'Rajdhani', sans-serif;
+  --font-mono:   'Share Tech Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-0);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+body::before {
+  content:''; position:fixed; inset:0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events:none; z-index:9999;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar { width:220px; min-height:100vh; background:var(--bg-1); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; position:relative; }
+.sidebar::after { content:''; position:absolute; right:-1px; top:80px; bottom:80px; width:1px; background:linear-gradient(180deg,transparent,var(--gold),transparent); opacity:0.3; }
+.logo-wrap { padding:24px 20px 20px; border-bottom:1px solid var(--border); }
+.logo { font-family:var(--font-nexus); font-size:1.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; display:flex; align-items:center; gap:8px; color:var(--text); }
+.logo-icon { width:28px; height:28px; border:1.5px solid var(--gold); display:flex; align-items:center; justify-content:center; transform:rotate(45deg); box-shadow:0 0 12px var(--gold-glow); flex-shrink:0; }
+.logo-icon-inner { width:10px; height:10px; background:var(--gold); box-shadow:0 0 8px var(--gold); }
+.logo-sub { font-family:var(--font-nexus); font-size:0.65rem; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:4px; display:block; }
+.status-badge { display:flex; align-items:center; gap:6px; padding:8px 20px; font-family:var(--font-mono); font-size:0.65rem; color:var(--green); letter-spacing:0.08em; border-bottom:1px solid var(--border); }
+.status-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:pulse-g 2s ease infinite; }
+@keyframes pulse-g { 0%,100%{ box-shadow:0 0 8px var(--green); } 50%{ box-shadow:0 0 18px var(--green); } }
+.nav-section { padding:16px 0 8px; }
+.nav-label { font-family:var(--font-mono); font-size:0.58rem; color:var(--muted); letter-spacing:0.18em; text-transform:uppercase; padding:0 20px; margin-bottom:6px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:9px 20px; font-family:var(--font-nexus); font-size:0.9rem; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; color:var(--muted); cursor:pointer; transition:all 0.15s; position:relative; }
+.nav-item:hover { color:var(--text); background:rgba(255,255,255,0.02); }
+.nav-item.active { color:var(--gold); background:var(--gold-dim); }
+.nav-item.active::before { content:''; position:absolute; left:0; top:4px; bottom:4px; width:2px; background:var(--gold); box-shadow:0 0 8px var(--gold-glow); }
+.nav-icon { font-size:0.9rem; width:16px; text-align:center; }
+.nav-badge { margin-left:auto; background:var(--gold-dim); color:var(--gold); font-family:var(--font-mono); font-size:0.62rem; padding:2px 7px; border:1px solid var(--border-gold); }
+.sidebar-footer { margin-top:auto; padding:16px 20px; border-top:1px solid var(--border); }
+.user-card { display:flex; align-items:center; gap:10px; }
+.user-avatar { width:32px; height:32px; border:1px solid var(--gold); display:flex; align-items:center; justify-content:center; font-family:var(--font-nexus); font-size:0.75rem; font-weight:700; color:var(--gold); background:var(--gold-dim); }
+.user-name { font-size:0.8rem; font-weight:600; font-family:var(--font-nexus); letter-spacing:0.04em; text-transform:uppercase; }
+.user-role { font-family:var(--font-mono); font-size:0.6rem; color:var(--muted); letter-spacing:0.06em; }
+
+/* ══ MAIN ══ */
+.main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+.topbar { height:56px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 24px; background:var(--bg-1); flex-shrink:0; }
+.topbar-left { display:flex; align-items:center; gap:16px; }
+.page-title { font-family:var(--font-nexus); font-size:1rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
+.breadcrumb { font-family:var(--font-mono); font-size:0.6rem; color:var(--muted); letter-spacing:0.06em; }
+.topbar-right { display:flex; align-items:center; gap:10px; }
+.topbar-pill { font-family:var(--font-mono); font-size:0.6rem; color:var(--muted); background:var(--bg-2); border:1px solid var(--border); padding:5px 12px; letter-spacing:0.08em; }
+.topbar-btn { display:flex; align-items:center; gap:7px; padding:7px 16px; background:var(--gold-dim); border:1px solid var(--border-gold); color:var(--gold); font-family:var(--font-nexus); font-size:0.82rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; }
+.topbar-btn:hover { background:rgba(255,215,0,0.18); box-shadow:0 0 16px var(--gold-glow); }
+
+.page-nav { display:flex; gap:2px; border-bottom:1px solid var(--border); padding:0 24px; background:var(--bg-1); }
+.page-tab { font-family:var(--font-nexus); font-size:0.78rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); padding:10px 18px 11px; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.15s; }
+.page-tab:hover { color:var(--text); }
+.page-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+/* ══ CONTENT ══ */
+.content { flex:1; display:flex; overflow:hidden; }
+
+/* ══ LEFT — LISTA CORRETORES ══ */
+.corretores-list {
+  flex:1; display:flex; flex-direction:column; overflow:hidden;
+  border-right:1px solid var(--border);
+}
+
+.list-toolbar {
+  padding:12px 20px; border-bottom:1px solid var(--border);
+  background:var(--bg-1); display:flex; align-items:center; gap:10px; flex-shrink:0;
+}
+
+.search-wrap { flex:1; position:relative; }
+.search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:0.75rem; color:var(--muted); }
+.search-input { width:100%; background:var(--bg-2); border:1px solid var(--border); color:var(--text); font-family:var(--font-main); font-size:0.82rem; padding:8px 12px 8px 30px; outline:none; transition:border-color 0.15s; }
+.search-input:focus { border-color:var(--border-gold); }
+.search-input::placeholder { color:var(--muted); }
+
+.filter-chip { font-family:var(--font-nexus); font-size:0.72rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:6px 12px; border:1px solid var(--border); color:var(--muted); cursor:pointer; transition:all 0.15s; }
+.filter-chip:hover { color:var(--text); border-color:var(--border-gold); }
+.filter-chip.active { color:var(--gold); border-color:var(--gold); background:var(--gold-dim); }
+
+/* KPI STRIP */
+.kpi-strip { display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid var(--border); flex-shrink:0; }
+.kpi-item { padding:12px 20px; border-right:1px solid var(--border); }
+.kpi-item:last-child { border-right:none; }
+.kpi-val { font-family:var(--font-nexus); font-size:1.4rem; font-weight:700; color:var(--gold); text-shadow:0 0 12px var(--gold-glow); line-height:1; margin-bottom:3px; }
+.kpi-lbl { font-family:var(--font-mono); font-size:0.56rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
+
+/* CORRETORES GRID */
+.corretores-grid {
+  flex:1; overflow-y:auto; padding:16px 20px;
+  display:grid; grid-template-columns:repeat(2,1fr); gap:12px; align-content:start;
+}
+.corretores-grid::-webkit-scrollbar { width:3px; }
+.corretores-grid::-webkit-scrollbar-thumb { background:var(--border-gold); }
+
+/* ══ CORRETOR CARD ══ */
+.corretor-card {
+  background:var(--bg-2); border:1px solid var(--border);
+  cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden;
+  animation:fadeUp 0.35s ease both;
+}
+
+.corretor-card:hover { border-color:var(--border-gold); transform:translateY(-2px); }
+.corretor-card.selected { border-color:var(--gold); background:var(--gold-soft); }
+
+.corretor-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; opacity:0; transition:opacity 0.2s; }
+.corretor-card.selected::before,
+.corretor-card:hover::before { background:var(--gold); box-shadow:0 0 8px var(--gold-glow); opacity:1; }
+
+/* STATUS STRIP LEFT */
+.corretor-card::after {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
+}
+.corretor-card.ativo::after    { background:var(--green); }
+.corretor-card.ferias::after   { background:var(--gold); }
+.corretor-card.inativo::after  { background:var(--muted); }
+
+.card-header { padding:14px 14px 10px; display:flex; align-items:flex-start; gap:12px; }
+
+.corretor-big-av {
+  width:44px; height:44px; flex-shrink:0;
+  border:1.5px solid; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-nexus); font-size:1rem; font-weight:700;
+  position:relative;
+}
+
+.corretor-big-av.rank1 { border-color:var(--gold); color:var(--gold); background:var(--gold-dim); box-shadow:0 0 12px var(--gold-glow); }
+.corretor-big-av.rank2 { border-color:rgba(192,192,192,0.6); color:#c0c0c0; background:rgba(192,192,192,0.08); }
+.corretor-big-av.rank3 { border-color:rgba(205,127,50,0.6); color:#cd7f32; background:rgba(205,127,50,0.08); }
+.corretor-big-av.default { border-color:var(--border-gold); color:var(--gold); background:var(--gold-dim); }
+
+.rank-badge {
+  position:absolute; top:-6px; right:-6px;
+  width:16px; height:16px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-size:0.5rem; font-weight:700;
+  border:1px solid var(--bg-2);
+}
+.rank-badge.r1 { background:var(--gold); color:var(--bg-0); }
+.rank-badge.r2 { background:#c0c0c0; color:var(--bg-0); }
+.rank-badge.r3 { background:#cd7f32; color:var(--bg-0); }
+
+.corretor-info { flex:1; min-width:0; }
+.corretor-nome { font-family:var(--font-nexus); font-size:1rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:2px; }
+.corretor-creci { font-family:var(--font-mono); font-size:0.58rem; color:var(--muted); letter-spacing:0.06em; margin-bottom:6px; }
+
+.corretor-status-badge { font-family:var(--font-mono); font-size:0.54rem; letter-spacing:0.1em; text-transform:uppercase; padding:2px 7px; border:1px solid; display:inline-flex; align-items:center; gap:4px; }
+.corretor-status-badge.ativo   { color:var(--green); border-color:rgba(0,255,136,0.3); background:var(--green-dim); }
+.corretor-status-badge.ferias  { color:var(--gold); border-color:var(--border-gold); background:var(--gold-dim); }
+.corretor-status-badge.inativo { color:var(--muted); border-color:var(--border); }
+
+.status-badge-dot { width:4px; height:4px; border-radius:50%; }
+
+/* METRICS GRID */
+.corretor-metrics { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--border); }
+.corretor-metric { padding:8px 10px; text-align:center; border-right:1px solid var(--border); }
+.corretor-metric:last-child { border-right:none; }
+.cm-val { font-family:var(--font-nexus); font-size:0.95rem; font-weight:700; line-height:1; margin-bottom:2px; }
+.cm-lbl { font-family:var(--font-mono); font-size:0.5rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
+
+/* CONVERSION BAR */
+.conv-wrap { padding:8px 14px 10px; }
+.conv-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; }
+.conv-label { font-family:var(--font-mono); font-size:0.56rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
+.conv-pct { font-family:var(--font-nexus); font-size:0.82rem; font-weight:700; }
+.conv-bar { height:3px; background:var(--bg-3); position:relative; }
+.conv-fill { position:absolute; left:0; top:0; height:100%; transition:width 1s ease; }
+
+/* ROUND ROBIN INDICATOR */
+.rr-wrap { padding:6px 14px 10px; display:flex; align-items:center; gap:8px; }
+.rr-label { font-family:var(--font-mono); font-size:0.56rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; flex:1; }
+.rr-queue { font-family:var(--font-mono); font-size:0.6rem; letter-spacing:0.06em; }
+.rr-next { color:var(--gold); }
+.rr-pos { font-family:var(--font-nexus); font-size:0.75rem; font-weight:700; color:var(--gold); }
+
+/* ══ RIGHT — DETALHE ══ */
+.corretor-detail {
+  width:320px; flex-shrink:0;
+  background:var(--bg-1); display:flex; flex-direction:column; overflow:hidden;
+}
+
+.detail-header {
+  padding:14px 16px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+.panel-title { font-family:var(--font-nexus); font-size:0.85rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+.title-dot { width:5px; height:5px; background:var(--gold); box-shadow:0 0 6px var(--gold-glow); }
+
+.detail-scroll { flex:1; overflow-y:auto; }
+.detail-scroll::-webkit-scrollbar { width:3px; }
+.detail-scroll::-webkit-scrollbar-thumb { background:var(--border-gold); }
+
+/* PROFILE HERO */
+.profile-hero {
+  padding:20px 16px; border-bottom:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  background:linear-gradient(180deg, rgba(255,215,0,0.03) 0%, transparent 100%);
+}
+
+.hero-av {
+  width:64px; height:64px;
+  border:2px solid var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-nexus); font-size:1.6rem; font-weight:700;
+  color:var(--gold); background:var(--gold-dim);
+  box-shadow:0 0 20px var(--gold-glow);
+  margin-bottom:12px; position:relative;
+}
+
+.hero-crown {
+  position:absolute; top:-10px; left:50%; transform:translateX(-50%);
+  font-size:0.9rem;
+}
+
+.hero-name { font-family:var(--font-nexus); font-size:1.2rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:4px; }
+.hero-creci { font-family:var(--font-mono); font-size:0.6rem; color:var(--muted); letter-spacing:0.08em; margin-bottom:8px; }
+
+/* STATS RING */
+.stats-rings { display:flex; gap:16px; justify-content:center; margin:12px 0; }
+.ring-wrap { text-align:center; }
+.ring-svg { width:60px; height:60px; transform:rotate(-90deg); }
+.ring-track { fill:none; stroke:var(--bg-3); stroke-width:5; }
+.ring-fill  { fill:none; stroke-width:5; stroke-linecap:round; stroke-dasharray:157; transition:stroke-dashoffset 1s ease; }
+.ring-center { font-family:var(--font-nexus); font-size:0.7rem; font-weight:700; }
+.ring-label { font-family:var(--font-mono); font-size:0.52rem; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; margin-top:3px; }
+
+/* DETAIL SECTIONS */
+.detail-section { padding:12px 16px; border-bottom:1px solid var(--border); }
+.ds-title { font-family:var(--font-mono); font-size:0.56rem; color:var(--muted); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:10px; }
+
+.contact-row { display:flex; align-items:center; gap:8px; padding:6px 0; }
+.contact-icon { font-size:0.75rem; width:16px; color:var(--muted); flex-shrink:0; }
+.contact-val { font-size:0.8rem; color:var(--text); }
+.contact-val.gold { color:var(--gold); font-weight:500; }
+
+/* ESPECIALIDADE TAGS */
+.esp-tags { display:flex; flex-wrap:wrap; gap:5px; }
+.esp-tag { font-family:var(--font-mono); font-size:0.56rem; letter-spacing:0.06em; text-transform:uppercase; padding:3px 7px; border:1px solid var(--border-gold); color:var(--gold); background:var(--gold-soft); }
+
+/* METAS */
+.meta-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.meta-label { font-family:var(--font-nexus); font-size:0.78rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; color:var(--muted); width:80px; flex-shrink:0; }
+.meta-bar-wrap { flex:1; height:4px; background:var(--bg-3); position:relative; }
+.meta-bar-fill { position:absolute; left:0; top:0; height:100%; border-radius:2px; }
+.meta-vals { font-family:var(--font-mono); font-size:0.58rem; color:var(--muted); text-align:right; white-space:nowrap; width:60px; flex-shrink:0; }
+.meta-vals span { color:var(--text); }
+
+/* LEADS RECENTES */
+.lead-mini { display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.03); }
+.lead-mini:last-child { border-bottom:none; }
+.lead-mini-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+.lead-mini-name { font-family:var(--font-nexus); font-size:0.78rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; flex:1; }
+.lead-mini-status { font-family:var(--font-mono); font-size:0.54rem; letter-spacing:0.06em; padding:1px 5px; border:1px solid; }
+.ls-visita   { color:var(--gold); border-color:var(--border-gold); }
+.ls-proposta { color:var(--orange); border-color:rgba(255,123,0,0.25); }
+.ls-novo     { color:var(--blue); border-color:rgba(79,156,249,0.25); }
+.ls-fechado  { color:var(--green); border-color:rgba(0,255,136,0.25); }
+
+/* ACTION BUTTONS */
+.detail-actions { padding:12px 16px; display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.det-btn { font-family:var(--font-nexus); font-size:0.75rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:9px; text-align:center; cursor:pointer; transition:all 0.15s; border:1px solid var(--border); color:var(--muted); background:var(--bg-2); }
+.det-btn:hover { color:var(--text); border-color:var(--border-gold); }
+.det-btn.primary { color:var(--gold); border-color:var(--border-gold); background:var(--gold-dim); }
+.det-btn.primary:hover { background:rgba(255,215,0,0.18); box-shadow:0 0 12px var(--gold-glow); }
+
+/* ROUND ROBIN CONFIG */
+.rr-config { padding:12px 16px; border-bottom:1px solid var(--border); }
+.rr-title { font-family:var(--font-mono); font-size:0.56rem; color:var(--muted); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; }
+.rr-active-badge { color:var(--green); font-size:0.54rem; letter-spacing:0.06em; padding:1px 6px; border:1px solid rgba(0,255,136,0.25); background:var(--green-dim); }
+
+.rr-queue-list { display:flex; flex-direction:column; gap:4px; }
+.rr-queue-item { display:flex; align-items:center; gap:8px; padding:6px 8px; background:var(--bg-2); border:1px solid var(--border); }
+.rr-queue-num { font-family:var(--font-mono); font-size:0.6rem; color:var(--muted); width:16px; }
+.rr-queue-av { width:20px; height:20px; border:1px solid var(--border-gold); display:flex; align-items:center; justify-content:center; font-family:var(--font-nexus); font-size:0.55rem; font-weight:700; color:var(--gold); background:var(--gold-dim); flex-shrink:0; }
+.rr-queue-name { font-family:var(--font-nexus); font-size:0.75rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; flex:1; }
+.rr-next-tag { font-family:var(--font-mono); font-size:0.52rem; color:var(--gold); letter-spacing:0.06em; padding:1px 5px; border:1px solid var(--border-gold); background:var(--gold-dim); }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+.corretor-card:nth-child(1){animation-delay:0.04s;}
+.corretor-card:nth-child(2){animation-delay:0.08s;}
+.corretor-card:nth-child(3){animation-delay:0.12s;}
+.corretor-card:nth-child(4){animation-delay:0.16s;}
+.corretor-card:nth-child(5){animation-delay:0.20s;}
+.corretor-card:nth-child(6){animation-delay:0.24s;}
+
+.glow-cursor { position:fixed; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(255,215,0,0.04) 0%, transparent 70%); pointer-events:none; transform:translate(-50%,-50%); transition:left 0.1s,top 0.1s; z-index:1; }
+</style>
+</head>
+<body>
+<div class="glow-cursor" id="glow"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo"><div class="logo-icon"><div class="logo-icon-inner"></div></div>NEXUS</div>
+    <span class="logo-sub">Imob Platform</span>
+  </div>
+  <div class="status-badge"><div class="status-dot"></div>SISTEMA ONLINE</div>
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬡</span> Dashboard</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◈</span> Pipeline CRM<span class="nav-badge">47</span></div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◻</span> Imóveis</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◎</span> Leads<span class="nav-badge">12</span></div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◷</span> Agenda</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Gestão</div>
+    <div class="nav-item active" onclick="setActive(this)"><span class="nav-icon">△</span> Corretores</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬙</span> Automações</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">▦</span> Relatórios</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">RG</div>
+      <div><div class="user-name">Riguetti</div><div class="user-role">ADMIN · NEXUS IMOB</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title">Corretores</div>
+      <div class="breadcrumb">NEXUS IMOB / GESTÃO / 6 CORRETORES</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-pill">Round-Robin: ativo</div>
+      <div class="topbar-pill">5 ativos · 1 férias</div>
+      <button class="topbar-btn">＋ Novo Corretor</button>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <div class="page-tab active">Todos</div>
+    <div class="page-tab">Ativos</div>
+    <div class="page-tab">Ranking</div>
+    <div class="page-tab">Metas</div>
+  </div>
+
+  <div class="content">
+
+    <!-- LISTA -->
+    <div class="corretores-list">
+
+      <div class="list-toolbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" placeholder="Buscar corretor...">
+        </div>
+        <div class="filter-chip active" onclick="toggleChip(this)">Todos</div>
+        <div class="filter-chip" onclick="toggleChip(this)">Ativos</div>
+        <div class="filter-chip" onclick="toggleChip(this)">Férias</div>
+      </div>
+
+      <div class="kpi-strip">
+        <div class="kpi-item"><div class="kpi-val">R$2.4M</div><div class="kpi-lbl">VGV do Mês</div></div>
+        <div class="kpi-item"><div class="kpi-val" style="color:var(--green);">6</div><div class="kpi-lbl">Fechamentos</div></div>
+        <div class="kpi-item"><div class="kpi-val">54%</div><div class="kpi-lbl">Conv. Média</div></div>
+        <div class="kpi-item"><div class="kpi-val" style="color:var(--purple);">147</div><div class="kpi-lbl">Leads Ativos</div></div>
+      </div>
+
+      <div class="corretores-grid">
+
+        <!-- LUCAS — RANK 1 -->
+        <div class="corretor-card ativo selected" onclick="selectCorretor(this, 'lucas')">
+          <div class="card-header">
+            <div class="corretor-big-av rank1">
+              LC<div class="rank-badge r1">1</div>
+            </div>
+            <div class="corretor-info">
+              <div class="corretor-nome">Lucas Carvalho</div>
+              <div class="corretor-creci">CRECI-SP · J-123456</div>
+              <div class="corretor-status-badge ativo">
+                <div class="status-badge-dot" style="background:var(--green);box-shadow:0 0 4px var(--green);border-radius:50%;"></div>
+                Ativo
+              </div>
+            </div>
+          </div>
+          <div class="corretor-metrics">
+            <div class="corretor-metric"><div class="cm-val" style="color:var(--green);">3</div><div class="cm-lbl">Fechamentos</div></div>
+            <div class="corretor-metric"><div class="cm-val" style="color:var(--gold);">R$5.1M</div><div class="cm-lbl">VGV</div></div>
+            <div class="corretor-metric"><div class="cm-val">18</div><div class="cm-lbl">Leads</div></div>
+            <div class="corretor-metric"><div class="cm-val">11</div><div class="cm-lbl">Visitas</div></div>
+          </div>
+          <div class="conv-wrap">
+            <div class="conv-header"><div class="conv-label">Taxa de Conversão</div><div class="conv-pct" style="color:var(--green);">68%</div></div>
+            <div class="conv-bar"><div class="conv-fill" style="width:68%;background:var(--green);box-shadow:0 0 6px rgba(0,255,136,0.4);"></div></div>
+          </div>
+          <div class="rr-wrap">
+            <div class="rr-label">Round-Robin</div>
+            <div class="rr-queue"><span class="rr-next">Próximo lead →</span></div>
+          </div>
+        </div>
+
+        <!-- ANA — RANK 2 -->
+        <div class="corretor-card ativo" onclick="selectCorretor(this, 'ana')">
+          <div class="card-header">
+            <div class="corretor-big-av rank2">
+              AC<div class="rank-badge r2">2</div>
+            </div>
+            <div class="corretor-info">
+              <div class="corretor-nome">Ana Carvalho</div>
+              <div class="corretor-creci">CRECI-SP · J-234567</div>
+              <div class="corretor-status-badge ativo">
+                <div class="status-badge-dot" style="background:var(--green);border-radius:50%;"></div>
+                Ativa
+              </div>
+            </div>
+          </div>
+          <div class="corretor-metrics">
+            <div class="corretor-metric"><div class="cm-val" style="color:var(--green);">2</div><div class="cm-lbl">Fechamentos</div></div>
+            <div class="corretor-metric"><div class="cm-val" style="color:var(--gold);">R$1.3M</div><div class="cm-lbl">VGV</div></div>
+            <div class="corretor-metric"><div class="cm-val">14</div><div class="cm-lbl">Leads</div></div>
+            <div class="corretor-metric"><div class="cm-val">9</div><div class="cm-lbl">Visitas</div></div>
+          </div>
+          <div class="conv-wrap">
+            <div class="conv-header"><div class="conv-label">Taxa de Conversão</div><div class="conv-pct" style="color:var(--blue);">54%</div></div>
+            <div class="conv-bar"><div class="conv-fill" style="width:54%;background:var(--blue);"></div></div>
+          </div>
+          <div class="rr-wrap">
+            <div class="rr-label">Round-Robin</div>
+            <div class="rr-queue" style="color:var(--muted);">Posição 2</div>
+          </div>
+        </div>
+
+        <!-- CARLA — RANK 3 -->
+        <div class="corretor-card ativo" onclick="selectCorretor(this, 'carla')">
+          <div class="card-header">
+            <div class="corretor-big-av rank3">
+              CF<div class="rank-badge r3">3</div>
+            </div>
+            <div class="corretor-info">
+              <div class="corretor-nome">Carla Ferreira</div>
+              <div class="corretor-creci">CRECI-SP · J-345678</div>
+              <div class="corretor-status-badge ativo">
+                <div class="status-badge-dot" style="background:var(--green);border-radius:50%;"></div>
+                Ativa
+              </div>
+            </div>
+          </div>
+          <div class="corretor-metrics">
+            <div class="corretor-metric"><div class="cm-val" style="color:var(--green);">1</div><div class="cm-lbl">Fechamentos</div></div>
+            <div class="corretor-metric"><div class="cm-val" style="color:var(--gold);">R$780k</div><div class="cm-lbl">VGV</div></div>
+            <div class="corretor-metric"><div class="cm-val">12</div><div class="cm-lbl">Leads</div></div>
+            <div class="corretor-metric"><div class="cm-val">8</div><div class="cm-lbl">Visitas</div></div>
+          </div>
+          <div class="conv-wrap">
+            <div class="conv-header"><div class="conv-label">Taxa de Conversão</div><div class="conv-pct" style="color:var(--gold);">42%</div></div>
+            <div class="conv-bar"><div class="conv-fill" style="width:42%;background:var(--gold);"></div></div>
+          </div>
+          <div class="rr-wrap">
+            <div class="rr-label">Round-Robin</div>
+            <div class="rr-queue" style="color:var(--muted);">Posição 3</div>
+          </div>
+        </div>
+
+        <!-- PEDRO — RANK 4 -->
+        <div class="corretor-card ativo" onclick="selectCorretor(this, 'pedro')">
+          <div class="card-header">
+            <div class="corretor-big-av default">
+              PM<div class="rank-badge" style="background:var(--muted);color:var(--bg-0);">4</div>
+            </div>
+            <div class="corretor-info">
+              <div class="corretor-nome">Pedro Mota</div>
+              <div class="corretor-creci">CRECI-SP · J-456789</div>
+              <div class="corretor-status-badge ativo">
+                <div class="status-badge-dot" style="background:var(--green);border-radius:50%;"></div>
+                Ativo
+              </div>
+            </div>
+          </div>
+          <div class="corretor-metrics">
+            <div class="corretor-metric"><div class="cm-val">0</div><div class="cm-lbl">Fechamentos</div></div>
+            <div class="corretor-metric"><div class="cm-val" style="color:var(--muted);">—</div><div class="cm-lbl">VGV</div></div>
+            <div class="corretor-metric"><div class="cm-val">8</div><div class="cm-lbl">Leads</div></div>
+            <div class="corretor-metric"><div class="cm-val">4</div><div class="cm-lbl">Visitas</div></div>
+          </div>
+          <div class="conv-wrap">
+            <div class="conv-header"><div class="conv-label">Taxa de Conversão</div><div class="conv-pct" style="color:var(--orange);">28%</div></div>
+            <div class="conv-bar"><div class="conv-fill" style="width:28%;background:var(--orange);"></div></div>
+          </div>
+          <div class="rr-wrap">
+            <div class="rr-label">Round-Robin</div>
+            <div class="rr-queue" style="color:var(--muted);">Posição 4</div>
+          </div>
+        </div>
+
+        <!-- MARINA — FÉRIAS -->
+        <div class="corretor-card ferias" onclick="selectCorretor(this, 'marina')">
+          <div class="card-header">
+            <div class="corretor-big-av default" style="border-color:var(--gold);opacity:0.6;">
+              MS<div class="rank-badge" style="background:var(--muted);color:var(--bg-0);">5</div>
+            </div>
+            <div class="corretor-info">
+              <div class="corretor-nome" style="opacity:0.6;">Marina Silva</div>
+              <div class="corretor-creci">CRECI-SP · J-567890</div>
+              <div class="corretor-status-badge ferias">
+                <div class="status-badge-dot" style="background:var(--gold);border-radius:50%;"></div>
+                Férias · volta 05/04
+              </div>
+            </div>
+          </div>
+          <div class="corretor-metrics" style="opacity:0.5;">
+            <div class="corretor-metric"><div class="cm-val">1</div><div class="cm-lbl">Fechamentos</div></div>
+            <div class="corretor-metric"><div class="cm-val">R$540k</div><div class="cm-lbl">VGV</div></div>
+            <div class="corretor-metric"><div class="cm-val">0</div><div class="cm-lbl">Leads</div></div>
+            <div class="corretor-metric"><div class="cm-val">0</div><div class="cm-lbl">Visitas</div></div>
+          </div>
+          <div class="conv-wrap" style="opacity:0.5;">
+            <div class="conv-header"><div class="conv-label">Taxa de Conversão</div><div class="conv-pct" style="color:var(--muted);">—</div></div>
+            <div class="conv-bar"><div class="conv-fill" style="width:0%;background:var(--muted);"></div></div>
+          </div>
+          <div class="rr-wrap">
+            <div class="rr-label">Round-Robin</div>
+            <div class="rr-queue" style="color:var(--orange);font-size:0.58rem;">⏸ pausado · férias</div>
+          </div>
+        </div>
+
+        <!-- RAFAEL — ATIVO -->
+        <div class="corretor-card ativo" onclick="selectCorretor(this, 'rafael')">
+          <div class="card-header">
+            <div class="corretor-big-av default">
+              RN<div class="rank-badge" style="background:var(--muted);color:var(--bg-0);">6</div>
+            </div>
+            <div class="corretor-info">
+              <div class="corretor-nome">Rafael Nunes</div>
+              <div class="corretor-creci">CRECI-SP · J-678901</div>
+              <div class="corretor-status-badge ativo">
+                <div class="status-badge-dot" style="background:var(--green);border-radius:50%;"></div>
+                Ativo · novo
+              </div>
+            </div>
+          </div>
+          <div class="corretor-metrics">
+            <div class="corretor-metric"><div class="cm-val">0</div><div class="cm-lbl">Fechamentos</div></div>
+            <div class="corretor-metric"><div class="cm-val" style="color:var(--muted);">—</div><div class="cm-lbl">VGV</div></div>
+            <div class="corretor-metric"><div class="cm-val">5</div><div class="cm-lbl">Leads</div></div>
+            <div class="corretor-metric"><div class="cm-val">2</div><div class="cm-lbl">Visitas</div></div>
+          </div>
+          <div class="conv-wrap">
+            <div class="conv-header"><div class="conv-label">Taxa de Conversão</div><div class="conv-pct" style="color:var(--muted);">—</div></div>
+            <div class="conv-bar"><div class="conv-fill" style="width:0%;background:var(--muted);"></div></div>
+          </div>
+          <div class="rr-wrap">
+            <div class="rr-label">Round-Robin</div>
+            <div class="rr-queue" style="color:var(--muted);">Posição 5</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DETALHE -->
+    <div class="corretor-detail">
+      <div class="detail-header">
+        <div class="panel-title"><div class="title-dot"></div>Perfil do Corretor</div>
+        <div style="font-family:var(--font-mono);font-size:0.58rem;color:var(--gold);letter-spacing:0.08em;">#C-001</div>
+      </div>
+
+      <div class="detail-scroll">
+
+        <!-- HERO -->
+        <div class="profile-hero">
+          <div class="hero-av">LC<div class="hero-crown">👑</div></div>
+          <div class="hero-name">Lucas Carvalho</div>
+          <div class="hero-creci">CRECI-SP · J-123456 · Ativo desde Jan/2024</div>
+          <div class="corretor-status-badge ativo" style="margin-top:4px;">
+            <div class="status-badge-dot" style="background:var(--green);box-shadow:0 0 4px var(--green);border-radius:50%;"></div>
+            Ativo · #1 Ranking
+          </div>
+
+          <!-- RINGS -->
+          <div class="stats-rings">
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 60 60">
+                <circle class="ring-track" cx="30" cy="30" r="25"/>
+                <circle class="ring-fill" cx="30" cy="30" r="25" stroke="#00ff88" style="stroke-dashoffset:50;"/>
+              </svg>
+              <div class="ring-label">Conversão</div>
+              <div class="ring-center" style="color:var(--green);font-family:var(--font-nexus);font-size:0.75rem;font-weight:700;text-align:center;margin-top:-2px;">68%</div>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 60 60">
+                <circle class="ring-track" cx="30" cy="30" r="25"/>
+                <circle class="ring-fill" cx="30" cy="30" r="25" stroke="#ffd700" style="stroke-dashoffset:31;"/>
+              </svg>
+              <div class="ring-label">Meta VGV</div>
+              <div class="ring-center" style="color:var(--gold);font-family:var(--font-nexus);font-size:0.75rem;font-weight:700;text-align:center;margin-top:-2px;">80%</div>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 60 60">
+                <circle class="ring-track" cx="30" cy="30" r="25"/>
+                <circle class="ring-fill" cx="30" cy="30" r="25" stroke="#a78bfa" style="stroke-dashoffset:63;"/>
+              </svg>
+              <div class="ring-label">NPS</div>
+              <div class="ring-center" style="color:var(--purple);font-family:var(--font-nexus);font-size:0.75rem;font-weight:700;text-align:center;margin-top:-2px;">60%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTATO -->
+        <div class="detail-section">
+          <div class="ds-title">Contato</div>
+          <div class="contact-row"><div class="contact-icon">📱</div><div class="contact-val gold">(11) 99876-5432</div></div>
+          <div class="contact-row"><div class="contact-icon">✉</div><div class="contact-val">lucas.carvalho@nexusimob.com</div></div>
+          <div class="contact-row"><div class="contact-icon">📍</div><div class="contact-val">Zona Sul · Moema, Itaim, V. Olímpia</div></div>
+        </div>
+
+        <!-- ESPECIALIDADES -->
+        <div class="detail-section">
+          <div class="ds-title">Especialidades</div>
+          <div class="esp-tags">
+            <span class="esp-tag">Alto Padrão</span>
+            <span class="esp-tag">Apartamentos</span>
+            <span class="esp-tag">Cobertura</span>
+            <span class="esp-tag">Venda</span>
+            <span class="esp-tag">Moema</span>
+            <span class="esp-tag">Itaim</span>
+          </div>
+        </div>
+
+        <!-- METAS DO MÊS -->
+        <div class="detail-section">
+          <div class="ds-title">Metas — Março 2026</div>
+          <div class="meta-row">
+            <div class="meta-label">Fechamentos</div>
+            <div class="meta-bar-wrap"><div class="meta-bar-fill" style="width:75%;background:var(--green);box-shadow:0 0 4px rgba(0,255,136,0.3);"></div></div>
+            <div class="meta-vals"><span>3</span>/4</div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-label">VGV</div>
+            <div class="meta-bar-wrap"><div class="meta-bar-fill" style="width:85%;background:var(--gold);"></div></div>
+            <div class="meta-vals"><span>R$5.1M</span>/6M</div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-label">Visitas</div>
+            <div class="meta-bar-wrap"><div class="meta-bar-fill" style="width:73%;background:var(--blue);"></div></div>
+            <div class="meta-vals"><span>11</span>/15</div>
+          </div>
+        </div>
+
+        <!-- LEADS RECENTES -->
+        <div class="detail-section">
+          <div class="ds-title">Leads em Carteira</div>
+          <div class="lead-mini"><div class="lead-mini-dot" style="background:var(--gold);"></div><div class="lead-mini-name">Fernanda Rocha</div><div class="lead-mini-status ls-visita">Visita</div></div>
+          <div class="lead-mini"><div class="lead-mini-dot" style="background:var(--orange);"></div><div class="lead-mini-name">Eduardo Neves</div><div class="lead-mini-status ls-proposta">Proposta</div></div>
+          <div class="lead-mini"><div class="lead-mini-dot" style="background:var(--blue);"></div><div class="lead-mini-name">João Lima</div><div class="lead-mini-status ls-visita">Visita</div></div>
+          <div class="lead-mini"><div class="lead-mini-dot" style="background:var(--green);"></div><div class="lead-mini-name">Grupo FDR</div><div class="lead-mini-status ls-fechado">Fechado ✓</div></div>
+          <div class="lead-mini"><div class="lead-mini-dot" style="background:var(--blue);"></div><div class="lead-mini-name">Carlos Mendes</div><div class="lead-mini-status ls-novo">Novo</div></div>
+        </div>
+
+        <!-- ROUND ROBIN -->
+        <div class="rr-config">
+          <div class="rr-title">
+            Fila Round-Robin
+            <span class="rr-active-badge">● ativo</span>
+          </div>
+          <div class="rr-queue-list">
+            <div class="rr-queue-item">
+              <div class="rr-queue-num">01</div>
+              <div class="rr-queue-av">LC</div>
+              <div class="rr-queue-name">Lucas C.</div>
+              <div class="rr-next-tag">← próximo</div>
+            </div>
+            <div class="rr-queue-item">
+              <div class="rr-queue-num">02</div>
+              <div class="rr-queue-av" style="border-color:rgba(167,139,250,0.4);color:#a78bfa;background:rgba(167,139,250,0.08);">AC</div>
+              <div class="rr-queue-name">Ana C.</div>
+            </div>
+            <div class="rr-queue-item">
+              <div class="rr-queue-num">03</div>
+              <div class="rr-queue-av" style="border-color:rgba(79,156,249,0.4);color:#4f9cf9;background:rgba(79,156,249,0.08);">CF</div>
+              <div class="rr-queue-name">Carla F.</div>
+            </div>
+            <div class="rr-queue-item">
+              <div class="rr-queue-num">04</div>
+              <div class="rr-queue-av">PM</div>
+              <div class="rr-queue-name">Pedro M.</div>
+            </div>
+            <div class="rr-queue-item" style="opacity:0.4;">
+              <div class="rr-queue-num">—</div>
+              <div class="rr-queue-av" style="border-color:var(--muted);color:var(--muted);">MS</div>
+              <div class="rr-queue-name">Marina S.</div>
+              <div style="font-family:var(--font-mono);font-size:0.52rem;color:var(--orange);letter-spacing:0.06em;">⏸ férias</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AÇÕES -->
+        <div class="detail-actions">
+          <div class="det-btn primary">💬 Mensagem</div>
+          <div class="det-btn">📊 Relatório</div>
+          <div class="det-btn">✏️ Editar Perfil</div>
+          <div class="det-btn">⚙ Configurar</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => { glow.style.left=e.clientX+'px'; glow.style.top=e.clientY+'px'; });
+
+function setActive(el) { document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
+
+document.querySelectorAll('.page-tab').forEach(t=>{ t.addEventListener('click',function(){ document.querySelectorAll('.page-tab').forEach(x=>x.classList.remove('active')); this.classList.add('active'); }); });
+
+function toggleChip(el) { document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); }
+
+function selectCorretor(el, id) {
+  document.querySelectorAll('.corretor-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+</script>
+</body>
+</html>

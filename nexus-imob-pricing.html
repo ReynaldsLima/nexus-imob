@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Imob — Planos & Preços</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0:        #060709;
+  --bg-1:        #0c0e13;
+  --bg-2:        #111520;
+  --bg-3:        #161b28;
+  --border:      rgba(255,255,255,0.06);
+  --border-gold: rgba(255,215,0,0.25);
+  --gold:        #ffd700;
+  --gold-dim:    rgba(255,215,0,0.10);
+  --gold-glow:   rgba(255,215,0,0.45);
+  --gold-soft:   rgba(255,215,0,0.05);
+  --green:       #00ff88;
+  --green-dim:   rgba(0,255,136,0.08);
+  --red:         #ff4757;
+  --muted:       #4a5568;
+  --text:        #e2e8f4;
+  --font-main:   'Exo 2', sans-serif;
+  --font-nexus:  'Rajdhani', sans-serif;
+  --font-mono:   'Share Tech Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-0);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* SCANLINES */
+body::before {
+  content:''; position:fixed; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);
+  pointer-events:none; z-index:9999;
+}
+
+/* CURSOR GLOW */
+.glow-cursor {
+  position:fixed; width:400px; height:400px; border-radius:50%;
+  background:radial-gradient(circle,rgba(255,215,0,0.03) 0%,transparent 70%);
+  pointer-events:none; transform:translate(-50%,-50%);
+  transition:left 0.2s,top 0.2s; z-index:1;
+}
+
+/* ANIMATED BG GRID */
+#bgCanvas { position:fixed; inset:0; z-index:0; opacity:0.4; }
+
+/* ═══ NAV ═══ */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:0 48px; height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(6,7,9,0.85); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+
+.nav-logo {
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-nexus); font-size:1.4rem; font-weight:700;
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--text);
+  text-decoration:none;
+}
+
+.nav-diamond {
+  width:22px; height:22px;
+  border:1.5px solid var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  transform:rotate(45deg);
+  box-shadow:0 0 8px var(--gold-glow);
+}
+
+.nav-diamond-inner { width:8px; height:8px; background:var(--gold); box-shadow:0 0 6px var(--gold); }
+.nav-sub { font-family:var(--font-nexus); font-size:0.65rem; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; }
+
+.nav-links { display:flex; align-items:center; gap:28px; }
+.nav-link { font-family:var(--font-nexus); font-size:0.85rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color 0.15s; }
+.nav-link:hover { color:var(--text); }
+
+.nav-cta { padding:8px 20px; background:var(--gold); color:var(--bg-0); font-family:var(--font-nexus); font-size:0.85rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:all 0.2s; border:none; text-decoration:none; display:flex; align-items:center; }
+.nav-cta:hover { box-shadow:0 0 20px var(--gold-glow); transform:translateY(-1px); }
+
+/* ═══ HERO ═══ */
+.hero {
+  position:relative; z-index:2;
+  padding:140px 48px 60px;
+  text-align:center;
+}
+
+.hero-eyebrow {
+  font-family:var(--font-mono); font-size:0.65rem;
+  color:var(--gold); letter-spacing:0.22em; text-transform:uppercase;
+  margin-bottom:20px;
+  display:inline-flex; align-items:center; gap:10px;
+}
+
+.eyebrow-line { width:32px; height:1px; background:var(--gold); opacity:0.5; }
+
+.hero-title {
+  font-family:var(--font-nexus); font-size:3.2rem; font-weight:700;
+  letter-spacing:0.04em; text-transform:uppercase;
+  line-height:1.1; margin-bottom:16px;
+  animation:fadeUp 0.6s ease both;
+}
+
+.hero-title .accent { color:var(--gold); text-shadow:0 0 30px var(--gold-glow); }
+
+.hero-desc {
+  font-size:1rem; color:var(--muted); line-height:1.7;
+  max-width:520px; margin:0 auto 40px;
+  font-weight:300;
+  animation:fadeUp 0.6s ease 0.1s both;
+}
+
+/* ═══ BILLING TOGGLE ═══ */
+.billing-toggle {
+  display:inline-flex; align-items:center; gap:16px;
+  background:var(--bg-2); border:1px solid var(--border);
+  padding:6px 6px 6px 16px;
+  margin-bottom:64px;
+  animation:fadeUp 0.6s ease 0.2s both;
+}
+
+.toggle-label {
+  font-family:var(--font-nexus); font-size:0.85rem; font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase;
+  transition:color 0.2s; cursor:pointer;
+}
+
+.toggle-label.active { color:var(--text); }
+.toggle-label.inactive { color:var(--muted); }
+
+.toggle-switch {
+  width:48px; height:24px;
+  background:var(--bg-3); border:1px solid var(--border);
+  border-radius:12px; position:relative; cursor:pointer;
+  transition:all 0.3s;
+}
+
+.toggle-switch.annual { background:rgba(255,215,0,0.15); border-color:var(--border-gold); }
+
+.toggle-knob {
+  position:absolute; top:3px; left:3px;
+  width:16px; height:16px; border-radius:50%;
+  background:var(--muted); transition:all 0.3s;
+}
+
+.toggle-switch.annual .toggle-knob { left:27px; background:var(--gold); box-shadow:0 0 8px var(--gold-glow); }
+
+.annual-badge {
+  background:var(--gold); color:var(--bg-0);
+  font-family:var(--font-nexus); font-size:0.7rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  padding:6px 14px; white-space:nowrap;
+}
+
+/* ═══ PRICING GRID ═══ */
+.pricing-section {
+  position:relative; z-index:2;
+  padding:0 48px 80px;
+  max-width:1200px; margin:0 auto;
+}
+
+.pricing-grid {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:16px; align-items:start;
+}
+
+/* ═══ PLAN CARD ═══ */
+.plan-card {
+  background:var(--bg-2); border:1px solid var(--border);
+  position:relative; overflow:hidden;
+  transition:transform 0.2s, border-color 0.2s;
+  animation:fadeUp 0.5s ease both;
+}
+
+.plan-card:hover { transform:translateY(-4px); border-color:var(--border-gold); }
+
+.plan-card:nth-child(1) { animation-delay:0.1s; }
+.plan-card:nth-child(2) { animation-delay:0.15s; }
+.plan-card:nth-child(3) { animation-delay:0.2s; }
+
+/* FEATURED — Profissional */
+.plan-card.featured {
+  border-color:var(--gold);
+  transform:translateY(-8px);
+  box-shadow:0 0 0 1px rgba(255,215,0,0.1), 0 24px 64px rgba(0,0,0,0.5), 0 0 60px rgba(255,215,0,0.06);
+}
+
+.plan-card.featured:hover { transform:translateY(-12px); }
+
+/* TOP BAR */
+.plan-top-bar { height:3px; }
+.plan-card:not(.featured) .plan-top-bar { background:var(--border); }
+.plan-card.featured .plan-top-bar { background:var(--gold); box-shadow:0 0 12px var(--gold-glow); }
+
+/* POPULAR BADGE */
+.popular-badge {
+  position:absolute; top:0; right:0;
+  background:var(--gold); color:var(--bg-0);
+  font-family:var(--font-nexus); font-size:0.65rem; font-weight:700;
+  letter-spacing:0.14em; text-transform:uppercase;
+  padding:5px 14px;
+}
+
+/* PLAN HEADER */
+.plan-header { padding:28px 28px 20px; border-bottom:1px solid var(--border); }
+
+.plan-name {
+  font-family:var(--font-nexus); font-size:1.2rem; font-weight:700;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:4px;
+}
+
+.plan-card.featured .plan-name { color:var(--gold); }
+
+.plan-tagline {
+  font-family:var(--font-mono); font-size:0.6rem;
+  color:var(--muted); letter-spacing:0.08em;
+  margin-bottom:20px; line-height:1.6;
+}
+
+/* PRICE */
+.price-wrap { position:relative; }
+
+.price-main {
+  display:flex; align-items:flex-start; gap:4px;
+  margin-bottom:4px;
+}
+
+.price-currency {
+  font-family:var(--font-nexus); font-size:1rem; font-weight:600;
+  color:var(--muted); margin-top:8px;
+}
+
+.price-value {
+  font-family:var(--font-nexus); font-size:3rem; font-weight:700;
+  letter-spacing:-0.02em; line-height:1;
+  transition:all 0.3s;
+}
+
+.plan-card.featured .price-value { color:var(--gold); text-shadow:0 0 24px var(--gold-glow); }
+
+.price-period {
+  font-family:var(--font-mono); font-size:0.58rem;
+  color:var(--muted); letter-spacing:0.08em;
+  text-transform:uppercase; margin-top:10px;
+}
+
+.price-annual-total {
+  font-family:var(--font-mono); font-size:0.6rem;
+  color:var(--muted); letter-spacing:0.06em; margin-top:2px;
+  height:16px; transition:all 0.3s;
+}
+
+.price-economy {
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--green-dim); border:1px solid rgba(0,255,136,0.2);
+  color:var(--green);
+  font-family:var(--font-mono); font-size:0.58rem;
+  letter-spacing:0.08em; text-transform:uppercase;
+  padding:3px 8px; margin-top:8px;
+  opacity:0; transform:translateY(4px);
+  transition:all 0.3s;
+}
+
+.price-economy.visible { opacity:1; transform:translateY(0); }
+.price-economy-dot { width:4px; height:4px; border-radius:50%; background:var(--green); }
+
+.price-old {
+  font-family:var(--font-mono); font-size:0.62rem;
+  color:var(--muted); letter-spacing:0.04em;
+  text-decoration:line-through;
+  opacity:0; transition:all 0.3s; height:0;
+}
+
+.price-old.visible { opacity:1; height:auto; margin-top:2px; }
+
+/* CTA BUTTON */
+.plan-cta {
+  margin:20px 0 0;
+  width:100%; padding:13px;
+  font-family:var(--font-nexus); font-size:0.9rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  cursor:pointer; transition:all 0.2s;
+  border:1px solid var(--border-gold);
+  background:var(--gold-dim); color:var(--gold);
+  position:relative; overflow:hidden;
+}
+
+.plan-cta::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.05),transparent);
+  opacity:0; transition:opacity 0.2s;
+}
+
+.plan-cta:hover { background:rgba(255,215,0,0.18); box-shadow:0 0 20px var(--gold-glow); }
+.plan-cta:hover::before { opacity:1; }
+
+.plan-card.featured .plan-cta {
+  background:var(--gold); color:var(--bg-0);
+  border-color:var(--gold);
+}
+
+.plan-card.featured .plan-cta:hover { box-shadow:0 0 28px var(--gold-glow); transform:translateY(-1px); }
+
+.plan-cta-sub {
+  font-family:var(--font-mono); font-size:0.54rem;
+  color:var(--muted); letter-spacing:0.06em;
+  text-align:center; margin-top:6px;
+}
+
+/* PLAN FEATURES */
+.plan-features { padding:20px 28px 28px; }
+
+.features-title {
+  font-family:var(--font-mono); font-size:0.56rem;
+  color:var(--muted); letter-spacing:0.14em; text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+.feature-item {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+}
+
+.feature-item:last-child { border-bottom:none; }
+
+.feature-check {
+  width:14px; height:14px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.6rem; margin-top:2px;
+}
+
+.feature-check.yes  { color:var(--green); }
+.feature-check.no   { color:var(--muted); opacity:0.4; }
+.feature-check.gold { color:var(--gold); }
+
+.feature-text {
+  font-size:0.82rem; line-height:1.4; flex:1;
+}
+
+.feature-text.dimmed { color:var(--muted); }
+
+.feature-highlight {
+  font-family:var(--font-mono); font-size:0.54rem;
+  letter-spacing:0.06em; text-transform:uppercase;
+  padding:1px 6px; border:1px solid;
+  margin-left:auto; flex-shrink:0; align-self:center;
+}
+
+.fh-gold   { color:var(--gold); border-color:rgba(255,215,0,0.3); background:var(--gold-soft); }
+.fh-green  { color:var(--green); border-color:rgba(0,255,136,0.2); background:var(--green-dim); }
+.fh-muted  { color:var(--muted); border-color:var(--border); }
+
+/* ANNUAL BONUSES */
+.annual-bonuses {
+  margin:0 28px 20px;
+  background:rgba(255,215,0,0.04);
+  border:1px solid rgba(255,215,0,0.15);
+  padding:12px 14px;
+  opacity:0; max-height:0; overflow:hidden;
+  transition:all 0.4s ease;
+}
+
+.annual-bonuses.visible { opacity:1; max-height:200px; }
+
+.bonus-title {
+  font-family:var(--font-mono); font-size:0.54rem;
+  color:var(--gold); letter-spacing:0.12em; text-transform:uppercase;
+  margin-bottom:8px; display:flex; align-items:center; gap:6px;
+}
+
+.bonus-dot { width:4px; height:4px; border-radius:50%; background:var(--gold); box-shadow:0 0 4px var(--gold); }
+
+.bonus-item {
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--font-mono); font-size:0.6rem;
+  color:var(--muted); letter-spacing:0.04em;
+  padding:3px 0;
+}
+
+.bonus-item span { color:var(--gold); }
+
+/* ═══ COMPARISON TABLE ═══ */
+.comparison-section {
+  position:relative; z-index:2;
+  padding:0 48px 80px;
+  max-width:1200px; margin:0 auto;
+}
+
+.section-header { text-align:center; margin-bottom:40px; }
+
+.section-eyebrow {
+  font-family:var(--font-mono); font-size:0.6rem;
+  color:var(--gold); letter-spacing:0.2em; text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.section-title {
+  font-family:var(--font-nexus); font-size:1.8rem; font-weight:700;
+  letter-spacing:0.06em; text-transform:uppercase;
+}
+
+.section-title span { color:var(--gold); }
+
+.comp-table { width:100%; border-collapse:collapse; }
+
+.comp-table thead th {
+  padding:14px 20px; text-align:center;
+  font-family:var(--font-nexus); font-size:0.85rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  border-bottom:1px solid var(--border);
+  background:var(--bg-2);
+}
+
+.comp-table thead th:first-child { text-align:left; color:var(--muted); }
+.comp-table thead th.th-featured { color:var(--gold); background:rgba(255,215,0,0.04); border-bottom:2px solid var(--gold); }
+
+.comp-table tbody tr { border-bottom:1px solid rgba(255,255,255,0.03); transition:background 0.15s; }
+.comp-table tbody tr:hover { background:rgba(255,255,255,0.02); }
+
+.comp-table tbody tr.category-row td {
+  font-family:var(--font-mono); font-size:0.58rem;
+  color:var(--gold); letter-spacing:0.14em; text-transform:uppercase;
+  padding:12px 20px 6px;
+  background:var(--bg-0);
+  border-bottom:none;
+}
+
+.comp-table tbody td {
+  padding:10px 20px; font-size:0.82rem;
+  vertical-align:middle;
+}
+
+.comp-table tbody td:first-child { color:var(--muted); }
+.comp-table tbody td.td-featured { background:rgba(255,215,0,0.02); }
+
+.check-yes  { color:var(--green); font-size:0.9rem; text-align:center; }
+.check-no   { color:var(--muted); opacity:0.3; font-size:0.9rem; text-align:center; }
+.check-gold { color:var(--gold); font-size:0.75rem; font-weight:700; font-family:var(--font-nexus); letter-spacing:0.04em; text-align:center; }
+.check-val  { font-family:var(--font-nexus); font-size:0.82rem; font-weight:600; text-align:center; }
+
+/* ═══ FAQ ═══ */
+.faq-section {
+  position:relative; z-index:2;
+  padding:0 48px 80px;
+  max-width:800px; margin:0 auto;
+}
+
+.faq-item {
+  border-bottom:1px solid var(--border);
+  overflow:hidden;
+}
+
+.faq-q {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 0; cursor:pointer;
+  font-family:var(--font-nexus); font-size:0.95rem; font-weight:600;
+  letter-spacing:0.04em; text-transform:uppercase;
+  transition:color 0.15s;
+}
+
+.faq-q:hover { color:var(--gold); }
+
+.faq-arrow {
+  font-size:0.7rem; color:var(--muted);
+  transition:transform 0.3s, color 0.15s;
+  flex-shrink:0;
+}
+
+.faq-item.open .faq-arrow { transform:rotate(180deg); color:var(--gold); }
+.faq-item.open .faq-q { color:var(--gold); }
+
+.faq-a {
+  font-size:0.85rem; color:var(--muted); line-height:1.8;
+  max-height:0; overflow:hidden; transition:max-height 0.3s ease, padding 0.3s;
+}
+
+.faq-item.open .faq-a { max-height:200px; padding-bottom:18px; }
+
+/* ═══ BOTTOM CTA ═══ */
+.bottom-cta {
+  position:relative; z-index:2;
+  padding:60px 48px 100px;
+  text-align:center;
+  background:linear-gradient(180deg, transparent, rgba(255,215,0,0.03) 50%, transparent);
+}
+
+.bottom-cta-title {
+  font-family:var(--font-nexus); font-size:2.2rem; font-weight:700;
+  letter-spacing:0.06em; text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.bottom-cta-title span { color:var(--gold); }
+
+.bottom-cta-desc {
+  font-size:0.9rem; color:var(--muted); margin-bottom:32px; font-weight:300;
+}
+
+.bottom-cta-btns { display:flex; gap:12px; justify-content:center; }
+
+.btn-primary {
+  padding:14px 36px; background:var(--gold); color:var(--bg-0);
+  font-family:var(--font-nexus); font-size:0.95rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  cursor:pointer; transition:all 0.2s; border:none;
+}
+
+.btn-primary:hover { box-shadow:0 0 28px var(--gold-glow); transform:translateY(-2px); }
+
+.btn-secondary {
+  padding:14px 36px; background:transparent;
+  border:1px solid var(--border-gold); color:var(--gold);
+  font-family:var(--font-nexus); font-size:0.95rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  cursor:pointer; transition:all 0.2s;
+}
+
+.btn-secondary:hover { background:var(--gold-dim); }
+
+/* TRUST BADGES */
+.trust-badges {
+  display:flex; gap:32px; justify-content:center;
+  margin-top:40px; flex-wrap:wrap;
+}
+
+.trust-badge {
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--font-mono); font-size:0.6rem;
+  color:var(--muted); letter-spacing:0.08em; text-transform:uppercase;
+}
+
+.trust-icon { font-size:0.9rem; }
+
+/* FOOTER */
+footer {
+  position:relative; z-index:2;
+  border-top:1px solid var(--border);
+  padding:24px 48px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+.footer-logo {
+  font-family:var(--font-nexus); font-size:0.9rem; font-weight:700;
+  letter-spacing:0.12em; text-transform:uppercase; color:var(--muted);
+}
+
+.footer-logo span { color:var(--gold); }
+
+.footer-copy {
+  font-family:var(--font-mono); font-size:0.56rem;
+  color:var(--muted); letter-spacing:0.08em;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px);} to{opacity:1;transform:translateY(0);} }
+@keyframes glow-pulse { 0%,100%{box-shadow:0 0 8px var(--gold-glow);} 50%{box-shadow:0 0 20px var(--gold-glow);} }
+
+.hero-diamond-nav { animation:glow-pulse 3s ease infinite; }
+</style>
+</head>
+<body>
+
+<div class="glow-cursor" id="glow"></div>
+<canvas id="bgCanvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-diamond nav-diamond-nav"><div class="nav-diamond-inner"></div></div>
+    <div>
+      <div>NEXUS</div>
+      <div class="nav-sub">Imob Platform</div>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#planos" class="nav-link">Planos</a>
+    <a href="#comparativo" class="nav-link">Comparativo</a>
+    <a href="#faq" class="nav-link">FAQ</a>
+    <a href="#" class="nav-cta">Testar 14 dias grátis</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">
+    <div class="eyebrow-line"></div>
+    Planos & Preços
+    <div class="eyebrow-line"></div>
+  </div>
+  <h1 class="hero-title">
+    Escolha o plano<br>ideal para sua <span class="accent">imobiliária</span>
+  </h1>
+  <p class="hero-desc">
+    Sem taxa de instalação no plano anual. Sem contrato de fidelidade no mensal.
+    14 dias grátis em todos os planos.
+  </p>
+
+  <!-- BILLING TOGGLE -->
+  <div class="billing-toggle">
+    <span class="toggle-label active" id="lbl-mensal" onclick="setBilling('mensal')">Mensal</span>
+    <div class="toggle-switch" id="toggleSwitch" onclick="toggleBilling()">
+      <div class="toggle-knob"></div>
+    </div>
+    <span class="toggle-label inactive" id="lbl-anual" onclick="setBilling('anual')">Anual</span>
+    <div class="annual-badge" id="annualBadge" style="display:none;">2 meses grátis</div>
+  </div>
+</div>
+
+<!-- PRICING GRID -->
+<div class="pricing-section" id="planos">
+  <div class="pricing-grid">
+
+    <!-- STARTER -->
+    <div class="plan-card">
+      <div class="plan-top-bar"></div>
+      <div class="plan-header">
+        <div class="plan-name">Starter</div>
+        <div class="plan-tagline">Para imobiliárias pequenas que querem<br>profissionalizar o atendimento.</div>
+        <div class="price-wrap">
+          <div class="price-old" id="old-starter">R$ 297/mês</div>
+          <div class="price-main">
+            <div class="price-currency">R$</div>
+            <div class="price-value" id="val-starter">297</div>
+          </div>
+          <div class="price-period">/mês · cobrado <span id="period-starter">mensalmente</span></div>
+          <div class="price-annual-total" id="total-starter"></div>
+          <div class="price-economy" id="eco-starter"><div class="price-economy-dot"></div>economia de R$ 594/ano</div>
+        </div>
+        <button class="plan-cta">Começar grátis →</button>
+        <div class="plan-cta-sub">14 dias grátis · sem cartão de crédito</div>
+      </div>
+
+      <div class="annual-bonuses" id="bonus-starter">
+        <div class="bonus-title"><div class="bonus-dot"></div>Incluso no plano anual</div>
+        <div class="bonus-item">🎁 <span>2 meses grátis</span> (economia R$ 594)</div>
+        <div class="bonus-item">⚡ <span>1 fluxo N8N</span> extra configurado</div>
+        <div class="bonus-item">📞 <span>Suporte prioritário</span> no onboarding</div>
+      </div>
+
+      <div class="plan-features">
+        <div class="features-title">O que está incluído</div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">CRM + Pipeline Kanban</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Catálogo de imóveis</div>
+          <div class="feature-highlight fh-muted">até 150</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Agenda & Visitas</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">WhatsApp (Evolution API)</div>
+          <div class="feature-highlight fh-muted">1 instância</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Automações N8N</div>
+          <div class="feature-highlight fh-muted">3 fluxos</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Portal imobiliário</div>
+          <div class="feature-highlight fh-muted">1 portal</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Relatórios básicos</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check no">✗</div>
+          <div class="feature-text dimmed">IA de atendimento 24h</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check no">✗</div>
+          <div class="feature-text dimmed">Match automático de imóveis</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Corretores</div>
+          <div class="feature-highlight fh-muted">até 5</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFISSIONAL (featured) -->
+    <div class="plan-card featured">
+      <div class="plan-top-bar"></div>
+      <div class="popular-badge">⭐ Mais popular</div>
+      <div class="plan-header">
+        <div class="plan-name">Profissional</div>
+        <div class="plan-tagline">Para imobiliárias em crescimento que<br>querem escalar com IA e automação.</div>
+        <div class="price-wrap">
+          <div class="price-old" id="old-prof">R$ 597/mês</div>
+          <div class="price-main">
+            <div class="price-currency" style="color:var(--gold);">R$</div>
+            <div class="price-value" id="val-prof">597</div>
+          </div>
+          <div class="price-period">/mês · cobrado <span id="period-prof">mensalmente</span></div>
+          <div class="price-annual-total" id="total-prof"></div>
+          <div class="price-economy" id="eco-prof"><div class="price-economy-dot"></div>economia de R$ 1.194/ano</div>
+        </div>
+        <button class="plan-cta">Começar grátis →</button>
+        <div class="plan-cta-sub">14 dias grátis · sem cartão de crédito</div>
+      </div>
+
+      <div class="annual-bonuses" id="bonus-prof">
+        <div class="bonus-title"><div class="bonus-dot"></div>Incluso no plano anual</div>
+        <div class="bonus-item">🎁 <span>2 meses grátis</span> (economia R$ 1.194)</div>
+        <div class="bonus-item">🚀 <span>Setup grátis</span> (valor R$ 500)</div>
+        <div class="bonus-item">⚡ <span>1 fluxo N8N</span> customizado incluso</div>
+        <div class="bonus-item">🎓 <span>Onboarding dedicado</span> 2h com especialista</div>
+        <div class="bonus-item">✅ <span>SLA 99.5%</span> uptime garantido</div>
+      </div>
+
+      <div class="plan-features">
+        <div class="features-title">Tudo do Starter, mais:</div>
+        <div class="feature-item">
+          <div class="feature-check gold">★</div>
+          <div class="feature-text">IA de atendimento 24h (Claude)</div>
+          <div class="feature-highlight fh-gold">novo</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check gold">★</div>
+          <div class="feature-text">Match automático de imóveis</div>
+          <div class="feature-highlight fh-gold">IA</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Catálogo de imóveis</div>
+          <div class="feature-highlight fh-green">até 500</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">WhatsApp (Evolution API)</div>
+          <div class="feature-highlight fh-green">2 instâncias</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Automações N8N completas</div>
+          <div class="feature-highlight fh-green">8 fluxos</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">ZAP Imóveis + VivaReal + OLX</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Reengajamento de leads frios</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">NPS pós-visita automático</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Relatórios avançados + PDF</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Corretores</div>
+          <div class="feature-highlight fh-green">até 15</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENTERPRISE -->
+    <div class="plan-card">
+      <div class="plan-top-bar"></div>
+      <div class="plan-header">
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-tagline">Para redes e franquias imobiliárias<br>com operação em escala.</div>
+        <div class="price-wrap">
+          <div class="price-old" id="old-ent">R$ 1.197/mês</div>
+          <div class="price-main">
+            <div class="price-currency">R$</div>
+            <div class="price-value" id="val-ent">1.197</div>
+          </div>
+          <div class="price-period">/mês · cobrado <span id="period-ent">mensalmente</span></div>
+          <div class="price-annual-total" id="total-ent"></div>
+          <div class="price-economy" id="eco-ent"><div class="price-economy-dot"></div>economia de R$ 2.394/ano</div>
+        </div>
+        <button class="plan-cta">Falar com especialista →</button>
+        <div class="plan-cta-sub">Onboarding personalizado incluso</div>
+      </div>
+
+      <div class="annual-bonuses" id="bonus-ent">
+        <div class="bonus-title"><div class="bonus-dot"></div>Incluso no plano anual</div>
+        <div class="bonus-item">🎁 <span>2 meses grátis</span> (economia R$ 2.394)</div>
+        <div class="bonus-item">🚀 <span>Setup grátis</span> (valor R$ 1.500)</div>
+        <div class="bonus-item">🎓 <span>Treinamento da equipe</span> 4h incluso</div>
+        <div class="bonus-item">⚙️ <span>2 integrações</span> customizadas/mês</div>
+        <div class="bonus-item">✅ <span>SLA 99.9%</span> com gerente dedicado</div>
+      </div>
+
+      <div class="plan-features">
+        <div class="features-title">Tudo do Profissional, mais:</div>
+        <div class="feature-item">
+          <div class="feature-check gold">★</div>
+          <div class="feature-text">White-label (marca própria)</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Corretores ilimitados</div>
+          <div class="feature-highlight fh-gold">∞</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Imóveis ilimitados</div>
+          <div class="feature-highlight fh-gold">∞</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">WhatsApp</div>
+          <div class="feature-highlight fh-gold">5 instâncias</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">N8N flows ilimitados</div>
+          <div class="feature-highlight fh-gold">∞</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Todos os portais</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">API dedicada</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Assinatura digital (ZapSign)</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check yes">✓</div>
+          <div class="feature-text">Módulo de comissões</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check gold">★</div>
+          <div class="feature-text">Gerente de conta dedicado</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="comparison-section" id="comparativo">
+  <div class="section-header">
+    <div class="section-eyebrow">Comparativo completo</div>
+    <h2 class="section-title">Todos os <span>recursos</span> lado a lado</h2>
+  </div>
+
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th>Recurso</th>
+        <th>Starter</th>
+        <th class="th-featured">Profissional ⭐</th>
+        <th>Enterprise</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="category-row"><td colspan="4">CRM & Pipeline</td></tr>
+      <tr><td>Pipeline Kanban visual</td><td class="check-yes">✓</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+      <tr><td>Timeline do lead</td><td class="check-yes">✓</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+      <tr><td>Histórico de interações</td><td class="check-yes">✓</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+      <tr><td>Notas e tarefas</td><td class="check-yes">✓</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+
+      <tr class="category-row"><td colspan="4">Imóveis & Catálogo</td></tr>
+      <tr><td>Catálogo de imóveis</td><td class="check-val">150</td><td class="td-featured check-gold">500</td><td class="check-gold">∞</td></tr>
+      <tr><td>Match IA automático</td><td class="check-no">✗</td><td class="td-featured check-gold">IA</td><td class="check-gold">IA</td></tr>
+      <tr><td>Mapa de imóveis</td><td class="check-yes">✓</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+
+      <tr class="category-row"><td colspan="4">Automação & IA</td></tr>
+      <tr><td>Fluxos N8N</td><td class="check-val">3</td><td class="td-featured check-gold">8</td><td class="check-gold">∞</td></tr>
+      <tr><td>IA de atendimento 24h</td><td class="check-no">✗</td><td class="td-featured check-gold">Claude</td><td class="check-gold">Claude</td></tr>
+      <tr><td>Reengajamento automático</td><td class="check-no">✗</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+      <tr><td>NPS pós-visita</td><td class="check-no">✗</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+      <tr><td>Relatório semanal auto</td><td class="check-no">✗</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+
+      <tr class="category-row"><td colspan="4">WhatsApp & Portais</td></tr>
+      <tr><td>Instâncias WhatsApp</td><td class="check-val">1</td><td class="td-featured check-gold">2</td><td class="check-gold">5</td></tr>
+      <tr><td>ZAP Imóveis</td><td class="check-yes">✓</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+      <tr><td>VivaReal</td><td class="check-no">✗</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+      <tr><td>OLX Imóveis</td><td class="check-no">✗</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+      <tr><td>Imovelweb + Chaves na Mão</td><td class="check-no">✗</td><td class="td-featured check-no">✗</td><td class="check-yes">✓</td></tr>
+
+      <tr class="category-row"><td colspan="4">Equipe & Gestão</td></tr>
+      <tr><td>Corretores</td><td class="check-val">5</td><td class="td-featured check-gold">15</td><td class="check-gold">∞</td></tr>
+      <tr><td>Round-robin automático</td><td class="check-yes">✓</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+      <tr><td>Ranking de corretores</td><td class="check-yes">✓</td><td class="td-featured check-yes">✓</td><td class="check-yes">✓</td></tr>
+      <tr><td>Módulo de comissões</td><td class="check-no">✗</td><td class="td-featured check-no">✗</td><td class="check-yes">✓</td></tr>
+
+      <tr class="category-row"><td colspan="4">Premium & Enterprise</td></tr>
+      <tr><td>White-label</td><td class="check-no">✗</td><td class="td-featured check-no">✗</td><td class="check-yes">✓</td></tr>
+      <tr><td>API dedicada</td><td class="check-no">✗</td><td class="td-featured check-no">✗</td><td class="check-yes">✓</td></tr>
+      <tr><td>Assinatura digital</td><td class="check-no">✗</td><td class="td-featured check-no">✗</td><td class="check-yes">✓</td></tr>
+      <tr><td>Gerente de conta</td><td class="check-no">✗</td><td class="td-featured check-no">✗</td><td class="check-yes">✓</td></tr>
+      <tr><td>SLA garantido</td><td class="check-no">✗</td><td class="td-featured check-gold">99.5%</td><td class="check-gold">99.9%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section" id="faq">
+  <div class="section-header">
+    <div class="section-eyebrow">Dúvidas frequentes</div>
+    <h2 class="section-title">Perguntas <span>frequentes</span></h2>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Posso cancelar a qualquer momento? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">No plano mensal, sim — cancele quando quiser sem multa. No plano anual, você pode cancelar com reembolso proporcional em até 30 dias. Após 30 dias, o acesso permanece ativo até o fim do período contratado.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Como funciona o trial de 14 dias? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Você tem acesso completo ao plano escolhido por 14 dias, sem precisar informar cartão de crédito. Ao final do trial, você decide se quer continuar — só então informamos os dados de pagamento.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">O plano anual inclui o setup fee? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Sim! No plano Profissional anual o setup (R$ 500) é incluído gratuitamente. No Enterprise anual o setup (R$ 1.500) também é incluído. No plano mensal, o setup é cobrado uma única vez na contratação.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Posso mudar de plano depois? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Sempre. Upgrade é imediato — você paga apenas a diferença proporcional ao período restante. Downgrade entra em vigor no próximo ciclo de cobrança, com crédito proporcional se for plano anual.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">O N8N e a Evolution API estão incluídos? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Sim, toda a infraestrutura já está incluída no plano — N8N self-hosted, Evolution API para WhatsApp e os fluxos de automação configurados. Você não precisa contratar nada separado.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">E se eu precisar de mais corretores do que o plano permite? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">No plano Starter você pode adicionar corretores extras por R$ 49/corretor/mês. Mas se você tem uma equipe maior, recomendamos migrar para o Profissional — sai mais barato e você ganha todos os recursos de IA.</div>
+  </div>
+</div>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <h2 class="bottom-cta-title">Pronto para <span>transformar</span><br>sua imobiliária?</h2>
+  <p class="bottom-cta-desc">14 dias grátis. Sem cartão. Cancele quando quiser.</p>
+  <div class="bottom-cta-btns">
+    <button class="btn-primary">Começar gratuitamente →</button>
+    <button class="btn-secondary">Falar com especialista</button>
+  </div>
+  <div class="trust-badges">
+    <div class="trust-badge"><span class="trust-icon">🔒</span>Dados seguros · SSL</div>
+    <div class="trust-badge"><span class="trust-icon">⚡</span>Setup em menos de 24h</div>
+    <div class="trust-badge"><span class="trust-icon">🇧🇷</span>Suporte em português</div>
+    <div class="trust-badge"><span class="trust-icon">💳</span>Cancele quando quiser</div>
+    <div class="trust-badge"><span class="trust-icon">🤖</span>IA powered by Claude</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">NEXUS<span> Imob</span></div>
+  <div class="footer-copy">© 2026 NEXUS Imob · Todos os direitos reservados</div>
+</footer>
+
+<script>
+// ── CURSOR GLOW ──
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => { glow.style.left=e.clientX+'px'; glow.style.top=e.clientY+'px'; });
+
+// ── BACKGROUND CANVAS ──
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+
+function resize() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+const nodes = Array.from({length:50}, () => ({
+  x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+  vx: (Math.random()-0.5)*0.25, vy: (Math.random()-0.5)*0.25,
+  size: Math.random()*1.2+0.3, opacity: Math.random()*0.3+0.05
+}));
+
+function drawBg() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle='rgba(255,215,0,0.02)'; ctx.lineWidth=1;
+  for(let x=0;x<canvas.width;x+=80){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke(); }
+  for(let y=0;y<canvas.height;y+=80){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke(); }
+
+  nodes.forEach((n,i) => {
+    nodes.slice(i+1).forEach(m => {
+      const d = Math.hypot(n.x-m.x, n.y-m.y);
+      if(d<140){ ctx.strokeStyle=`rgba(255,215,0,${(1-d/140)*0.08})`; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(n.x,n.y); ctx.lineTo(m.x,m.y); ctx.stroke(); }
+    });
+    ctx.beginPath(); ctx.arc(n.x,n.y,n.size,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,215,0,${n.opacity})`; ctx.fill();
+    n.x+=n.vx; n.y+=n.vy;
+    if(n.x<0||n.x>canvas.width) n.vx*=-1;
+    if(n.y<0||n.y>canvas.height) n.vy*=-1;
+  });
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+
+// ── BILLING TOGGLE ──
+let isAnnual = false;
+
+const prices = {
+  starter: { monthly: 297, annual: 247 },
+  prof:    { monthly: 597, annual: 497 },
+  ent:     { monthly: 1197, annual: 997 }
+};
+
+function formatPrice(val) {
+  return val >= 1000 ? val.toLocaleString('pt-BR') : String(val);
+}
+
+function setBilling(mode) {
+  isAnnual = (mode === 'anual');
+  updateUI();
+}
+
+function toggleBilling() {
+  isAnnual = !isAnnual;
+  updateUI();
+}
+
+function updateUI() {
+  const sw   = document.getElementById('toggleSwitch');
+  const lblM = document.getElementById('lbl-mensal');
+  const lblA = document.getElementById('lbl-anual');
+  const badge = document.getElementById('annualBadge');
+
+  if(isAnnual) {
+    sw.classList.add('annual');
+    lblM.classList.replace('active','inactive');
+    lblA.classList.replace('inactive','active');
+    badge.style.display = 'block';
+  } else {
+    sw.classList.remove('annual');
+    lblA.classList.replace('active','inactive');
+    lblM.classList.replace('inactive','active');
+    badge.style.display = 'none';
+  }
+
+  // Update prices
+  const plans = [
+    { key:'starter', valId:'val-starter', periodId:'period-starter', totalId:'total-starter', ecoId:'eco-starter', oldId:'old-starter', bonusId:'bonus-starter', price:prices.starter },
+    { key:'prof',    valId:'val-prof',    periodId:'period-prof',    totalId:'total-prof',    ecoId:'eco-prof',    oldId:'old-prof',    bonusId:'bonus-prof',    price:prices.prof },
+    { key:'ent',     valId:'val-ent',     periodId:'period-ent',     totalId:'total-ent',     ecoId:'eco-ent',     oldId:'old-ent',     bonusId:'bonus-ent',     price:prices.ent }
+  ];
+
+  plans.forEach(p => {
+    const valEl    = document.getElementById(p.valId);
+    const perEl    = document.getElementById(p.periodId);
+    const totEl    = document.getElementById(p.totalId);
+    const ecoEl    = document.getElementById(p.ecoId);
+    const oldEl    = document.getElementById(p.oldId);
+    const bonusEl  = document.getElementById(p.bonusId);
+
+    if(isAnnual) {
+      valEl.textContent = formatPrice(p.price.annual);
+      perEl.textContent = 'anualmente';
+      totEl.textContent = `R$ ${formatPrice(p.price.annual * 10)} cobrado uma vez`;
+      ecoEl.classList.add('visible');
+      oldEl.classList.add('visible');
+      bonusEl.classList.add('visible');
+    } else {
+      valEl.textContent = formatPrice(p.price.monthly);
+      perEl.textContent = 'mensalmente';
+      totEl.textContent = '';
+      ecoEl.classList.remove('visible');
+      oldEl.classList.remove('visible');
+      bonusEl.classList.remove('visible');
+    }
+  });
+}
+
+// ── FAQ ──
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

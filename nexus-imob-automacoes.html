@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Imob — Automações</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0:        #060709;
+  --bg-1:        #0c0e13;
+  --bg-2:        #111520;
+  --bg-3:        #161b28;
+  --bg-4:        #1c2235;
+  --border:      rgba(255,255,255,0.06);
+  --border-gold: rgba(255,215,0,0.22);
+
+  --gold:        #ffd700;
+  --gold-dim:    rgba(255,215,0,0.10);
+  --gold-glow:   rgba(255,215,0,0.40);
+  --gold-soft:   rgba(255,215,0,0.05);
+
+  --green:       #00ff88;
+  --green-dim:   rgba(0,255,136,0.08);
+  --red:         #ff4757;
+  --red-dim:     rgba(255,71,87,0.08);
+  --orange:      #ff7b00;
+  --orange-dim:  rgba(255,123,0,0.08);
+  --purple:      #a78bfa;
+  --purple-dim:  rgba(167,139,250,0.08);
+  --blue:        #4f9cf9;
+  --blue-dim:    rgba(79,156,249,0.08);
+
+  --text:        #e2e8f4;
+  --muted:       #4a5568;
+
+  --font-main:   'Exo 2', sans-serif;
+  --font-nexus:  'Rajdhani', sans-serif;
+  --font-mono:   'Share Tech Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-0);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+body::before {
+  content:''; position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none; z-index: 9999;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar {
+  width: 220px; min-height: 100vh;
+  background: var(--bg-1); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; flex-shrink: 0; position: relative;
+}
+.sidebar::after {
+  content:''; position: absolute; right: -1px; top: 80px; bottom: 80px;
+  width: 1px; background: linear-gradient(180deg, transparent, var(--gold), transparent); opacity: 0.3;
+}
+.logo-wrap { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); }
+.logo { font-family: var(--font-nexus); font-size: 1.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; color: var(--text); }
+.logo-icon { width: 28px; height: 28px; border: 1.5px solid var(--gold); display: flex; align-items: center; justify-content: center; transform: rotate(45deg); box-shadow: 0 0 12px var(--gold-glow); flex-shrink: 0; }
+.logo-icon-inner { width: 10px; height: 10px; background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+.logo-sub { font-family: var(--font-nexus); font-size: 0.65rem; color: var(--gold); letter-spacing: 0.3em; text-transform: uppercase; margin-top: 4px; display: block; }
+.status-badge { display: flex; align-items: center; gap: 6px; padding: 8px 20px; font-family: var(--font-mono); font-size: 0.65rem; color: var(--green); letter-spacing: 0.08em; border-bottom: 1px solid var(--border); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse-g 2s ease infinite; }
+@keyframes pulse-g { 0%,100%{ box-shadow:0 0 8px var(--green); } 50%{ box-shadow:0 0 18px var(--green); } }
+.nav-section { padding: 16px 0 8px; }
+.nav-label { font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; padding: 0 20px; margin-bottom: 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-family: var(--font-nexus); font-size: 0.9rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: all 0.15s; position: relative; }
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+.nav-item.active { color: var(--gold); background: var(--gold-dim); }
+.nav-item.active::before { content:''; position: absolute; left:0; top:4px; bottom:4px; width:2px; background:var(--gold); box-shadow:0 0 8px var(--gold-glow); }
+.nav-icon { font-size: 0.9rem; width: 16px; text-align: center; }
+.nav-badge { margin-left: auto; background: var(--gold-dim); color: var(--gold); font-family: var(--font-mono); font-size: 0.62rem; padding: 2px 7px; border: 1px solid var(--border-gold); }
+.sidebar-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); }
+.user-card { display: flex; align-items: center; gap: 10px; }
+.user-avatar { width: 32px; height: 32px; border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; font-family: var(--font-nexus); font-size: 0.75rem; font-weight: 700; color: var(--gold); background: var(--gold-dim); }
+.user-name { font-size: 0.8rem; font-weight: 600; font-family: var(--font-nexus); letter-spacing: 0.04em; text-transform: uppercase; }
+.user-role { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em; }
+
+/* ══ MAIN ══ */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.topbar { height: 56px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: var(--bg-1); flex-shrink: 0; }
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.page-title { font-family: var(--font-nexus); font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.breadcrumb { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.topbar-pill { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); background: var(--bg-2); border: 1px solid var(--border); padding: 5px 12px; letter-spacing: 0.08em; }
+.topbar-pill.ok { color: var(--green); border-color: rgba(0,255,136,0.2); background: var(--green-dim); }
+.topbar-pill.warn { color: var(--orange); border-color: rgba(255,123,0,0.2); background: var(--orange-dim); }
+.topbar-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; background: var(--gold-dim); border: 1px solid var(--border-gold); color: var(--gold); font-family: var(--font-nexus); font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; }
+.topbar-btn:hover { background: rgba(255,215,0,0.18); box-shadow: 0 0 16px var(--gold-glow); }
+
+/* ══ CONTENT ══ */
+.content { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 18px; }
+.content::-webkit-scrollbar { width: 4px; }
+.content::-webkit-scrollbar-thumb { background: var(--border-gold); }
+
+/* ══ SYSTEM STATUS BAR ══ */
+.system-bar {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+}
+
+.sys-card {
+  background: var(--bg-2); border: 1px solid var(--border); padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px; position: relative; overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.sys-card::before {
+  content:''; position: absolute; top:0; left:0; right:0; height:1px;
+}
+
+.sys-card.online::before  { background: var(--green); box-shadow: 0 0 8px rgba(0,255,136,0.5); }
+.sys-card.warn::before    { background: var(--orange); }
+.sys-card.offline::before { background: var(--red); }
+
+.sys-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+.sys-info { flex: 1; min-width: 0; }
+
+.sys-name { font-family: var(--font-nexus); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 2px; }
+
+.sys-status { font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.sys-status.online  { color: var(--green); }
+.sys-status.warn    { color: var(--orange); }
+.sys-status.offline { color: var(--red); }
+
+.sys-metric { font-family: var(--font-nexus); font-size: 1.1rem; font-weight: 700; color: var(--text); text-align: right; flex-shrink: 0; }
+.sys-metric small { font-family: var(--font-mono); font-size: 0.5rem; color: var(--muted); display: block; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* ══ SECTION HEADER ══ */
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.section-title { font-family: var(--font-nexus); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+.section-dot { width: 5px; height: 5px; background: var(--gold); box-shadow: 0 0 6px var(--gold-glow); }
+.section-action { font-family: var(--font-mono); font-size: 0.6rem; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: opacity 0.15s; }
+.section-action:hover { opacity: 0.7; }
+
+/* ══ FLOWS GRID ══ */
+.flows-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+/* ══ FLOW CARD ══ */
+.flow-card {
+  background: var(--bg-2); border: 1px solid var(--border);
+  padding: 0; position: relative; overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  animation: fadeUp 0.4s ease both;
+}
+
+.flow-card:hover { border-color: var(--border-gold); transform: translateY(-2px); }
+
+.flow-card.running { border-color: rgba(0,255,136,0.2); }
+.flow-card.paused  { border-color: rgba(255,123,0,0.15); opacity: 0.75; }
+.flow-card.error   { border-color: rgba(255,71,87,0.2); }
+
+/* TOP STRIP */
+.flow-strip {
+  height: 3px;
+  background: var(--border);
+}
+.flow-card.running .flow-strip { background: var(--green); box-shadow: 0 0 8px rgba(0,255,136,0.4); animation: strip-run 2s linear infinite; }
+.flow-card.paused  .flow-strip { background: var(--orange); }
+.flow-card.error   .flow-strip { background: var(--red); }
+
+@keyframes strip-run {
+  0%   { background: linear-gradient(90deg, var(--green) 0%, transparent 60%); }
+  50%  { background: linear-gradient(90deg, transparent 0%, var(--green) 50%, transparent 100%); }
+  100% { background: linear-gradient(90deg, transparent 40%, var(--green) 100%); }
+}
+
+.flow-body { padding: 14px; }
+
+.flow-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+
+.flow-icon-wrap {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+  border: 1px solid var(--border);
+  background: var(--bg-3);
+}
+
+/* TOGGLE SWITCH */
+.toggle-wrap { display: flex; align-items: center; gap: 6px; }
+.toggle-label { font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.toggle-label.on  { color: var(--green); }
+.toggle-label.off { color: var(--muted); }
+
+.toggle {
+  width: 32px; height: 16px;
+  background: var(--bg-3); border: 1px solid var(--border);
+  border-radius: 8px; position: relative; cursor: pointer;
+  transition: all 0.2s; flex-shrink: 0;
+}
+
+.toggle.active { background: rgba(0,255,136,0.15); border-color: rgba(0,255,136,0.4); }
+
+.toggle-knob {
+  position: absolute; top: 2px; left: 2px;
+  width: 10px; height: 10px;
+  background: var(--muted); border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.toggle.active .toggle-knob { left: 18px; background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+.flow-name { font-family: var(--font-nexus); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; line-height: 1.2; }
+.flow-desc { font-family: var(--font-mono); font-size: 0.56rem; color: var(--muted); letter-spacing: 0.04em; line-height: 1.6; margin-bottom: 10px; }
+
+/* NODES MINI DIAGRAM */
+.flow-nodes {
+  display: flex; align-items: center; gap: 3px;
+  margin-bottom: 10px; flex-wrap: wrap;
+}
+
+.fn-node {
+  font-family: var(--font-mono); font-size: 0.52rem;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 3px 6px; border: 1px solid;
+  white-space: nowrap;
+}
+
+.fn-node.trigger  { color: var(--red); border-color: rgba(255,71,87,0.25); background: rgba(255,71,87,0.06); }
+.fn-node.action   { color: var(--blue); border-color: rgba(79,156,249,0.25); background: rgba(79,156,249,0.06); }
+.fn-node.ai       { color: var(--purple); border-color: rgba(167,139,250,0.25); background: rgba(167,139,250,0.06); }
+.fn-node.output   { color: var(--green); border-color: rgba(0,255,136,0.25); background: rgba(0,255,136,0.06); }
+.fn-node.cond     { color: var(--gold); border-color: rgba(255,215,0,0.25); background: rgba(255,215,0,0.06); transform: skewX(-6deg); }
+.fn-node.cond span { display: inline-block; transform: skewX(6deg); }
+
+.fn-arrow { color: var(--muted); font-size: 0.65rem; flex-shrink: 0; }
+
+/* FLOW METRICS */
+.flow-metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-bottom: 10px; }
+
+.flow-metric {
+  background: var(--bg-3); border: 1px solid var(--border); padding: 6px 8px; text-align: center;
+}
+
+.fm-val { font-family: var(--font-nexus); font-size: 0.95rem; font-weight: 700; line-height: 1; margin-bottom: 2px; }
+.fm-val.g { color: var(--green); }
+.fm-val.r { color: var(--red); }
+.fm-val.gold { color: var(--gold); }
+.fm-lbl { font-family: var(--font-mono); font-size: 0.5rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* LAST RUN */
+.flow-last-run {
+  font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted);
+  letter-spacing: 0.06em; display: flex; align-items: center; justify-content: space-between;
+  padding-top: 8px; border-top: 1px solid var(--border);
+}
+
+.flow-last-run .run-status { padding: 2px 6px; border: 1px solid; font-size: 0.54rem; }
+.run-status.ok      { color: var(--green); border-color: rgba(0,255,136,0.2); background: var(--green-dim); }
+.run-status.running { color: var(--gold); border-color: var(--border-gold); background: var(--gold-dim); animation: blink 1.2s ease infinite; }
+.run-status.error   { color: var(--red); border-color: rgba(255,71,87,0.2); background: var(--red-dim); }
+
+@keyframes blink { 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
+
+/* ══ BOTTOM SECTION ══ */
+.bottom-grid { display: grid; grid-template-columns: 1fr 380px; gap: 16px; }
+
+/* ══ EXECUTION LOG ══ */
+.log-panel { background: var(--bg-2); border: 1px solid var(--border); display: flex; flex-direction: column; max-height: 340px; }
+
+.log-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+
+.log-feed { flex: 1; overflow-y: auto; font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.04em; }
+.log-feed::-webkit-scrollbar { width: 3px; }
+.log-feed::-webkit-scrollbar-thumb { background: var(--border-gold); }
+
+.log-row {
+  display: grid; grid-template-columns: 90px 110px 1fr 60px;
+  padding: 7px 16px; border-bottom: 1px solid rgba(255,255,255,0.03);
+  transition: background 0.1s; align-items: center; gap: 8px;
+}
+
+.log-row:hover { background: rgba(255,255,255,0.02); }
+
+.log-time { color: var(--muted); }
+.log-flow { color: var(--gold); text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.log-msg  { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.log-status { text-align: right; }
+
+.ls { padding: 1px 5px; border: 1px solid; font-size: 0.52rem; }
+.ls.ok    { color: var(--green); border-color: rgba(0,255,136,0.2); }
+.ls.run   { color: var(--gold); border-color: var(--border-gold); animation: blink 1.2s ease infinite; }
+.ls.err   { color: var(--red); border-color: rgba(255,71,87,0.2); }
+.ls.skip  { color: var(--muted); border-color: var(--border); }
+
+.log-cols { display: grid; grid-template-columns: 90px 110px 1fr 60px; padding: 6px 16px; border-bottom: 1px solid var(--border); gap: 8px; }
+.log-col-header { font-family: var(--font-mono); font-size: 0.54rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ══ QUICK STATS ══ */
+.stats-panel { background: var(--bg-2); border: 1px solid var(--border); display: flex; flex-direction: column; max-height: 340px; }
+.stats-header { padding: 12px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+
+.stat-item { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; transition: background 0.15s; }
+.stat-item:hover { background: rgba(255,255,255,0.02); }
+.stat-item:last-child { border-bottom: none; }
+
+.stat-bar-wrap { flex: 1; height: 3px; background: var(--bg-3); position: relative; }
+.stat-bar-fill { position: absolute; left:0; top:0; height:100%; border-radius:1px; transition: width 1s ease; }
+
+.stat-name { font-family: var(--font-nexus); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; width: 110px; flex-shrink: 0; }
+.stat-val  { font-family: var(--font-nexus); font-size: 0.85rem; font-weight: 700; width: 36px; text-align: right; flex-shrink: 0; }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.flow-card:nth-child(1) { animation-delay: 0.04s; }
+.flow-card:nth-child(2) { animation-delay: 0.08s; }
+.flow-card:nth-child(3) { animation-delay: 0.12s; }
+.flow-card:nth-child(4) { animation-delay: 0.16s; }
+.flow-card:nth-child(5) { animation-delay: 0.20s; }
+.flow-card:nth-child(6) { animation-delay: 0.24s; }
+.flow-card:nth-child(7) { animation-delay: 0.28s; }
+.flow-card:nth-child(8) { animation-delay: 0.32s; }
+
+.glow-cursor { position:fixed; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(255,215,0,0.04) 0%, transparent 70%); pointer-events:none; transform:translate(-50%,-50%); transition:left 0.1s,top 0.1s; z-index:1; }
+</style>
+</head>
+<body>
+
+<div class="glow-cursor" id="glow"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo"><div class="logo-icon"><div class="logo-icon-inner"></div></div>NEXUS</div>
+    <span class="logo-sub">Imob Platform</span>
+  </div>
+  <div class="status-badge"><div class="status-dot"></div>SISTEMA ONLINE</div>
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬡</span> Dashboard</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◈</span> Pipeline CRM<span class="nav-badge">47</span></div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◻</span> Imóveis</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◎</span> Leads<span class="nav-badge">12</span></div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◷</span> Agenda</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Gestão</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">△</span> Corretores</div>
+    <div class="nav-item active" onclick="setActive(this)"><span class="nav-icon">⬙</span> Automações</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">▦</span> Relatórios</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">RG</div>
+      <div><div class="user-name">Riguetti</div><div class="user-role">ADMIN · NEXUS IMOB</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title">Automações</div>
+      <div class="breadcrumb">NEXUS IMOB / AUTOMAÇÕES / 8 FLUXOS ATIVOS</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-pill ok">● N8N: online</div>
+      <div class="topbar-pill ok">● WhatsApp: conectado</div>
+      <div class="topbar-pill ok">● IA: operacional</div>
+      <button class="topbar-btn">＋ Novo Fluxo</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ SYSTEM STATUS ══ -->
+    <div class="system-bar">
+
+      <div class="sys-card online">
+        <div class="sys-icon">⚡</div>
+        <div class="sys-info">
+          <div class="sys-name">N8N Engine</div>
+          <div class="sys-status online">● Online · self-hosted</div>
+        </div>
+        <div class="sys-metric">99.8%<small>uptime</small></div>
+      </div>
+
+      <div class="sys-card online">
+        <div class="sys-icon">💬</div>
+        <div class="sys-info">
+          <div class="sys-name">WhatsApp</div>
+          <div class="sys-status online">● Conectado · Evolution API</div>
+        </div>
+        <div class="sys-metric">1<small>instância</small></div>
+      </div>
+
+      <div class="sys-card online">
+        <div class="sys-icon">🤖</div>
+        <div class="sys-info">
+          <div class="sys-name">IA · Claude</div>
+          <div class="sys-status online">● Operacional · Anthropic</div>
+        </div>
+        <div class="sys-metric">142ms<small>latência</small></div>
+      </div>
+
+      <div class="sys-card warn">
+        <div class="sys-icon">📊</div>
+        <div class="sys-info">
+          <div class="sys-name">Webhook ZAP</div>
+          <div class="sys-status warn">⚠ Instável · verificar</div>
+        </div>
+        <div class="sys-metric">87%<small>sucesso</small></div>
+      </div>
+
+      <div class="sys-card online">
+        <div class="sys-icon">📧</div>
+        <div class="sys-info">
+          <div class="sys-name">E-mail SMTP</div>
+          <div class="sys-status online">● Online · SendGrid</div>
+        </div>
+        <div class="sys-metric">100%<small>entrega</small></div>
+      </div>
+
+    </div>
+
+    <!-- ══ FLUXOS ══ -->
+    <div>
+      <div class="section-head">
+        <div class="section-title"><div class="section-dot"></div>Fluxos de Automação</div>
+        <div class="section-action">gerenciar no N8N →</div>
+      </div>
+
+      <div class="flows-grid">
+
+        <!-- FLUXO 1 -->
+        <div class="flow-card running">
+          <div class="flow-strip"></div>
+          <div class="flow-body">
+            <div class="flow-top">
+              <div class="flow-icon-wrap">🔴</div>
+              <div class="toggle-wrap">
+                <div class="toggle-label on">ON</div>
+                <div class="toggle active" onclick="toggleFlow(this)"><div class="toggle-knob"></div></div>
+              </div>
+            </div>
+            <div class="flow-name">Recepção de Lead</div>
+            <div class="flow-desc">Webhook recebe lead → salva banco → qualifica IA → atribui corretor → notifica via WhatsApp</div>
+            <div class="flow-nodes">
+              <div class="fn-node trigger">Webhook</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node action">API</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node ai">IA</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node output">WPP</div>
+            </div>
+            <div class="flow-metrics">
+              <div class="flow-metric"><div class="fm-val g">847</div><div class="fm-lbl">Execuções</div></div>
+              <div class="flow-metric"><div class="fm-val g">99%</div><div class="fm-lbl">Sucesso</div></div>
+              <div class="flow-metric"><div class="fm-val gold">1.2s</div><div class="fm-lbl">Tempo Méd.</div></div>
+            </div>
+            <div class="flow-last-run">
+              <span>Última: há 4 min</span>
+              <span class="run-status running">● executando</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLUXO 2 -->
+        <div class="flow-card running">
+          <div class="flow-strip"></div>
+          <div class="flow-body">
+            <div class="flow-top">
+              <div class="flow-icon-wrap">🟣</div>
+              <div class="toggle-wrap">
+                <div class="toggle-label on">ON</div>
+                <div class="toggle active" onclick="toggleFlow(this)"><div class="toggle-knob"></div></div>
+              </div>
+            </div>
+            <div class="flow-name">Atendimento IA WPP</div>
+            <div class="flow-desc">Mensagem recebida → Claude processa → verifica intenção → responde ou transfere ao corretor</div>
+            <div class="flow-nodes">
+              <div class="fn-node trigger">WPP In</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node ai">Claude</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node cond"><span>Humano?</span></div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node output">WPP</div>
+            </div>
+            <div class="flow-metrics">
+              <div class="flow-metric"><div class="fm-val g">2.4k</div><div class="fm-lbl">Msgs/mês</div></div>
+              <div class="flow-metric"><div class="fm-val g">94%</div><div class="fm-lbl">Sucesso</div></div>
+              <div class="flow-metric"><div class="fm-val gold">2.8s</div><div class="fm-lbl">Tempo Méd.</div></div>
+            </div>
+            <div class="flow-last-run">
+              <span>Última: há 1 min</span>
+              <span class="run-status running">● executando</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLUXO 3 -->
+        <div class="flow-card running">
+          <div class="flow-strip"></div>
+          <div class="flow-body">
+            <div class="flow-top">
+              <div class="flow-icon-wrap">🟡</div>
+              <div class="toggle-wrap">
+                <div class="toggle-label on">ON</div>
+                <div class="toggle active" onclick="toggleFlow(this)"><div class="toggle-knob"></div></div>
+              </div>
+            </div>
+            <div class="flow-name">Lembretes de Visita</div>
+            <div class="flow-desc">Visita agendada → Google Calendar → confirmação imediata → lembrete 24h → lembrete 1h</div>
+            <div class="flow-nodes">
+              <div class="fn-node trigger">Visita</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node action">GCal</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node action">⏰ 24h</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node output">WPP</div>
+            </div>
+            <div class="flow-metrics">
+              <div class="flow-metric"><div class="fm-val g">312</div><div class="fm-lbl">Execuções</div></div>
+              <div class="flow-metric"><div class="fm-val g">100%</div><div class="fm-lbl">Sucesso</div></div>
+              <div class="flow-metric"><div class="fm-val gold">0.8s</div><div class="fm-lbl">Tempo Méd.</div></div>
+            </div>
+            <div class="flow-last-run">
+              <span>Última: há 28 min</span>
+              <span class="run-status ok">✓ ok</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLUXO 4 -->
+        <div class="flow-card running">
+          <div class="flow-strip"></div>
+          <div class="flow-body">
+            <div class="flow-top">
+              <div class="flow-icon-wrap">🟢</div>
+              <div class="toggle-wrap">
+                <div class="toggle-label on">ON</div>
+                <div class="toggle active" onclick="toggleFlow(this)"><div class="toggle-knob"></div></div>
+              </div>
+            </div>
+            <div class="flow-name">Match Automático IA</div>
+            <div class="flow-desc">Lead qualificado → busca imóveis → IA rankeia matches → envia top 3 via WhatsApp → atualiza CRM</div>
+            <div class="flow-nodes">
+              <div class="fn-node trigger">Lead</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node action">API</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node ai">Match</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node output">WPP</div>
+            </div>
+            <div class="flow-metrics">
+              <div class="flow-metric"><div class="fm-val g">189</div><div class="fm-lbl">Matches</div></div>
+              <div class="flow-metric"><div class="fm-val g">97%</div><div class="fm-lbl">Sucesso</div></div>
+              <div class="flow-metric"><div class="fm-val gold">3.4s</div><div class="fm-lbl">Tempo Méd.</div></div>
+            </div>
+            <div class="flow-last-run">
+              <span>Última: há 8 min</span>
+              <span class="run-status ok">✓ ok</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLUXO 5 -->
+        <div class="flow-card running">
+          <div class="flow-strip"></div>
+          <div class="flow-body">
+            <div class="flow-top">
+              <div class="flow-icon-wrap">📧</div>
+              <div class="toggle-wrap">
+                <div class="toggle-label on">ON</div>
+                <div class="toggle active" onclick="toggleFlow(this)"><div class="toggle-knob"></div></div>
+              </div>
+            </div>
+            <div class="flow-name">Relatório Semanal</div>
+            <div class="flow-desc">Cron toda segunda → busca KPIs → gera HTML → envia e-mail para gestores com resumo completo</div>
+            <div class="flow-nodes">
+              <div class="fn-node trigger">Cron Seg</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node action">KPIs</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node ai">HTML</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node output">E-mail</div>
+            </div>
+            <div class="flow-metrics">
+              <div class="flow-metric"><div class="fm-val g">12</div><div class="fm-lbl">Relatórios</div></div>
+              <div class="flow-metric"><div class="fm-val g">100%</div><div class="fm-lbl">Entregue</div></div>
+              <div class="flow-metric"><div class="fm-val gold">4.1s</div><div class="fm-lbl">Tempo Méd.</div></div>
+            </div>
+            <div class="flow-last-run">
+              <span>Próximo: Segunda 07h</span>
+              <span class="run-status ok">✓ agendado</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLUXO 6 -->
+        <div class="flow-card running">
+          <div class="flow-strip"></div>
+          <div class="flow-body">
+            <div class="flow-top">
+              <div class="flow-icon-wrap">🔁</div>
+              <div class="toggle-wrap">
+                <div class="toggle-label on">ON</div>
+                <div class="toggle active" onclick="toggleFlow(this)"><div class="toggle-knob"></div></div>
+              </div>
+            </div>
+            <div class="flow-name">Reengajamento</div>
+            <div class="flow-desc">Lead sem atividade por 7 dias → IA gera mensagem personalizada → envia via WhatsApp → registra no CRM</div>
+            <div class="flow-nodes">
+              <div class="fn-node trigger">7d inativo</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node ai">IA msg</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node output">WPP</div>
+            </div>
+            <div class="flow-metrics">
+              <div class="flow-metric"><div class="fm-val g">64</div><div class="fm-lbl">Reativados</div></div>
+              <div class="flow-metric"><div class="fm-val g">38%</div><div class="fm-lbl">Resp. Rate</div></div>
+              <div class="flow-metric"><div class="fm-val gold">1.9s</div><div class="fm-lbl">Tempo Méd.</div></div>
+            </div>
+            <div class="flow-last-run">
+              <span>Última: há 2h</span>
+              <span class="run-status ok">✓ ok</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLUXO 7 -->
+        <div class="flow-card paused">
+          <div class="flow-strip"></div>
+          <div class="flow-body">
+            <div class="flow-top">
+              <div class="flow-icon-wrap">📑</div>
+              <div class="toggle-wrap">
+                <div class="toggle-label off">OFF</div>
+                <div class="toggle" onclick="toggleFlow(this)"><div class="toggle-knob"></div></div>
+              </div>
+            </div>
+            <div class="flow-name">Gestão de Docs</div>
+            <div class="flow-desc">Proposta aceita → gera checklist de documentos → notifica cliente e corretor → monitora pendências</div>
+            <div class="flow-nodes">
+              <div class="fn-node trigger">Proposta</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node action">Checklist</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node output">Notif.</div>
+            </div>
+            <div class="flow-metrics">
+              <div class="flow-metric"><div class="fm-val" style="color:var(--muted);">—</div><div class="fm-lbl">Pausado</div></div>
+              <div class="flow-metric"><div class="fm-val" style="color:var(--muted);">—</div><div class="fm-lbl">Sucesso</div></div>
+              <div class="flow-metric"><div class="fm-val" style="color:var(--muted);">—</div><div class="fm-lbl">Tempo</div></div>
+            </div>
+            <div class="flow-last-run">
+              <span>Pausado manualmente</span>
+              <span class="run-status" style="color:var(--orange);border-color:rgba(255,123,0,0.2);padding:1px 5px;border:1px solid;">⏸ pausado</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLUXO 8 -->
+        <div class="flow-card error">
+          <div class="flow-strip"></div>
+          <div class="flow-body">
+            <div class="flow-top">
+              <div class="flow-icon-wrap">⭐</div>
+              <div class="toggle-wrap">
+                <div class="toggle-label on">ON</div>
+                <div class="toggle active" onclick="toggleFlow(this)"><div class="toggle-knob"></div></div>
+              </div>
+            </div>
+            <div class="flow-name">NPS Pós-Visita</div>
+            <div class="flow-desc">2h após visita → envia pesquisa de satisfação via WhatsApp → salva feedback → atualiza score do corretor</div>
+            <div class="flow-nodes">
+              <div class="fn-node trigger">2h visita</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node action">NPS</div>
+              <div class="fn-arrow">→</div>
+              <div class="fn-node output">WPP</div>
+            </div>
+            <div class="flow-metrics">
+              <div class="flow-metric"><div class="fm-val g">98</div><div class="fm-lbl">Enviados</div></div>
+              <div class="flow-metric"><div class="fm-val r">78%</div><div class="fm-lbl">Sucesso</div></div>
+              <div class="flow-metric"><div class="fm-val r">Erro</div><div class="fm-lbl">Último</div></div>
+            </div>
+            <div class="flow-last-run">
+              <span>Última: há 45 min</span>
+              <span class="run-status error">✕ erro</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /flows-grid -->
+    </div>
+
+    <!-- ══ BOTTOM ══ -->
+    <div class="bottom-grid">
+
+      <!-- LOG DE EXECUÇÕES -->
+      <div class="log-panel">
+        <div class="log-header">
+          <div class="section-title" style="font-size:0.82rem;"><div class="section-dot"></div>Log de Execuções</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div style="font-family:var(--font-mono);font-size:0.56rem;color:var(--green);letter-spacing:0.08em;display:flex;align-items:center;gap:5px;">
+              <div style="width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse-g 1.5s infinite;"></div>
+              AO VIVO
+            </div>
+            <div class="section-action">ver tudo →</div>
+          </div>
+        </div>
+        <div class="log-cols">
+          <div class="log-col-header">Horário</div>
+          <div class="log-col-header">Fluxo</div>
+          <div class="log-col-header">Evento</div>
+          <div class="log-col-header">Status</div>
+        </div>
+        <div class="log-feed" id="logFeed">
+
+          <div class="log-row">
+            <div class="log-time">10:34:22</div>
+            <div class="log-flow">Recep. Lead</div>
+            <div class="log-msg">Carlos M. via ZAP Imóveis → Lucas C. atribuído</div>
+            <div class="log-status"><span class="ls run">● exec</span></div>
+          </div>
+          <div class="log-row">
+            <div class="log-time">10:33:58</div>
+            <div class="log-flow">Atend. IA</div>
+            <div class="log-msg">Fernanda R. perguntou sobre churrasqueira — Claude respondeu</div>
+            <div class="log-status"><span class="ls ok">✓ ok</span></div>
+          </div>
+          <div class="log-row">
+            <div class="log-time">10:31:10</div>
+            <div class="log-flow">Match IA</div>
+            <div class="log-msg">3 imóveis encontrados para João Lima (score 94%, 81%, 72%)</div>
+            <div class="log-status"><span class="ls ok">✓ ok</span></div>
+          </div>
+          <div class="log-row">
+            <div class="log-time">10:28:44</div>
+            <div class="log-flow">Lembrete</div>
+            <div class="log-msg">Lembrete 24h enviado para Patricia C. — visita amanhã 10h</div>
+            <div class="log-status"><span class="ls ok">✓ ok</span></div>
+          </div>
+          <div class="log-row">
+            <div class="log-time">10:15:03</div>
+            <div class="log-flow">NPS Visita</div>
+            <div class="log-msg">Falha ao enviar NPS para Roberto A. — número inválido</div>
+            <div class="log-status"><span class="ls err">✕ erro</span></div>
+          </div>
+          <div class="log-row">
+            <div class="log-time">10:10:30</div>
+            <div class="log-flow">Reengaj.</div>
+            <div class="log-msg">Mensagem personalizada enviada para Ana P. — 7 dias inativa</div>
+            <div class="log-status"><span class="ls ok">✓ ok</span></div>
+          </div>
+          <div class="log-row">
+            <div class="log-time">09:58:14</div>
+            <div class="log-flow">Atend. IA</div>
+            <div class="log-msg">Lead qualificado — Marcos P. transferido para Lucas C.</div>
+            <div class="log-status"><span class="ls ok">✓ ok</span></div>
+          </div>
+          <div class="log-row">
+            <div class="log-time">09:45:00</div>
+            <div class="log-flow">Lembrete</div>
+            <div class="log-msg">Lembrete 1h enviado para Carlos M. — visita às 09h00</div>
+            <div class="log-status"><span class="ls ok">✓ ok</span></div>
+          </div>
+          <div class="log-row">
+            <div class="log-time">09:00:01</div>
+            <div class="log-flow">Recep. Lead</div>
+            <div class="log-msg">Lúcia M. via Meta Ads → Carla F. atribuída (round-robin)</div>
+            <div class="log-status"><span class="ls ok">✓ ok</span></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- QUICK STATS -->
+      <div class="stats-panel">
+        <div class="stats-header">
+          <div class="section-title" style="font-size:0.82rem;"><div class="section-dot" style="background:var(--purple);box-shadow:0 0 6px var(--purple);"></div>Performance Hoje</div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-name">Execuções</div>
+          <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:92%;background:var(--green);box-shadow:0 0 6px rgba(0,255,136,0.3);"></div></div>
+          <div class="stat-val" style="color:var(--green);">247</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-name">Taxa Sucesso</div>
+          <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:96%;background:var(--green);"></div></div>
+          <div class="stat-val" style="color:var(--green);">96%</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-name">Msgs WPP</div>
+          <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:75%;background:var(--gold);"></div></div>
+          <div class="stat-val" style="color:var(--gold);">183</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-name">Leads Notif.</div>
+          <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:60%;background:var(--blue);"></div></div>
+          <div class="stat-val" style="color:var(--blue);">34</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-name">Matches IA</div>
+          <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:40%;background:var(--purple);"></div></div>
+          <div class="stat-val" style="color:var(--purple);">21</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-name">Erros</div>
+          <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:8%;background:var(--red);"></div></div>
+          <div class="stat-val" style="color:var(--red);">9</div>
+        </div>
+      </div>
+
+    </div><!-- /bottom-grid -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// Cursor glow
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => { glow.style.left = e.clientX+'px'; glow.style.top = e.clientY+'px'; });
+
+// Sidebar
+function setActive(el) { document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
+
+// Toggle flow
+function toggleFlow(el) {
+  const card = el.closest('.flow-card');
+  const label = el.previousElementSibling;
+  el.classList.toggle('active');
+  const isOn = el.classList.contains('active');
+  label.textContent = isOn ? 'ON' : 'OFF';
+  label.className = 'toggle-label ' + (isOn ? 'on' : 'off');
+  if(isOn) {
+    card.classList.remove('paused');
+    card.classList.add('running');
+    card.querySelector('.flow-strip').style.animation = '';
+  } else {
+    card.classList.remove('running');
+    card.classList.add('paused');
+    card.querySelector('.flow-strip').style.animation = 'none';
+    card.querySelector('.flow-strip').style.background = 'var(--orange)';
+  }
+}
+
+// Live log simulation
+const logEvents = [
+  { time: '', flow: 'Recep. Lead',  msg: 'Novo lead recebido via Meta Ads → atribuindo corretor...', st: 'run', sc: '● exec' },
+  { time: '', flow: 'Atend. IA',    msg: 'Lead perguntou sobre financiamento — Claude processando resposta', st: 'ok',  sc: '✓ ok' },
+  { time: '', flow: 'Match IA',     msg: '4 imóveis compatíveis encontrados e enviados para lead', st: 'ok',  sc: '✓ ok' },
+  { time: '', flow: 'Lembrete',     msg: 'Confirmação de visita enviada automaticamente para cliente', st: 'ok',  sc: '✓ ok' },
+  { time: '', flow: 'Reengaj.',     msg: 'Mensagem de reengajamento disparada para lead frio', st: 'ok',  sc: '✓ ok' },
+  { time: '', flow: 'NPS Visita',   msg: 'NPS pós-visita enviado — aguardando resposta do cliente', st: 'ok',  sc: '✓ ok' },
+];
+
+let logIdx = 0;
+
+function addLogRow() {
+  const now = new Date();
+  const time = now.toTimeString().slice(0,8);
+  const ev = logEvents[logIdx % logEvents.length];
+  ev.time = time;
+
+  const feed = document.getElementById('logFeed');
+  const row = document.createElement('div');
+  row.className = 'log-row';
+  row.style.opacity = '0';
+  row.style.transform = 'translateX(-8px)';
+  row.style.transition = 'all 0.3s';
+  row.innerHTML = `
+    <div class="log-time">${time}</div>
+    <div class="log-flow">${ev.flow}</div>
+    <div class="log-msg">${ev.msg}</div>
+    <div class="log-status"><span class="ls ${ev.st}">${ev.sc}</span></div>
+  `;
+
+  feed.insertBefore(row, feed.firstChild);
+  setTimeout(() => { row.style.opacity = '1'; row.style.transform = 'translateX(0)'; }, 50);
+
+  // Remove last row if too many
+  const rows = feed.querySelectorAll('.log-row');
+  if(rows.length > 12) rows[rows.length - 1].remove();
+
+  logIdx++;
+}
+
+setInterval(addLogRow, 4000);
+</script>
+</body>
+</html>

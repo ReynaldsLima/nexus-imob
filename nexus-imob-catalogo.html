@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Imob — Catálogo de Imóveis</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0:        #060709;
+  --bg-1:        #0c0e13;
+  --bg-2:        #111520;
+  --bg-3:        #161b28;
+  --bg-4:        #1c2235;
+  --border:      rgba(255,255,255,0.06);
+  --border-gold: rgba(255,215,0,0.22);
+
+  --gold:        #ffd700;
+  --gold-dim:    rgba(255,215,0,0.10);
+  --gold-glow:   rgba(255,215,0,0.40);
+  --gold-soft:   rgba(255,215,0,0.05);
+
+  --green:       #00ff88;
+  --green-dim:   rgba(0,255,136,0.08);
+  --yellow:      #ffcc00;
+  --orange:      #ff7b00;
+  --orange-dim:  rgba(255,123,0,0.08);
+  --red:         #ff4757;
+  --red-dim:     rgba(255,71,87,0.08);
+  --purple:      #a78bfa;
+  --purple-dim:  rgba(167,139,250,0.08);
+  --blue:        #4f9cf9;
+  --blue-dim:    rgba(79,156,249,0.08);
+
+  --text:        #e2e8f4;
+  --muted:       #4a5568;
+
+  --font-main:   'Exo 2', sans-serif;
+  --font-nexus:  'Rajdhani', sans-serif;
+  --font-mono:   'Share Tech Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-0);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+body::before {
+  content:'';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar {
+  width: 220px;
+  min-height: 100vh;
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.sidebar::after {
+  content:'';
+  position: absolute;
+  right: -1px; top: 80px; bottom: 80px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  opacity: 0.3;
+}
+
+.logo-wrap { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); }
+
+.logo {
+  font-family: var(--font-nexus);
+  font-size: 1.7rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px; color: var(--text);
+}
+
+.logo-icon {
+  width: 28px; height: 28px;
+  border: 1.5px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px var(--gold-glow);
+  flex-shrink: 0;
+}
+
+.logo-icon-inner { width: 10px; height: 10px; background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+.logo-sub { font-family: var(--font-nexus); font-size: 0.65rem; color: var(--gold); letter-spacing: 0.3em; text-transform: uppercase; margin-top: 4px; display: block; }
+
+.status-badge {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 20px;
+  font-family: var(--font-mono); font-size: 0.65rem; color: var(--green);
+  letter-spacing: 0.08em; border-bottom: 1px solid var(--border);
+}
+
+.status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 8px var(--green);
+  animation: pulse-g 2s ease infinite;
+}
+
+@keyframes pulse-g { 0%,100%{ box-shadow:0 0 8px var(--green); } 50%{ box-shadow:0 0 18px var(--green); } }
+
+.nav-section { padding: 16px 0 8px; }
+
+.nav-label { font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; padding: 0 20px; margin-bottom: 6px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px;
+  font-family: var(--font-nexus); font-size: 0.9rem; font-weight: 500;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--muted); cursor: pointer; transition: all 0.15s; position: relative;
+}
+
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+.nav-item.active { color: var(--gold); background: var(--gold-dim); }
+.nav-item.active::before { content:''; position: absolute; left:0; top:4px; bottom:4px; width:2px; background:var(--gold); box-shadow:0 0 8px var(--gold-glow); }
+.nav-icon { font-size: 0.9rem; width: 16px; text-align: center; }
+.nav-badge { margin-left: auto; background: var(--gold-dim); color: var(--gold); font-family: var(--font-mono); font-size: 0.62rem; padding: 2px 7px; border: 1px solid var(--border-gold); }
+
+.sidebar-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); }
+.user-card { display: flex; align-items: center; gap: 10px; }
+.user-avatar { width: 32px; height: 32px; border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; font-family: var(--font-nexus); font-size: 0.75rem; font-weight: 700; color: var(--gold); background: var(--gold-dim); }
+.user-name { font-size: 0.8rem; font-weight: 600; font-family: var(--font-nexus); letter-spacing: 0.04em; text-transform: uppercase; }
+.user-role { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em; }
+
+/* ══ MAIN ══ */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.topbar {
+  height: 56px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; background: var(--bg-1); flex-shrink: 0;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.page-title { font-family: var(--font-nexus); font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.breadcrumb { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.topbar-pill { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); background: var(--bg-2); border: 1px solid var(--border); padding: 5px 12px; letter-spacing: 0.08em; }
+.topbar-pill.active-pill { color: var(--gold); border-color: var(--border-gold); background: var(--gold-dim); }
+
+.topbar-btn { display: flex; align-items: center; gap: 7px; padding: 7px 16px; background: var(--gold-dim); border: 1px solid var(--border-gold); color: var(--gold); font-family: var(--font-nexus); font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; }
+.topbar-btn:hover { background: rgba(255,215,0,0.18); box-shadow: 0 0 16px var(--gold-glow); }
+
+/* PAGE NAV */
+.page-nav { display: flex; gap: 2px; border-bottom: 1px solid var(--border); padding: 0 24px; background: var(--bg-1); }
+.page-tab { font-family: var(--font-nexus); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 18px 11px; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+.page-tab:hover { color: var(--text); }
+.page-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ══ CONTENT ══ */
+.content { flex: 1; display: flex; overflow: hidden; }
+
+/* ══ FILTERS SIDEBAR ══ */
+.filters-panel {
+  width: 240px;
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.filters-panel::-webkit-scrollbar { width: 3px; }
+.filters-panel::-webkit-scrollbar-thumb { background: var(--border-gold); }
+
+.filters-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; background: var(--bg-1); z-index: 1;
+}
+
+.filter-title { font-family: var(--font-nexus); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+.filter-title-dot { width: 5px; height: 5px; background: var(--gold); box-shadow: 0 0 6px var(--gold-glow); }
+.filter-clear { font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted); cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.15s; }
+.filter-clear:hover { color: var(--gold); }
+
+.filter-section { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+
+.filter-section-title { font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; }
+
+/* TIPO CHIPS */
+.tipo-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.tipo-chip {
+  font-family: var(--font-nexus); font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 5px 10px; border: 1px solid var(--border);
+  color: var(--muted); cursor: pointer; transition: all 0.15s;
+}
+.tipo-chip:hover { color: var(--text); border-color: var(--border-gold); }
+.tipo-chip.active { color: var(--gold); border-color: var(--gold); background: var(--gold-dim); }
+
+/* RANGE SLIDER */
+.range-wrap { margin-bottom: 4px; }
+.range-labels { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.range-val { font-family: var(--font-nexus); font-size: 0.78rem; font-weight: 600; color: var(--gold); }
+.range-label-text { font-family: var(--font-mono); font-size: 0.56rem; color: var(--muted); letter-spacing: 0.06em; align-self: flex-end; }
+
+input[type="range"] {
+  width: 100%; height: 2px;
+  -webkit-appearance: none;
+  background: var(--bg-3);
+  outline: none; cursor: pointer;
+  border-radius: 1px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  background: var(--gold);
+  border-radius: 0;
+  box-shadow: 0 0 8px var(--gold-glow);
+  transform: rotate(45deg);
+  cursor: pointer;
+}
+
+/* CHECKBOX */
+.check-items { display: flex; flex-direction: column; gap: 7px; }
+.check-item { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+
+.check-box {
+  width: 14px; height: 14px;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.15s;
+}
+
+.check-box.checked { border-color: var(--gold); background: var(--gold-dim); }
+.check-box.checked::after { content: '✓'; font-size: 0.6rem; color: var(--gold); font-weight: 700; }
+
+.check-label { font-family: var(--font-nexus); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.check-item:hover .check-label { color: var(--text); }
+.check-count { margin-left: auto; font-family: var(--font-mono); font-size: 0.56rem; color: var(--muted); }
+
+/* DORMITORY SELECTOR */
+.dorm-selector { display: flex; gap: 4px; }
+.dorm-btn {
+  flex: 1; padding: 7px 0; text-align: center;
+  font-family: var(--font-nexus); font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.04em; color: var(--muted); border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.15s;
+}
+.dorm-btn:hover { color: var(--text); }
+.dorm-btn.active { color: var(--gold); border-color: var(--gold); background: var(--gold-dim); }
+
+/* STATUS FILTER */
+.status-filters { display: flex; flex-direction: column; gap: 6px; }
+.status-filter-item { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 5px 0; }
+.status-dot-f { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.status-filter-label { font-family: var(--font-nexus); font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); flex: 1; }
+.status-filter-item:hover .status-filter-label { color: var(--text); }
+.status-filter-count { font-family: var(--font-mono); font-size: 0.56rem; color: var(--muted); }
+
+/* ══ CATALOG MAIN ══ */
+.catalog-main {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+}
+
+/* SEARCH + CONTROLS BAR */
+.search-bar {
+  padding: 12px 20px; border-bottom: 1px solid var(--border);
+  background: var(--bg-1); display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0;
+}
+
+.search-input-wrap {
+  flex: 1; position: relative;
+}
+
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: var(--muted); }
+
+.search-input {
+  width: 100%; background: var(--bg-2); border: 1px solid var(--border);
+  color: var(--text); font-family: var(--font-main); font-size: 0.85rem;
+  padding: 9px 14px 9px 36px; outline: none; transition: border-color 0.15s;
+}
+.search-input:focus { border-color: var(--border-gold); }
+.search-input::placeholder { color: var(--muted); }
+
+.sort-select {
+  background: var(--bg-2); border: 1px solid var(--border);
+  color: var(--muted); font-family: var(--font-mono); font-size: 0.62rem;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 9px 14px; outline: none; cursor: pointer;
+  -webkit-appearance: none; min-width: 140px;
+}
+.sort-select:focus { border-color: var(--border-gold); }
+
+.view-toggle { display: flex; gap: 2px; }
+.view-btn {
+  width: 34px; height: 34px; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.85rem; color: var(--muted);
+  background: var(--bg-2); transition: all 0.15s;
+}
+.view-btn:hover { color: var(--text); border-color: var(--border-gold); }
+.view-btn.active { color: var(--gold); border-color: var(--gold); background: var(--gold-dim); }
+
+/* RESULTS COUNT */
+.results-info {
+  padding: 8px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg-0); flex-shrink: 0;
+}
+
+.results-count { font-family: var(--font-mono); font-size: 0.62rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.results-count span { color: var(--gold); font-weight: 700; }
+
+.ai-match-toggle {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 0.6rem; color: var(--purple);
+  letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
+  padding: 4px 10px; border: 1px solid rgba(167,139,250,0.2);
+  background: rgba(167,139,250,0.06); transition: all 0.15s;
+}
+.ai-match-toggle:hover { background: rgba(167,139,250,0.12); }
+.ai-toggle-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 6px var(--purple); }
+
+/* GRID */
+.catalog-grid {
+  flex: 1; overflow-y: auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  align-content: start;
+}
+
+.catalog-grid::-webkit-scrollbar { width: 4px; }
+.catalog-grid::-webkit-scrollbar-thumb { background: var(--border-gold); }
+
+/* ══ PROPERTY CARD ══ */
+.prop-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.4s ease both;
+}
+
+.prop-card:hover {
+  border-color: var(--border-gold);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,215,0,0.08);
+}
+
+/* TOP GLOW LINE */
+.prop-card::before {
+  content:''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  opacity: 0; transition: opacity 0.2s;
+}
+
+.prop-card:hover::before { opacity: 1; }
+.prop-card.disponivel::before { background: var(--green); box-shadow: 0 0 10px rgba(0,255,136,0.5); }
+.prop-card.visita::before { background: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+.prop-card.proposta::before { background: var(--orange); box-shadow: 0 0 10px rgba(255,123,0,0.5); }
+.prop-card.vendido::before { background: var(--blue); box-shadow: 0 0 10px rgba(79,156,249,0.5); }
+
+/* IMAGE AREA */
+.prop-image {
+  height: 140px; background: var(--bg-3);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+.prop-emoji { font-size: 3rem; opacity: 0.6; }
+
+/* Gradient overlay */
+.prop-image::after {
+  content:''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(17,21,32,0.8) 100%);
+}
+
+/* STATUS BADGE */
+.prop-status {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  font-family: var(--font-mono); font-size: 0.56rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 8px; border: 1px solid;
+}
+
+.prop-status.disponivel { color: var(--green); border-color: rgba(0,255,136,0.3); background: rgba(6,7,9,0.85); }
+.prop-status.visita     { color: var(--gold); border-color: var(--border-gold); background: rgba(6,7,9,0.85); }
+.prop-status.proposta   { color: var(--orange); border-color: rgba(255,123,0,0.3); background: rgba(6,7,9,0.85); }
+.prop-status.vendido    { color: var(--blue); border-color: rgba(79,156,249,0.3); background: rgba(6,7,9,0.85); }
+
+/* AI MATCH BADGE */
+.ai-badge {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  font-family: var(--font-mono); font-size: 0.54rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 7px; border: 1px solid rgba(167,139,250,0.4);
+  background: rgba(6,7,9,0.9); color: var(--purple);
+  display: flex; align-items: center; gap: 4px;
+}
+
+.ai-badge-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 4px var(--purple); }
+
+/* PRICE on image */
+.prop-price-overlay {
+  position: absolute; bottom: 10px; left: 10px; z-index: 2;
+  font-family: var(--font-nexus); font-size: 1.1rem; font-weight: 700;
+  color: var(--text); text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+  letter-spacing: 0.02em;
+}
+
+.prop-price-overlay small {
+  font-size: 0.62rem; color: rgba(255,255,255,0.5);
+  font-family: var(--font-mono); letter-spacing: 0.06em; margin-left: 2px;
+}
+
+/* CARD BODY */
+.prop-body { padding: 14px; }
+
+.prop-title {
+  font-family: var(--font-nexus); font-size: 0.95rem; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  margin-bottom: 3px; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.prop-location {
+  font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted);
+  letter-spacing: 0.04em; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 4px;
+}
+
+/* SPECS ROW */
+.prop-specs {
+  display: flex; gap: 0;
+  border: 1px solid var(--border);
+  margin-bottom: 10px; overflow: hidden;
+}
+
+.prop-spec {
+  flex: 1; padding: 6px 0; text-align: center;
+  border-right: 1px solid var(--border);
+}
+
+.prop-spec:last-child { border-right: none; }
+
+.spec-val {
+  font-family: var(--font-nexus); font-size: 0.85rem; font-weight: 700;
+  color: var(--text); display: block; line-height: 1;
+}
+
+.spec-key {
+  font-family: var(--font-mono); font-size: 0.5rem; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; display: block;
+}
+
+/* TAGS */
+.prop-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.prop-tag {
+  font-family: var(--font-mono); font-size: 0.52rem;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 2px 6px; border: 1px solid var(--border); color: var(--muted);
+}
+.prop-tag.gold { color: var(--gold); border-color: rgba(255,215,0,0.2); background: var(--gold-soft); }
+
+/* CARD FOOTER */
+.prop-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 10px; border-top: 1px solid var(--border);
+}
+
+.prop-corretor { display: flex; align-items: center; gap: 6px; }
+
+.prop-av {
+  width: 20px; height: 20px;
+  border: 1px solid var(--border-gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-nexus); font-size: 0.52rem; font-weight: 700;
+  color: var(--gold); background: var(--gold-dim); flex-shrink: 0;
+}
+
+.prop-corretor-name { font-family: var(--font-nexus); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+
+.prop-leads-count {
+  font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted);
+  letter-spacing: 0.06em; display: flex; align-items: center; gap: 4px;
+}
+
+.prop-leads-dot { width: 4px; height: 4px; border-radius: 50%; }
+
+/* CARD ACTIONS (on hover) */
+.prop-actions {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; border-top: 1px solid var(--border);
+  background: var(--border);
+  opacity: 0; max-height: 0; overflow: hidden;
+  transition: all 0.2s;
+}
+
+.prop-card:hover .prop-actions { opacity: 1; max-height: 40px; }
+
+.prop-action-btn {
+  padding: 8px; text-align: center;
+  font-family: var(--font-nexus); font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--bg-2); color: var(--muted);
+  cursor: pointer; transition: all 0.15s;
+}
+
+.prop-action-btn:hover { background: var(--bg-3); color: var(--text); }
+.prop-action-btn.primary { color: var(--gold); background: var(--bg-2); }
+.prop-action-btn.primary:hover { background: var(--gold-soft); }
+
+/* DESTAQUE CARD (spans 2 cols) */
+.prop-card.featured-card {
+  grid-column: span 2;
+}
+
+.prop-card.featured-card .prop-image { height: 200px; }
+.prop-card.featured-card .prop-emoji { font-size: 4.5rem; }
+
+.featured-ribbon {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 2;
+  font-family: var(--font-nexus); font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 4px 16px; color: var(--bg-0); background: var(--gold);
+  box-shadow: 0 0 16px var(--gold-glow);
+}
+
+/* MAP PLACEHOLDER */
+.map-view {
+  flex: 1; background: var(--bg-2);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px;
+  display: none;
+}
+
+.map-view.active { display: flex; }
+.catalog-grid.hidden { display: none; }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.prop-card:nth-child(1) { animation-delay: 0.04s; }
+.prop-card:nth-child(2) { animation-delay: 0.08s; }
+.prop-card:nth-child(3) { animation-delay: 0.12s; }
+.prop-card:nth-child(4) { animation-delay: 0.16s; }
+.prop-card:nth-child(5) { animation-delay: 0.20s; }
+.prop-card:nth-child(6) { animation-delay: 0.24s; }
+.prop-card:nth-child(7) { animation-delay: 0.28s; }
+
+.glow-cursor {
+  position: fixed; width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,215,0,0.04) 0%, transparent 70%);
+  pointer-events: none; transform: translate(-50%,-50%);
+  transition: left 0.1s, top 0.1s; z-index: 1;
+}
+</style>
+</head>
+<body>
+
+<div class="glow-cursor" id="glow"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo"><div class="logo-icon"><div class="logo-icon-inner"></div></div>NEXUS</div>
+    <span class="logo-sub">Imob Platform</span>
+  </div>
+  <div class="status-badge"><div class="status-dot"></div>SISTEMA ONLINE</div>
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬡</span> Dashboard</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◈</span> Pipeline CRM<span class="nav-badge">47</span></div>
+    <div class="nav-item active" onclick="setActive(this)"><span class="nav-icon">◻</span> Imóveis</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◎</span> Leads<span class="nav-badge">12</span></div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◷</span> Agenda</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Gestão</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">△</span> Corretores</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬙</span> Automações</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">▦</span> Relatórios</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">RG</div>
+      <div><div class="user-name">Riguetti</div><div class="user-role">ADMIN · NEXUS IMOB</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title">Catálogo de Imóveis</div>
+      <div class="breadcrumb">NEXUS IMOB / IMÓVEIS / 84 CADASTRADOS</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-pill active-pill">🤖 Match IA: ativo</div>
+      <div class="topbar-pill">📸 84 imóveis</div>
+      <button class="topbar-btn">＋ Cadastrar Imóvel</button>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <div class="page-tab active">Todos</div>
+    <div class="page-tab">Venda</div>
+    <div class="page-tab">Aluguel</div>
+    <div class="page-tab">Lançamentos</div>
+    <div class="page-tab">Destaques</div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ FILTERS ══ -->
+    <div class="filters-panel">
+
+      <div class="filters-header">
+        <div class="filter-title"><div class="filter-title-dot"></div>Filtros</div>
+        <div class="filter-clear" onclick="clearFilters()">Limpar</div>
+      </div>
+
+      <!-- TIPO -->
+      <div class="filter-section">
+        <div class="filter-section-title">Tipo de Imóvel</div>
+        <div class="tipo-chips">
+          <div class="tipo-chip active" onclick="toggleChip(this)">Todos</div>
+          <div class="tipo-chip" onclick="toggleChip(this)">Apto</div>
+          <div class="tipo-chip" onclick="toggleChip(this)">Casa</div>
+          <div class="tipo-chip" onclick="toggleChip(this)">Cobertura</div>
+          <div class="tipo-chip" onclick="toggleChip(this)">Comercial</div>
+          <div class="tipo-chip" onclick="toggleChip(this)">Terreno</div>
+        </div>
+      </div>
+
+      <!-- FINALIDADE -->
+      <div class="filter-section">
+        <div class="filter-section-title">Finalidade</div>
+        <div class="tipo-chips">
+          <div class="tipo-chip active" onclick="toggleChip(this)">Todos</div>
+          <div class="tipo-chip" onclick="toggleChip(this)">Venda</div>
+          <div class="tipo-chip" onclick="toggleChip(this)">Aluguel</div>
+        </div>
+      </div>
+
+      <!-- PREÇO -->
+      <div class="filter-section">
+        <div class="filter-section-title">Faixa de Preço</div>
+        <div class="range-wrap">
+          <div class="range-labels">
+            <div class="range-val" id="priceMin">R$ 300k</div>
+            <div class="range-val" id="priceMax">R$ 5M</div>
+          </div>
+          <input type="range" min="300000" max="5000000" value="5000000" step="50000"
+            oninput="updateRange(this,'priceMax','R$',true)">
+        </div>
+      </div>
+
+      <!-- ÁREA -->
+      <div class="filter-section">
+        <div class="filter-section-title">Área (m²)</div>
+        <div class="range-wrap">
+          <div class="range-labels">
+            <div class="range-val" id="areaMin">40m²</div>
+            <div class="range-val" id="areaMax">500m²</div>
+          </div>
+          <input type="range" min="40" max="500" value="500" step="10"
+            oninput="updateRange(this,'areaMax','',false,'m²')">
+        </div>
+      </div>
+
+      <!-- DORMITÓRIOS -->
+      <div class="filter-section">
+        <div class="filter-section-title">Dormitórios</div>
+        <div class="dorm-selector">
+          <div class="dorm-btn active" onclick="setDorm(this)">1+</div>
+          <div class="dorm-btn" onclick="setDorm(this)">2+</div>
+          <div class="dorm-btn" onclick="setDorm(this)">3+</div>
+          <div class="dorm-btn" onclick="setDorm(this)">4+</div>
+        </div>
+      </div>
+
+      <!-- BAIRROS -->
+      <div class="filter-section">
+        <div class="filter-section-title">Bairros</div>
+        <div class="check-items">
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box checked"></div>
+            <div class="check-label">Moema</div>
+            <div class="check-count">14</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box checked"></div>
+            <div class="check-label">Itaim Bibi</div>
+            <div class="check-count">11</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box checked"></div>
+            <div class="check-label">Pinheiros</div>
+            <div class="check-count">09</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"></div>
+            <div class="check-label">Vila Olímpia</div>
+            <div class="check-count">08</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"></div>
+            <div class="check-label">Perdizes</div>
+            <div class="check-count">07</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"></div>
+            <div class="check-label">Paraíso</div>
+            <div class="check-count">05</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATUS -->
+      <div class="filter-section">
+        <div class="filter-section-title">Status</div>
+        <div class="status-filters">
+          <div class="status-filter-item">
+            <div class="status-dot-f" style="background:var(--green);box-shadow:0 0 6px var(--green);"></div>
+            <div class="status-filter-label">Disponível</div>
+            <div class="status-filter-count">52</div>
+          </div>
+          <div class="status-filter-item">
+            <div class="status-dot-f" style="background:var(--gold);"></div>
+            <div class="status-filter-label">Visita Agend.</div>
+            <div class="status-filter-count">14</div>
+          </div>
+          <div class="status-filter-item">
+            <div class="status-dot-f" style="background:var(--orange);"></div>
+            <div class="status-filter-label">Proposta</div>
+            <div class="status-filter-count">08</div>
+          </div>
+          <div class="status-filter-item">
+            <div class="status-dot-f" style="background:var(--blue);"></div>
+            <div class="status-filter-label">Vendido</div>
+            <div class="status-filter-count">10</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIFERENCIAIS -->
+      <div class="filter-section">
+        <div class="filter-section-title">Diferenciais</div>
+        <div class="check-items">
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box checked"></div><div class="check-label">Varanda</div></div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Piscina</div></div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Churrasqueira</div></div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box checked"></div><div class="check-label">Portaria 24h</div></div>
+          <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label">Pet Friendly</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ CATALOG MAIN ══ -->
+    <div class="catalog-main">
+
+      <!-- SEARCH BAR -->
+      <div class="search-bar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" type="text" placeholder="Buscar por endereço, bairro, código ou características...">
+        </div>
+        <select class="sort-select">
+          <option>Mais Recentes</option>
+          <option>Menor Preço</option>
+          <option>Maior Preço</option>
+          <option>Maior Área</option>
+          <option>Match IA</option>
+        </select>
+        <div class="view-toggle">
+          <div class="view-btn active" id="btnGrid" onclick="setView('grid')" title="Grid">▦</div>
+          <div class="view-btn" id="btnList" onclick="setView('list')" title="Lista">≡</div>
+          <div class="view-btn" id="btnMap" onclick="setView('map')" title="Mapa">◎</div>
+        </div>
+      </div>
+
+      <!-- RESULTS INFO -->
+      <div class="results-info">
+        <div class="results-count">Exibindo <span>34</span> de 84 imóveis</div>
+        <div class="ai-match-toggle">
+          <div class="ai-toggle-dot"></div>
+          🤖 Match IA: mostrando compatibilidade com Fernanda R.
+        </div>
+      </div>
+
+      <!-- GRID -->
+      <div class="catalog-grid" id="catalogGrid">
+
+        <!-- CARD DESTAQUE -->
+        <div class="prop-card disponivel featured-card" onclick="openCard(this)">
+          <div class="prop-image">
+            <div class="prop-emoji">🏙</div>
+            <div class="featured-ribbon">⭐ Destaque do Mês</div>
+            <div class="prop-status disponivel">● Disponível</div>
+            <div class="ai-badge"><div class="ai-badge-dot"></div>IA 94% match</div>
+            <div class="prop-price-overlay">R$ 1.100.000</div>
+          </div>
+          <div class="prop-body">
+            <div class="prop-title">Apartamento Moema 120m²</div>
+            <div class="prop-location">📍 R. Abílio Soares, 150 — Moema · SP</div>
+            <div class="prop-specs">
+              <div class="prop-spec"><span class="spec-val">120</span><span class="spec-key">m²</span></div>
+              <div class="prop-spec"><span class="spec-val">3</span><span class="spec-key">Dorm</span></div>
+              <div class="prop-spec"><span class="spec-val">2</span><span class="spec-key">Vagas</span></div>
+              <div class="prop-spec"><span class="spec-val">8º</span><span class="spec-key">Andar</span></div>
+              <div class="prop-spec"><span class="spec-val">2</span><span class="spec-key">Suítes</span></div>
+            </div>
+            <div class="prop-tags">
+              <span class="prop-tag gold">Varanda Gourmet</span>
+              <span class="prop-tag">Piscina</span>
+              <span class="prop-tag">Academia</span>
+              <span class="prop-tag">Churrasqueira</span>
+              <span class="prop-tag">Portaria 24h</span>
+            </div>
+            <div class="prop-footer">
+              <div class="prop-corretor"><div class="prop-av">LC</div><div class="prop-corretor-name">Lucas C.</div></div>
+              <div class="prop-leads-count"><div class="prop-leads-dot" style="background:var(--gold);box-shadow:0 0 4px var(--gold);"></div>4 leads ativos</div>
+            </div>
+          </div>
+          <div class="prop-actions">
+            <div class="prop-action-btn primary">Ver Detalhes</div>
+            <div class="prop-action-btn">Agendar Visita</div>
+          </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="prop-card disponivel" onclick="openCard(this)">
+          <div class="prop-image">
+            <div class="prop-emoji">🏗</div>
+            <div class="prop-status disponivel">● Disponível</div>
+            <div class="ai-badge"><div class="ai-badge-dot"></div>IA 81% match</div>
+            <div class="prop-price-overlay">R$ 4.500.000</div>
+          </div>
+          <div class="prop-body">
+            <div class="prop-title">Cobertura Duplex Itaim</div>
+            <div class="prop-location">📍 Av. Faria Lima, 2500 — Itaim Bibi</div>
+            <div class="prop-specs">
+              <div class="prop-spec"><span class="spec-val">280</span><span class="spec-key">m²</span></div>
+              <div class="prop-spec"><span class="spec-val">4</span><span class="spec-key">Dorm</span></div>
+              <div class="prop-spec"><span class="spec-val">4</span><span class="spec-key">Vagas</span></div>
+              <div class="prop-spec"><span class="spec-val">Top</span><span class="spec-key">Andar</span></div>
+            </div>
+            <div class="prop-tags">
+              <span class="prop-tag gold">Terraço Privativo</span>
+              <span class="prop-tag">Vista 360°</span>
+              <span class="prop-tag">Jacuzzi</span>
+            </div>
+            <div class="prop-footer">
+              <div class="prop-corretor"><div class="prop-av">LC</div><div class="prop-corretor-name">Lucas C.</div></div>
+              <div class="prop-leads-count"><div class="prop-leads-dot" style="background:var(--green);box-shadow:0 0 4px var(--green);"></div>3 leads ativos</div>
+            </div>
+          </div>
+          <div class="prop-actions">
+            <div class="prop-action-btn primary">Ver Detalhes</div>
+            <div class="prop-action-btn">Agendar Visita</div>
+          </div>
+        </div>
+
+        <!-- CARD 3 — VISITA AGENDADA -->
+        <div class="prop-card visita" onclick="openCard(this)">
+          <div class="prop-image">
+            <div class="prop-emoji">🏢</div>
+            <div class="prop-status visita">◷ Visita Agend.</div>
+            <div class="prop-price-overlay">R$ 980.000</div>
+          </div>
+          <div class="prop-body">
+            <div class="prop-title">Apartamento Ibirapuera</div>
+            <div class="prop-location">📍 R. Borges Lagoa, 88 — Ibirapuera</div>
+            <div class="prop-specs">
+              <div class="prop-spec"><span class="spec-val">110</span><span class="spec-key">m²</span></div>
+              <div class="prop-spec"><span class="spec-val">3</span><span class="spec-key">Dorm</span></div>
+              <div class="prop-spec"><span class="spec-val">1</span><span class="spec-key">Vaga</span></div>
+              <div class="prop-spec"><span class="spec-val">5º</span><span class="spec-key">Andar</span></div>
+            </div>
+            <div class="prop-tags">
+              <span class="prop-tag">Varanda</span>
+              <span class="prop-tag">Academia</span>
+              <span class="prop-tag gold">📅 Visita 31/03</span>
+            </div>
+            <div class="prop-footer">
+              <div class="prop-corretor"><div class="prop-av" style="border-color:rgba(167,139,250,0.4);color:#a78bfa;background:rgba(167,139,250,0.08);">AC</div><div class="prop-corretor-name">Ana C.</div></div>
+              <div class="prop-leads-count"><div class="prop-leads-dot" style="background:var(--gold);"></div>2 leads ativos</div>
+            </div>
+          </div>
+          <div class="prop-actions">
+            <div class="prop-action-btn primary">Ver Detalhes</div>
+            <div class="prop-action-btn">Ver Visita</div>
+          </div>
+        </div>
+
+        <!-- CARD 4 — PROPOSTA -->
+        <div class="prop-card proposta" onclick="openCard(this)">
+          <div class="prop-image">
+            <div class="prop-emoji">🏠</div>
+            <div class="prop-status proposta">📄 Proposta</div>
+            <div class="prop-price-overlay">R$ 2.800.000</div>
+          </div>
+          <div class="prop-body">
+            <div class="prop-title">Casa Vila Olímpia</div>
+            <div class="prop-location">📍 R. Tucumã, 44 — Vila Olímpia</div>
+            <div class="prop-specs">
+              <div class="prop-spec"><span class="spec-val">320</span><span class="spec-key">m²</span></div>
+              <div class="prop-spec"><span class="spec-val">4</span><span class="spec-key">Dorm</span></div>
+              <div class="prop-spec"><span class="spec-val">4</span><span class="spec-key">Vagas</span></div>
+              <div class="prop-spec"><span class="spec-val">2</span><span class="spec-key">Pisos</span></div>
+            </div>
+            <div class="prop-tags">
+              <span class="prop-tag gold">Piscina Privativa</span>
+              <span class="prop-tag">Churrasqueira</span>
+            </div>
+            <div class="prop-footer">
+              <div class="prop-corretor"><div class="prop-av">LC</div><div class="prop-corretor-name">Lucas C.</div></div>
+              <div class="prop-leads-count"><div class="prop-leads-dot" style="background:var(--orange);"></div>Proposta Eduardo N.</div>
+            </div>
+          </div>
+          <div class="prop-actions">
+            <div class="prop-action-btn primary">Ver Proposta</div>
+            <div class="prop-action-btn">Detalhes</div>
+          </div>
+        </div>
+
+        <!-- CARD 5 — ALUGUEL -->
+        <div class="prop-card disponivel" onclick="openCard(this)">
+          <div class="prop-image">
+            <div class="prop-emoji">🏘</div>
+            <div class="prop-status disponivel">● Disponível</div>
+            <div class="prop-price-overlay">R$ 4.200 <small>/mês</small></div>
+          </div>
+          <div class="prop-body">
+            <div class="prop-title">Apto Pinheiros · Aluguel</div>
+            <div class="prop-location">📍 R. Cardeal Arcoverde, 201 — Pinheiros</div>
+            <div class="prop-specs">
+              <div class="prop-spec"><span class="spec-val">65</span><span class="spec-key">m²</span></div>
+              <div class="prop-spec"><span class="spec-val">2</span><span class="spec-key">Dorm</span></div>
+              <div class="prop-spec"><span class="spec-val">1</span><span class="spec-key">Vaga</span></div>
+              <div class="prop-spec"><span class="spec-val">3º</span><span class="spec-key">Andar</span></div>
+            </div>
+            <div class="prop-tags">
+              <span class="prop-tag">Pet Friendly</span>
+              <span class="prop-tag">Mobiliado</span>
+              <span class="prop-tag gold">6 leads ativos</span>
+            </div>
+            <div class="prop-footer">
+              <div class="prop-corretor"><div class="prop-av" style="border-color:rgba(167,139,250,0.4);color:#a78bfa;background:rgba(167,139,250,0.08);">AC</div><div class="prop-corretor-name">Ana C.</div></div>
+              <div class="prop-leads-count"><div class="prop-leads-dot" style="background:var(--green);box-shadow:0 0 4px var(--green);"></div>Alta demanda</div>
+            </div>
+          </div>
+          <div class="prop-actions">
+            <div class="prop-action-btn primary">Ver Detalhes</div>
+            <div class="prop-action-btn">Agendar Visita</div>
+          </div>
+        </div>
+
+        <!-- CARD 6 — VENDIDO -->
+        <div class="prop-card vendido" onclick="openCard(this)">
+          <div class="prop-image" style="filter:grayscale(0.6);">
+            <div class="prop-emoji">🏢</div>
+            <div class="prop-status vendido">✓ Vendido</div>
+            <div class="prop-price-overlay" style="color:rgba(255,255,255,0.4);">R$ 650.000</div>
+          </div>
+          <div class="prop-body">
+            <div class="prop-title" style="color:var(--muted);">Apto Paraíso 85m²</div>
+            <div class="prop-location">📍 R. Vergueiro, 1200 — Paraíso</div>
+            <div class="prop-specs">
+              <div class="prop-spec"><span class="spec-val" style="color:var(--muted);">85</span><span class="spec-key">m²</span></div>
+              <div class="prop-spec"><span class="spec-val" style="color:var(--muted);">2</span><span class="spec-key">Dorm</span></div>
+              <div class="prop-spec"><span class="spec-val" style="color:var(--muted);">1</span><span class="spec-key">Vaga</span></div>
+              <div class="prop-spec"><span class="spec-val" style="color:var(--muted);">2º</span><span class="spec-key">Andar</span></div>
+            </div>
+            <div class="prop-tags">
+              <span class="prop-tag">Escriturado 22/03</span>
+            </div>
+            <div class="prop-footer">
+              <div class="prop-corretor"><div class="prop-av" style="border-color:rgba(167,139,250,0.4);color:#a78bfa;background:rgba(167,139,250,0.08);">AC</div><div class="prop-corretor-name">Ana C.</div></div>
+              <div class="prop-leads-count" style="color:var(--blue);">✓ Lúcia Martins</div>
+            </div>
+          </div>
+          <div class="prop-actions">
+            <div class="prop-action-btn">Ver Histórico</div>
+            <div class="prop-action-btn">Recadastrar</div>
+          </div>
+        </div>
+
+        <!-- CARD 7 -->
+        <div class="prop-card disponivel" onclick="openCard(this)">
+          <div class="prop-image">
+            <div class="prop-emoji">🏡</div>
+            <div class="prop-status disponivel">● Disponível</div>
+            <div class="prop-price-overlay">R$ 1.380.000</div>
+          </div>
+          <div class="prop-body">
+            <div class="prop-title">Casa Paraíso 135m²</div>
+            <div class="prop-location">📍 Av. Paulista, 900 — Paraíso</div>
+            <div class="prop-specs">
+              <div class="prop-spec"><span class="spec-val">135</span><span class="spec-key">m²</span></div>
+              <div class="prop-spec"><span class="spec-val">4</span><span class="spec-key">Dorm</span></div>
+              <div class="prop-spec"><span class="spec-val">2</span><span class="spec-key">Vagas</span></div>
+              <div class="prop-spec"><span class="spec-val">—</span><span class="spec-key">Térrea</span></div>
+            </div>
+            <div class="prop-tags">
+              <span class="prop-tag">Quintal</span>
+              <span class="prop-tag gold">IA 72% match</span>
+            </div>
+            <div class="prop-footer">
+              <div class="prop-corretor"><div class="prop-av" style="border-color:rgba(79,156,249,0.4);color:#4f9cf9;background:rgba(79,156,249,0.08);">CF</div><div class="prop-corretor-name">Carla F.</div></div>
+              <div class="prop-leads-count"><div class="prop-leads-dot" style="background:var(--gold);"></div>1 lead ativo</div>
+            </div>
+          </div>
+          <div class="prop-actions">
+            <div class="prop-action-btn primary">Ver Detalhes</div>
+            <div class="prop-action-btn">Agendar Visita</div>
+          </div>
+        </div>
+
+      </div><!-- /catalog-grid -->
+
+      <!-- MAP VIEW -->
+      <div class="map-view" id="mapView">
+        <div style="font-size:3rem;opacity:0.2;">🗺</div>
+        <div style="font-family:var(--font-nexus);font-size:1rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);">Visualização de Mapa</div>
+        <div style="font-family:var(--font-mono);font-size:0.62rem;color:var(--muted);letter-spacing:0.08em;margin-top:8px;">Integração Google Maps · em desenvolvimento</div>
+        <div style="margin-top:20px;padding:10px 20px;border:1px solid var(--border-gold);font-family:var(--font-mono);font-size:0.62rem;color:var(--gold);letter-spacing:0.08em;cursor:pointer;" onclick="setView('grid')">← Voltar para Grid</div>
+      </div>
+
+    </div><!-- /catalog-main -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => { glow.style.left = e.clientX+'px'; glow.style.top = e.clientY+'px'; });
+
+function setActive(el) { document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
+
+// Page tabs
+document.querySelectorAll('.page-tab').forEach(tab=>{
+  tab.addEventListener('click',function(){
+    document.querySelectorAll('.page-tab').forEach(t=>t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Tipo chips (allow multiple selection except in groups)
+function toggleChip(el) {
+  const parent = el.parentElement;
+  if(el.textContent.trim()==='Todos') {
+    parent.querySelectorAll('.tipo-chip').forEach(c=>c.classList.remove('active'));
+    el.classList.add('active');
+  } else {
+    parent.querySelector('.tipo-chip')?.classList.remove('active');
+    el.classList.toggle('active');
+  }
+}
+
+// Dorm selector
+function setDorm(el) {
+  document.querySelectorAll('.dorm-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Checkbox toggle
+function toggleCheck(el) {
+  const box = el.querySelector('.check-box');
+  box.classList.toggle('checked');
+}
+
+// Range update
+function updateRange(input, labelId, prefix, isCurrency, suffix='') {
+  const val = parseInt(input.value);
+  let display = '';
+  if(isCurrency) {
+    if(val >= 1000000) display = `R$ ${(val/1000000).toFixed(1)}M`;
+    else display = `R$ ${(val/1000).toFixed(0)}k`;
+  } else {
+    display = val + suffix;
+  }
+  document.getElementById(labelId).textContent = display;
+}
+
+// Clear filters
+function clearFilters() {
+  document.querySelectorAll('.tipo-chip').forEach(c=>{ c.classList.remove('active'); if(c.textContent.trim()==='Todos') c.classList.add('active'); });
+  document.querySelectorAll('.check-box').forEach(b=>b.classList.remove('checked'));
+  document.querySelectorAll('.dorm-btn').forEach((b,i)=>{ b.classList.remove('active'); if(i===0) b.classList.add('active'); });
+}
+
+// View toggle
+function setView(view) {
+  document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+  const grid = document.getElementById('catalogGrid');
+  const map  = document.getElementById('mapView');
+  if(view==='grid') {
+    document.getElementById('btnGrid').classList.add('active');
+    grid.classList.remove('hidden'); map.classList.remove('active');
+  } else if(view==='list') {
+    document.getElementById('btnList').classList.add('active');
+    grid.classList.remove('hidden'); map.classList.remove('active');
+    grid.style.gridTemplateColumns='1fr';
+  } else {
+    document.getElementById('btnMap').classList.add('active');
+    grid.classList.add('hidden'); map.classList.add('active');
+  }
+  if(view==='grid') grid.style.gridTemplateColumns='repeat(3,1fr)';
+}
+
+// Card click feedback
+function openCard(el) {
+  document.querySelectorAll('.prop-card').forEach(c=>c.style.boxShadow='');
+  el.style.boxShadow='0 0 0 1px var(--gold), 0 8px 32px rgba(255,215,0,0.1)';
+}
+</script>
+</body>
+</html>

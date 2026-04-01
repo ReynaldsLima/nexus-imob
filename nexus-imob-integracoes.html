@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Imob — Integrações</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0:        #060709;
+  --bg-1:        #0c0e13;
+  --bg-2:        #111520;
+  --bg-3:        #161b28;
+  --bg-4:        #1c2235;
+  --border:      rgba(255,255,255,0.06);
+  --border-gold: rgba(255,215,0,0.22);
+
+  --gold:        #ffd700;
+  --gold-dim:    rgba(255,215,0,0.10);
+  --gold-glow:   rgba(255,215,0,0.40);
+  --gold-soft:   rgba(255,215,0,0.05);
+
+  --green:       #00ff88;
+  --green-dim:   rgba(0,255,136,0.08);
+  --red:         #ff4757;
+  --red-dim:     rgba(255,71,87,0.08);
+  --orange:      #ff7b00;
+  --orange-dim:  rgba(255,123,0,0.08);
+  --purple:      #a78bfa;
+  --purple-dim:  rgba(167,139,250,0.08);
+  --blue:        #4f9cf9;
+  --blue-dim:    rgba(79,156,249,0.08);
+  --muted:       #4a5568;
+  --text:        #e2e8f4;
+
+  --font-main:   'Exo 2', sans-serif;
+  --font-nexus:  'Rajdhani', sans-serif;
+  --font-mono:   'Share Tech Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-0);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+body::before {
+  content:''; position:fixed; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);
+  pointer-events:none; z-index:9999;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar { width:220px; min-height:100vh; background:var(--bg-1); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; position:relative; }
+.sidebar::after { content:''; position:absolute; right:-1px; top:80px; bottom:80px; width:1px; background:linear-gradient(180deg,transparent,var(--gold),transparent); opacity:0.3; }
+.logo-wrap { padding:24px 20px 20px; border-bottom:1px solid var(--border); }
+.logo { font-family:var(--font-nexus); font-size:1.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; display:flex; align-items:center; gap:8px; color:var(--text); }
+.logo-icon { width:28px; height:28px; border:1.5px solid var(--gold); display:flex; align-items:center; justify-content:center; transform:rotate(45deg); box-shadow:0 0 12px var(--gold-glow); flex-shrink:0; }
+.logo-icon-inner { width:10px; height:10px; background:var(--gold); box-shadow:0 0 8px var(--gold); }
+.logo-sub { font-family:var(--font-nexus); font-size:0.65rem; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:4px; display:block; }
+.status-badge { display:flex; align-items:center; gap:6px; padding:8px 20px; font-family:var(--font-mono); font-size:0.65rem; color:var(--green); letter-spacing:0.08em; border-bottom:1px solid var(--border); }
+.status-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:pulse-g 2s ease infinite; }
+@keyframes pulse-g { 0%,100%{box-shadow:0 0 8px var(--green);} 50%{box-shadow:0 0 18px var(--green);} }
+.nav-section { padding:16px 0 8px; }
+.nav-label { font-family:var(--font-mono); font-size:0.58rem; color:var(--muted); letter-spacing:0.18em; text-transform:uppercase; padding:0 20px; margin-bottom:6px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:9px 20px; font-family:var(--font-nexus); font-size:0.9rem; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; color:var(--muted); cursor:pointer; transition:all 0.15s; position:relative; }
+.nav-item:hover { color:var(--text); background:rgba(255,255,255,0.02); }
+.nav-item.active { color:var(--gold); background:var(--gold-dim); }
+.nav-item.active::before { content:''; position:absolute; left:0; top:4px; bottom:4px; width:2px; background:var(--gold); box-shadow:0 0 8px var(--gold-glow); }
+.nav-icon { font-size:0.9rem; width:16px; text-align:center; }
+.nav-badge { margin-left:auto; background:var(--gold-dim); color:var(--gold); font-family:var(--font-mono); font-size:0.62rem; padding:2px 7px; border:1px solid var(--border-gold); }
+.sidebar-footer { margin-top:auto; padding:16px 20px; border-top:1px solid var(--border); }
+.user-card { display:flex; align-items:center; gap:10px; }
+.user-avatar { width:32px; height:32px; border:1px solid var(--gold); display:flex; align-items:center; justify-content:center; font-family:var(--font-nexus); font-size:0.75rem; font-weight:700; color:var(--gold); background:var(--gold-dim); }
+.user-name { font-size:0.8rem; font-weight:600; font-family:var(--font-nexus); letter-spacing:0.04em; text-transform:uppercase; }
+.user-role { font-family:var(--font-mono); font-size:0.6rem; color:var(--muted); letter-spacing:0.06em; }
+
+/* ══ MAIN ══ */
+.main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+.topbar { height:56px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 24px; background:var(--bg-1); flex-shrink:0; }
+.topbar-left { display:flex; align-items:center; gap:16px; }
+.page-title { font-family:var(--font-nexus); font-size:1rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
+.breadcrumb { font-family:var(--font-mono); font-size:0.6rem; color:var(--muted); letter-spacing:0.06em; }
+.topbar-right { display:flex; align-items:center; gap:10px; }
+.topbar-pill { font-family:var(--font-mono); font-size:0.6rem; color:var(--muted); background:var(--bg-2); border:1px solid var(--border); padding:5px 12px; letter-spacing:0.08em; }
+.topbar-pill.ok { color:var(--green); border-color:rgba(0,255,136,0.2); background:var(--green-dim); }
+.topbar-btn { display:flex; align-items:center; gap:7px; padding:7px 16px; background:var(--gold-dim); border:1px solid var(--border-gold); color:var(--gold); font-family:var(--font-nexus); font-size:0.82rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; }
+.topbar-btn:hover { background:rgba(255,215,0,0.18); box-shadow:0 0 16px var(--gold-glow); }
+
+.page-nav { display:flex; gap:2px; border-bottom:1px solid var(--border); padding:0 24px; background:var(--bg-1); }
+.page-tab { font-family:var(--font-nexus); font-size:0.78rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); padding:10px 18px 11px; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.15s; }
+.page-tab:hover { color:var(--text); }
+.page-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+/* ══ CONTENT ══ */
+.content { flex:1; display:flex; overflow:hidden; }
+
+/* ══ LEFT — PORTAIS ══ */
+.portais-list {
+  flex:1; display:flex; flex-direction:column; overflow:hidden;
+  border-right:1px solid var(--border);
+}
+
+/* KPI STRIP */
+.kpi-strip {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-bottom:1px solid var(--border); flex-shrink:0;
+}
+
+.kpi-item { padding:14px 20px; border-right:1px solid var(--border); }
+.kpi-item:last-child { border-right:none; }
+.kpi-val { font-family:var(--font-nexus); font-size:1.5rem; font-weight:700; color:var(--gold); text-shadow:0 0 12px var(--gold-glow); line-height:1; margin-bottom:3px; }
+.kpi-val.green { color:var(--green); text-shadow:none; }
+.kpi-val.muted { color:var(--muted); }
+.kpi-lbl { font-family:var(--font-mono); font-size:0.56rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
+
+/* PORTAIS SCROLL */
+.portais-scroll { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:12px; }
+.portais-scroll::-webkit-scrollbar { width:3px; }
+.portais-scroll::-webkit-scrollbar-thumb { background:var(--border-gold); }
+
+/* ══ PORTAL CARD ══ */
+.portal-card {
+  background:var(--bg-2); border:1px solid var(--border);
+  transition:border-color 0.2s; cursor:pointer;
+  animation:fadeUp 0.4s ease both;
+}
+
+.portal-card:hover { border-color:var(--border-gold); }
+.portal-card.selected { border-color:var(--gold); background:var(--gold-soft); }
+.portal-card.connected { border-left:3px solid var(--green); }
+.portal-card.warning   { border-left:3px solid var(--orange); }
+.portal-card.error     { border-left:3px solid var(--red); }
+.portal-card.inactive  { border-left:3px solid var(--muted); opacity:0.7; }
+
+.portal-card:nth-child(1){animation-delay:0.04s;}
+.portal-card:nth-child(2){animation-delay:0.08s;}
+.portal-card:nth-child(3){animation-delay:0.12s;}
+.portal-card:nth-child(4){animation-delay:0.16s;}
+.portal-card:nth-child(5){animation-delay:0.20s;}
+
+/* CARD MAIN ROW */
+.portal-main { display:flex; align-items:center; gap:14px; padding:16px 18px; }
+
+.portal-logo-box {
+  width:44px; height:44px; flex-shrink:0;
+  background:var(--bg-3); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.4rem; position:relative;
+}
+
+.portal-status-dot {
+  position:absolute; bottom:-3px; right:-3px;
+  width:10px; height:10px; border-radius:50%;
+  border:2px solid var(--bg-2);
+}
+
+.portal-info { flex:1; min-width:0; }
+.portal-name { font-family:var(--font-nexus); font-size:1rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:2px; }
+.portal-url  { font-family:var(--font-mono); font-size:0.56rem; color:var(--muted); letter-spacing:0.04em; margin-bottom:6px; }
+
+.portal-tags { display:flex; gap:5px; flex-wrap:wrap; }
+.portal-tag {
+  font-family:var(--font-mono); font-size:0.52rem;
+  letter-spacing:0.06em; text-transform:uppercase;
+  padding:2px 6px; border:1px solid var(--border); color:var(--muted);
+}
+.portal-tag.api    { color:var(--blue); border-color:rgba(79,156,249,0.2); background:var(--blue-dim); }
+.portal-tag.wh     { color:var(--purple); border-color:rgba(167,139,250,0.2); background:var(--purple-dim); }
+.portal-tag.xml    { color:var(--gold); border-color:var(--border-gold); background:var(--gold-dim); }
+.portal-tag.leads  { color:var(--green); border-color:rgba(0,255,136,0.2); background:var(--green-dim); }
+
+.portal-right { display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0; }
+
+.portal-status-badge {
+  font-family:var(--font-mono); font-size:0.58rem;
+  letter-spacing:0.08em; text-transform:uppercase;
+  padding:3px 9px; border:1px solid;
+  display:flex; align-items:center; gap:5px;
+}
+.psb-connected { color:var(--green); border-color:rgba(0,255,136,0.3); background:var(--green-dim); }
+.psb-warning   { color:var(--orange); border-color:rgba(255,123,0,0.3); background:var(--orange-dim); }
+.psb-error     { color:var(--red); border-color:rgba(255,71,87,0.3); background:var(--red-dim); }
+.psb-inactive  { color:var(--muted); border-color:var(--border); }
+
+.psb-dot { width:4px; height:4px; border-radius:50%; }
+
+/* PORTAL METRICS ROW */
+.portal-metrics {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--border);
+}
+
+.portal-metric { padding:8px 16px; border-right:1px solid var(--border); text-align:center; }
+.portal-metric:last-child { border-right:none; }
+.pm-val { font-family:var(--font-nexus); font-size:0.9rem; font-weight:700; color:var(--text); line-height:1; margin-bottom:2px; }
+.pm-val.gold { color:var(--gold); }
+.pm-val.green { color:var(--green); }
+.pm-lbl { font-family:var(--font-mono); font-size:0.5rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
+
+/* ══ RIGHT — DETALHE DO PORTAL ══ */
+.portal-detail {
+  width:320px; flex-shrink:0;
+  background:var(--bg-1); display:flex; flex-direction:column; overflow:hidden;
+}
+
+.detail-header {
+  padding:14px 16px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+.panel-title { font-family:var(--font-nexus); font-size:0.85rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+.title-dot { width:5px; height:5px; background:var(--gold); box-shadow:0 0 6px var(--gold-glow); }
+
+.detail-scroll { flex:1; overflow-y:auto; }
+.detail-scroll::-webkit-scrollbar { width:3px; }
+.detail-scroll::-webkit-scrollbar-thumb { background:var(--border-gold); }
+
+/* PORTAL HERO */
+.portal-hero {
+  padding:20px 16px; border-bottom:1px solid var(--border);
+  text-align:center;
+  background:linear-gradient(180deg,rgba(0,255,136,0.03) 0%,transparent 100%);
+}
+
+.hero-portal-icon { font-size:3rem; margin-bottom:10px; display:block; }
+.hero-portal-name { font-family:var(--font-nexus); font-size:1.2rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:4px; }
+.hero-portal-url  { font-family:var(--font-mono); font-size:0.58rem; color:var(--muted); letter-spacing:0.06em; margin-bottom:10px; }
+
+/* CONNECTION STATUS */
+.conn-status {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:8px 16px; background:var(--green-dim); border:1px solid rgba(0,255,136,0.2);
+  margin:0 16px 16px;
+}
+.conn-status-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:pulse-g 1.5s infinite; }
+.conn-status-text { font-family:var(--font-mono); font-size:0.6rem; color:var(--green); letter-spacing:0.08em; text-transform:uppercase; }
+
+/* DETAIL SECTION */
+.d-section { padding:12px 16px; border-bottom:1px solid var(--border); }
+.d-section-title { font-family:var(--font-mono); font-size:0.56rem; color:var(--muted); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:10px; }
+
+/* API KEY FIELD */
+.api-field { margin-bottom:10px; }
+.api-label { font-family:var(--font-mono); font-size:0.54rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:5px; display:block; }
+.api-input-wrap { display:flex; gap:4px; }
+.api-input {
+  flex:1; background:var(--bg-2); border:1px solid var(--border);
+  color:var(--text); font-family:var(--font-mono); font-size:0.68rem;
+  padding:8px 10px; outline:none; letter-spacing:0.04em;
+  transition:border-color 0.15s;
+}
+.api-input:focus { border-color:var(--border-gold); }
+.api-copy-btn {
+  padding:8px 10px; background:var(--bg-3); border:1px solid var(--border);
+  color:var(--muted); font-size:0.75rem; cursor:pointer; transition:all 0.15s; flex-shrink:0;
+}
+.api-copy-btn:hover { color:var(--gold); border-color:var(--border-gold); }
+
+/* WEBHOOK URL */
+.webhook-box {
+  background:var(--bg-3); border:1px solid var(--border); padding:10px 12px;
+  margin-bottom:8px;
+}
+.webhook-label { font-family:var(--font-mono); font-size:0.54rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:5px; }
+.webhook-url   { font-family:var(--font-mono); font-size:0.62rem; color:var(--gold); letter-spacing:0.02em; word-break:break-all; line-height:1.5; }
+
+/* SYNC CONFIG */
+.sync-row { display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.03); }
+.sync-row:last-child { border-bottom:none; }
+.sync-label { font-family:var(--font-nexus); font-size:0.8rem; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; color:var(--muted); }
+.sync-val { font-family:var(--font-mono); font-size:0.62rem; color:var(--text); letter-spacing:0.04em; }
+.sync-val.green { color:var(--green); }
+.sync-val.gold  { color:var(--gold); }
+
+/* TOGGLE MINI */
+.toggle-mini {
+  width:32px; height:16px; background:var(--bg-3); border:1px solid var(--border);
+  border-radius:8px; position:relative; cursor:pointer; transition:all 0.2s; flex-shrink:0;
+}
+.toggle-mini.on { background:rgba(0,255,136,0.15); border-color:rgba(0,255,136,0.4); }
+.toggle-mini-knob { position:absolute; top:2px; left:2px; width:10px; height:10px; background:var(--muted); border-radius:50%; transition:all 0.2s; }
+.toggle-mini.on .toggle-mini-knob { left:18px; background:var(--green); box-shadow:0 0 5px var(--green); }
+
+/* STATS MINI */
+.stats-mini { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.stat-mini-card { background:var(--bg-2); border:1px solid var(--border); padding:8px 10px; text-align:center; }
+.smc-val { font-family:var(--font-nexus); font-size:1.1rem; font-weight:700; line-height:1; margin-bottom:2px; }
+.smc-lbl { font-family:var(--font-mono); font-size:0.5rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
+
+/* LOG MINI */
+.log-mini-row {
+  display:flex; align-items:center; gap:8px; padding:7px 0;
+  border-bottom:1px solid rgba(255,255,255,0.03); font-family:var(--font-mono);
+}
+.log-mini-row:last-child { border-bottom:none; }
+.lmr-time { font-size:0.54rem; color:var(--muted); letter-spacing:0.04em; flex-shrink:0; width:52px; }
+.lmr-dot  { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+.lmr-text { font-size:0.6rem; color:var(--text); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lmr-badge { font-size:0.52px; }
+
+/* ACTION BUTTONS */
+.det-actions { padding:12px 16px; display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.det-btn { font-family:var(--font-nexus); font-size:0.75rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:9px; text-align:center; cursor:pointer; transition:all 0.15s; border:1px solid var(--border); color:var(--muted); background:var(--bg-2); }
+.det-btn:hover { color:var(--text); border-color:var(--border-gold); }
+.det-btn.primary { color:var(--gold); border-color:var(--border-gold); background:var(--gold-dim); }
+.det-btn.primary:hover { background:rgba(255,215,0,0.18); box-shadow:0 0 12px var(--gold-glow); }
+.det-btn.danger { color:var(--red); border-color:rgba(255,71,87,0.2); }
+.det-btn.danger:hover { background:var(--red-dim); }
+.det-btn.full { grid-column:1/-1; }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+.glow-cursor { position:fixed; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,rgba(255,215,0,0.04) 0%,transparent 70%); pointer-events:none; transform:translate(-50%,-50%); transition:left 0.1s,top 0.1s; z-index:1; }
+</style>
+</head>
+<body>
+<div class="glow-cursor" id="glow"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo"><div class="logo-icon"><div class="logo-icon-inner"></div></div>NEXUS</div>
+    <span class="logo-sub">Imob Platform</span>
+  </div>
+  <div class="status-badge"><div class="status-dot"></div>SISTEMA ONLINE</div>
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬡</span> Dashboard</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◈</span> Pipeline CRM<span class="nav-badge">47</span></div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◻</span> Imóveis</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◎</span> Leads<span class="nav-badge">12</span></div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◷</span> Agenda</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Gestão</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">△</span> Corretores</div>
+    <div class="nav-item active" onclick="setActive(this)"><span class="nav-icon">⬡</span> Integrações</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬙</span> Automações</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">▦</span> Relatórios</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">RG</div>
+      <div><div class="user-name">Riguetti</div><div class="user-role">ADMIN · NEXUS IMOB</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title">Integrações</div>
+      <div class="breadcrumb">NEXUS IMOB / INTEGRAÇÕES / PORTAIS IMOBILIÁRIOS</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-pill ok">● 3 portais conectados</div>
+      <div class="topbar-pill">147 leads este mês</div>
+      <button class="topbar-btn">＋ Nova Integração</button>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <div class="page-tab active">Portais Imobiliários</div>
+    <div class="page-tab">Marketing & Ads</div>
+    <div class="page-tab">Comunicação</div>
+    <div class="page-tab">Financeiro</div>
+    <div class="page-tab">Outros</div>
+  </div>
+
+  <div class="content">
+
+    <!-- PORTAIS LIST -->
+    <div class="portais-list">
+
+      <div class="kpi-strip">
+        <div class="kpi-item">
+          <div class="kpi-val">147</div>
+          <div class="kpi-lbl">Leads este mês</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-val green">3</div>
+          <div class="kpi-lbl">Portais ativos</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-val">84</div>
+          <div class="kpi-lbl">Imóveis publicados</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-val muted">2</div>
+          <div class="kpi-lbl">Aguardando config.</div>
+        </div>
+      </div>
+
+      <div class="portais-scroll">
+
+        <!-- ZAP IMÓVEIS — CONECTADO -->
+        <div class="portal-card connected selected" onclick="selectPortal(this,'zap')">
+          <div class="portal-main">
+            <div class="portal-logo-box">
+              🏠
+              <div class="portal-status-dot" style="background:var(--green);box-shadow:0 0 6px var(--green);"></div>
+            </div>
+            <div class="portal-info">
+              <div class="portal-name">ZAP Imóveis</div>
+              <div class="portal-url">zapimoveis.com.br · Grupo OLX</div>
+              <div class="portal-tags">
+                <span class="portal-tag api">API REST</span>
+                <span class="portal-tag wh">Webhook</span>
+                <span class="portal-tag xml">XML Feed</span>
+                <span class="portal-tag leads">#1 em leads</span>
+              </div>
+            </div>
+            <div class="portal-right">
+              <div class="portal-status-badge psb-connected">
+                <div class="psb-dot" style="background:var(--green);box-shadow:0 0 4px var(--green);border-radius:50%;"></div>
+                Conectado
+              </div>
+              <div style="font-family:var(--font-mono);font-size:0.54rem;color:var(--muted);letter-spacing:0.06em;">sync: há 12 min</div>
+            </div>
+          </div>
+          <div class="portal-metrics">
+            <div class="portal-metric"><div class="pm-val gold">62</div><div class="pm-lbl">Leads/mês</div></div>
+            <div class="portal-metric"><div class="pm-val">42%</div><div class="pm-lbl">Share leads</div></div>
+            <div class="portal-metric"><div class="pm-val green">38</div><div class="pm-lbl">Imóveis pub.</div></div>
+            <div class="portal-metric"><div class="pm-val">99%</div><div class="pm-lbl">Uptime webhook</div></div>
+          </div>
+        </div>
+
+        <!-- VIVAREAL — CONECTADO -->
+        <div class="portal-card connected" onclick="selectPortal(this,'vivareal')">
+          <div class="portal-main">
+            <div class="portal-logo-box">
+              🔍
+              <div class="portal-status-dot" style="background:var(--green);box-shadow:0 0 6px var(--green);"></div>
+            </div>
+            <div class="portal-info">
+              <div class="portal-name">VivaReal</div>
+              <div class="portal-url">vivareal.com.br · Grupo OLX</div>
+              <div class="portal-tags">
+                <span class="portal-tag api">API REST</span>
+                <span class="portal-tag wh">Webhook</span>
+                <span class="portal-tag xml">XML Feed</span>
+              </div>
+            </div>
+            <div class="portal-right">
+              <div class="portal-status-badge psb-connected">
+                <div class="psb-dot" style="background:var(--green);border-radius:50%;"></div>
+                Conectado
+              </div>
+              <div style="font-family:var(--font-mono);font-size:0.54rem;color:var(--muted);letter-spacing:0.06em;">sync: há 28 min</div>
+            </div>
+          </div>
+          <div class="portal-metrics">
+            <div class="portal-metric"><div class="pm-val gold">13</div><div class="pm-lbl">Leads/mês</div></div>
+            <div class="portal-metric"><div class="pm-val">9%</div><div class="pm-lbl">Share leads</div></div>
+            <div class="portal-metric"><div class="pm-val green">38</div><div class="pm-lbl">Imóveis pub.</div></div>
+            <div class="portal-metric"><div class="pm-val">100%</div><div class="pm-lbl">Uptime webhook</div></div>
+          </div>
+        </div>
+
+        <!-- OLX — ALERTA -->
+        <div class="portal-card warning" onclick="selectPortal(this,'olx')">
+          <div class="portal-main">
+            <div class="portal-logo-box">
+              🛒
+              <div class="portal-status-dot" style="background:var(--orange);"></div>
+            </div>
+            <div class="portal-info">
+              <div class="portal-name">OLX Imóveis</div>
+              <div class="portal-url">olx.com.br/imoveis · Grupo OLX</div>
+              <div class="portal-tags">
+                <span class="portal-tag wh">Webhook</span>
+                <span class="portal-tag xml">XML Feed</span>
+              </div>
+            </div>
+            <div class="portal-right">
+              <div class="portal-status-badge psb-warning">
+                <div class="psb-dot" style="background:var(--orange);border-radius:50%;"></div>
+                Instável
+              </div>
+              <div style="font-family:var(--font-mono);font-size:0.54rem;color:var(--orange);letter-spacing:0.06em;">⚠ 3 erros hoje</div>
+            </div>
+          </div>
+          <div class="portal-metrics">
+            <div class="portal-metric"><div class="pm-val gold">6</div><div class="pm-lbl">Leads/mês</div></div>
+            <div class="portal-metric"><div class="pm-val">4%</div><div class="pm-lbl">Share leads</div></div>
+            <div class="portal-metric"><div class="pm-val" style="color:var(--orange);">8</div><div class="pm-lbl">Imóveis pub.</div></div>
+            <div class="portal-metric"><div class="pm-val" style="color:var(--orange);">87%</div><div class="pm-lbl">Uptime webhook</div></div>
+          </div>
+        </div>
+
+        <!-- IMOVELWEB — INATIVO -->
+        <div class="portal-card inactive" onclick="selectPortal(this,'imovelweb')">
+          <div class="portal-main">
+            <div class="portal-logo-box" style="opacity:0.5;">
+              🏗
+              <div class="portal-status-dot" style="background:var(--muted);"></div>
+            </div>
+            <div class="portal-info">
+              <div class="portal-name" style="color:var(--muted);">Imovelweb</div>
+              <div class="portal-url">imovelweb.com.br · Navent Group</div>
+              <div class="portal-tags">
+                <span class="portal-tag api">API REST</span>
+                <span class="portal-tag xml">XML Feed</span>
+              </div>
+            </div>
+            <div class="portal-right">
+              <div class="portal-status-badge psb-inactive">Não configurado</div>
+              <div style="font-family:var(--font-mono);font-size:0.54rem;color:var(--muted);letter-spacing:0.06em;">aguardando API key</div>
+            </div>
+          </div>
+          <div class="portal-metrics">
+            <div class="portal-metric"><div class="pm-val muted">—</div><div class="pm-lbl">Leads/mês</div></div>
+            <div class="portal-metric"><div class="pm-val muted">—</div><div class="pm-lbl">Share leads</div></div>
+            <div class="portal-metric"><div class="pm-val muted">0</div><div class="pm-lbl">Imóveis pub.</div></div>
+            <div class="portal-metric"><div class="pm-val muted">—</div><div class="pm-lbl">Uptime</div></div>
+          </div>
+        </div>
+
+        <!-- CHAVES NA MÃO — INATIVO -->
+        <div class="portal-card inactive" onclick="selectPortal(this,'chavesnamao')">
+          <div class="portal-main">
+            <div class="portal-logo-box" style="opacity:0.5;">
+              🔑
+              <div class="portal-status-dot" style="background:var(--muted);"></div>
+            </div>
+            <div class="portal-info">
+              <div class="portal-name" style="color:var(--muted);">Chaves na Mão</div>
+              <div class="portal-url">chavesnamao.com.br</div>
+              <div class="portal-tags">
+                <span class="portal-tag wh">Webhook</span>
+                <span class="portal-tag xml">XML Feed</span>
+              </div>
+            </div>
+            <div class="portal-right">
+              <div class="portal-status-badge psb-inactive">Não configurado</div>
+              <div style="font-family:var(--font-mono);font-size:0.54rem;color:var(--muted);letter-spacing:0.06em;">aguardando config.</div>
+            </div>
+          </div>
+          <div class="portal-metrics">
+            <div class="portal-metric"><div class="pm-val muted">—</div><div class="pm-lbl">Leads/mês</div></div>
+            <div class="portal-metric"><div class="pm-val muted">—</div><div class="pm-lbl">Share leads</div></div>
+            <div class="portal-metric"><div class="pm-val muted">0</div><div class="pm-lbl">Imóveis pub.</div></div>
+            <div class="portal-metric"><div class="pm-val muted">—</div><div class="pm-lbl">Uptime</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DETALHE DO PORTAL -->
+    <div class="portal-detail">
+      <div class="detail-header">
+        <div class="panel-title"><div class="title-dot"></div>Configuração</div>
+        <div style="font-family:var(--font-mono);font-size:0.58rem;color:var(--green);letter-spacing:0.08em;">● conectado</div>
+      </div>
+
+      <div class="detail-scroll">
+
+        <!-- HERO -->
+        <div class="portal-hero">
+          <span class="hero-portal-icon">🏠</span>
+          <div class="hero-portal-name">ZAP Imóveis</div>
+          <div class="hero-portal-url">zapimoveis.com.br</div>
+        </div>
+
+        <div class="conn-status">
+          <div class="conn-status-dot"></div>
+          <div class="conn-status-text">Webhook ativo · recebendo leads</div>
+        </div>
+
+        <!-- API CONFIG -->
+        <div class="d-section">
+          <div class="d-section-title">Credenciais da API</div>
+          <div class="api-field">
+            <label class="api-label">API Key</label>
+            <div class="api-input-wrap">
+              <input class="api-input" type="password" value="zap_live_k9x2m...4f8a" readonly>
+              <div class="api-copy-btn" title="Copiar">⎘</div>
+            </div>
+          </div>
+          <div class="api-field">
+            <label class="api-label">Client ID</label>
+            <div class="api-input-wrap">
+              <input class="api-input" type="text" value="NXS-IMOB-001" readonly>
+              <div class="api-copy-btn">⎘</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WEBHOOK -->
+        <div class="d-section">
+          <div class="d-section-title">URL do Webhook (copie no painel ZAP)</div>
+          <div class="webhook-box">
+            <div class="webhook-label">Endpoint N8N</div>
+            <div class="webhook-url">https://n8n.nexusimob.com.br/webhook/zap-leads/tenant-001</div>
+          </div>
+          <div class="webhook-box">
+            <div class="webhook-label">Eventos configurados</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">
+              <span class="portal-tag leads">novo_lead</span>
+              <span class="portal-tag leads">lead_atualizado</span>
+              <span class="portal-tag api">imovel_visualizado</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SYNC CONFIG -->
+        <div class="d-section">
+          <div class="d-section-title">Configurações de Sync</div>
+          <div class="sync-row">
+            <div class="sync-label">Publicar imóveis auto</div>
+            <div class="toggle-mini on" onclick="this.classList.toggle('on')"><div class="toggle-mini-knob"></div></div>
+          </div>
+          <div class="sync-row">
+            <div class="sync-label">Sync automático</div>
+            <div class="sync-val gold">a cada 6h</div>
+          </div>
+          <div class="sync-row">
+            <div class="sync-label">Último sync</div>
+            <div class="sync-val green">há 12 min</div>
+          </div>
+          <div class="sync-row">
+            <div class="sync-label">Imóveis publicados</div>
+            <div class="sync-val">38 / 84</div>
+          </div>
+          <div class="sync-row">
+            <div class="sync-label">Formato de exportação</div>
+            <div class="sync-val">XML + API</div>
+          </div>
+          <div class="sync-row">
+            <div class="sync-label">Lead p/ N8N auto</div>
+            <div class="toggle-mini on" onclick="this.classList.toggle('on')"><div class="toggle-mini-knob"></div></div>
+          </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="d-section">
+          <div class="d-section-title">Performance — Março 2026</div>
+          <div class="stats-mini">
+            <div class="stat-mini-card">
+              <div class="smc-val" style="color:var(--gold);">62</div>
+              <div class="smc-lbl">Leads recebidos</div>
+            </div>
+            <div class="stat-mini-card">
+              <div class="smc-val" style="color:var(--green);">42%</div>
+              <div class="smc-lbl">Share do total</div>
+            </div>
+            <div class="stat-mini-card">
+              <div class="smc-val" style="color:var(--text);">3</div>
+              <div class="smc-lbl">Fechamentos</div>
+            </div>
+            <div class="stat-mini-card">
+              <div class="smc-val" style="color:var(--purple);">4.8%</div>
+              <div class="smc-lbl">Conversão</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOG RECENTE -->
+        <div class="d-section">
+          <div class="d-section-title">Log de eventos recentes</div>
+          <div class="log-mini-row">
+            <div class="lmr-time">10:34</div>
+            <div class="lmr-dot" style="background:var(--green);"></div>
+            <div class="lmr-text">Novo lead: Carlos M. → N8N acionado</div>
+          </div>
+          <div class="log-mini-row">
+            <div class="lmr-time">09:58</div>
+            <div class="lmr-dot" style="background:var(--green);"></div>
+            <div class="lmr-text">Sync XML: 38 imóveis atualizados</div>
+          </div>
+          <div class="log-mini-row">
+            <div class="lmr-time">09:12</div>
+            <div class="lmr-dot" style="background:var(--blue);"></div>
+            <div class="lmr-text">Lead atualizado: Ana S. visualizou imóvel</div>
+          </div>
+          <div class="log-mini-row">
+            <div class="lmr-time">08:30</div>
+            <div class="lmr-dot" style="background:var(--green);"></div>
+            <div class="lmr-text">Novo lead: Pedro M. → atribuído Carla F.</div>
+          </div>
+          <div class="log-mini-row">
+            <div class="lmr-time">07:01</div>
+            <div class="lmr-dot" style="background:var(--gold);"></div>
+            <div class="lmr-text">Sync automático iniciado (06h schedule)</div>
+          </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="det-actions">
+          <div class="det-btn primary">↺ Sincronizar agora</div>
+          <div class="det-btn">✏️ Editar config.</div>
+          <div class="det-btn">📊 Ver relatório</div>
+          <div class="det-btn">🔗 Testar webhook</div>
+          <div class="det-btn danger full">✕ Desconectar portal</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => { glow.style.left=e.clientX+'px'; glow.style.top=e.clientY+'px'; });
+
+function setActive(el) { document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
+
+document.querySelectorAll('.page-tab').forEach(t=>{
+  t.addEventListener('click',function(){ document.querySelectorAll('.page-tab').forEach(x=>x.classList.remove('active')); this.classList.add('active'); });
+});
+
+const portalData = {
+  zap:        { icon:'🏠', name:'ZAP Imóveis',    url:'zapimoveis.com.br',    status:'connected', badge:'● conectado', badgeClass:'', color:'var(--green)' },
+  vivareal:   { icon:'🔍', name:'VivaReal',        url:'vivareal.com.br',      status:'connected', badge:'● conectado', badgeClass:'', color:'var(--green)' },
+  olx:        { icon:'🛒', name:'OLX Imóveis',     url:'olx.com.br/imoveis',   status:'warning',   badge:'⚠ instável',  badgeClass:'', color:'var(--orange)' },
+  imovelweb:  { icon:'🏗', name:'Imovelweb',       url:'imovelweb.com.br',     status:'inactive',  badge:'não configurado', badgeClass:'', color:'var(--muted)' },
+  chavesnamao:{ icon:'🔑', name:'Chaves na Mão',   url:'chavesnamao.com.br',   status:'inactive',  badge:'não configurado', badgeClass:'', color:'var(--muted)' },
+};
+
+function selectPortal(el, id) {
+  document.querySelectorAll('.portal-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+
+  const d = portalData[id];
+  if(!d) return;
+
+  // Update detail header status
+  const detHeader = document.querySelector('.detail-header > div:last-child');
+  detHeader.style.color = d.color;
+  detHeader.textContent = d.badge;
+
+  // Update hero
+  document.querySelector('.hero-portal-icon').textContent = d.icon;
+  document.querySelector('.hero-portal-name').textContent = d.name;
+  document.querySelector('.hero-portal-url').textContent  = d.url;
+
+  // Conn status
+  const connBox = document.querySelector('.conn-status');
+  if(d.status === 'connected') {
+    connBox.style.background = 'rgba(0,255,136,0.08)';
+    connBox.style.borderColor = 'rgba(0,255,136,0.2)';
+    connBox.querySelector('.conn-status-dot').style.background = 'var(--green)';
+    connBox.querySelector('.conn-status-text').style.color = 'var(--green)';
+    connBox.querySelector('.conn-status-text').textContent = 'Webhook ativo · recebendo leads';
+  } else if(d.status === 'warning') {
+    connBox.style.background = 'rgba(255,123,0,0.08)';
+    connBox.style.borderColor = 'rgba(255,123,0,0.2)';
+    connBox.querySelector('.conn-status-dot').style.background = 'var(--orange)';
+    connBox.querySelector('.conn-status-text').style.color = 'var(--orange)';
+    connBox.querySelector('.conn-status-text').textContent = '⚠ Webhook instável · verificar configuração';
+  } else {
+    connBox.style.background = 'rgba(74,85,104,0.1)';
+    connBox.style.borderColor = 'var(--border)';
+    connBox.querySelector('.conn-status-dot').style.background = 'var(--muted)';
+    connBox.querySelector('.conn-status-text').style.color = 'var(--muted)';
+    connBox.querySelector('.conn-status-text').textContent = 'Portal não configurado · clique em Conectar';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Imob — Relatórios</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0:        #060709;
+  --bg-1:        #0c0e13;
+  --bg-2:        #111520;
+  --bg-3:        #161b28;
+  --bg-4:        #1c2235;
+  --border:      rgba(255,255,255,0.06);
+  --border-gold: rgba(255,215,0,0.22);
+
+  --gold:        #ffd700;
+  --gold-dim:    rgba(255,215,0,0.10);
+  --gold-glow:   rgba(255,215,0,0.40);
+  --gold-soft:   rgba(255,215,0,0.05);
+
+  --green:       #00ff88;
+  --green-dim:   rgba(0,255,136,0.08);
+  --red:         #ff4757;
+  --red-dim:     rgba(255,71,87,0.08);
+  --orange:      #ff7b00;
+  --orange-dim:  rgba(255,123,0,0.08);
+  --purple:      #a78bfa;
+  --purple-dim:  rgba(167,139,250,0.08);
+  --blue:        #4f9cf9;
+  --blue-dim:    rgba(79,156,249,0.08);
+  --muted:       #4a5568;
+  --text:        #e2e8f4;
+
+  --font-main:   'Exo 2', sans-serif;
+  --font-nexus:  'Rajdhani', sans-serif;
+  --font-mono:   'Share Tech Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-0);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+body::before {
+  content:''; position:fixed; inset:0;
+  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);
+  pointer-events:none; z-index:9999;
+}
+
+/* ══ SIDEBAR ══ */
+.sidebar { width:220px; min-height:100vh; background:var(--bg-1); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; position:relative; }
+.sidebar::after { content:''; position:absolute; right:-1px; top:80px; bottom:80px; width:1px; background:linear-gradient(180deg,transparent,var(--gold),transparent); opacity:0.3; }
+.logo-wrap { padding:24px 20px 20px; border-bottom:1px solid var(--border); }
+.logo { font-family:var(--font-nexus); font-size:1.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; display:flex; align-items:center; gap:8px; color:var(--text); }
+.logo-icon { width:28px; height:28px; border:1.5px solid var(--gold); display:flex; align-items:center; justify-content:center; transform:rotate(45deg); box-shadow:0 0 12px var(--gold-glow); flex-shrink:0; }
+.logo-icon-inner { width:10px; height:10px; background:var(--gold); box-shadow:0 0 8px var(--gold); }
+.logo-sub { font-family:var(--font-nexus); font-size:0.65rem; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:4px; display:block; }
+.status-badge { display:flex; align-items:center; gap:6px; padding:8px 20px; font-family:var(--font-mono); font-size:0.65rem; color:var(--green); letter-spacing:0.08em; border-bottom:1px solid var(--border); }
+.status-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:pulse-g 2s ease infinite; }
+@keyframes pulse-g { 0%,100%{box-shadow:0 0 8px var(--green);} 50%{box-shadow:0 0 18px var(--green);} }
+.nav-section { padding:16px 0 8px; }
+.nav-label { font-family:var(--font-mono); font-size:0.58rem; color:var(--muted); letter-spacing:0.18em; text-transform:uppercase; padding:0 20px; margin-bottom:6px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:9px 20px; font-family:var(--font-nexus); font-size:0.9rem; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; color:var(--muted); cursor:pointer; transition:all 0.15s; position:relative; }
+.nav-item:hover { color:var(--text); background:rgba(255,255,255,0.02); }
+.nav-item.active { color:var(--gold); background:var(--gold-dim); }
+.nav-item.active::before { content:''; position:absolute; left:0; top:4px; bottom:4px; width:2px; background:var(--gold); box-shadow:0 0 8px var(--gold-glow); }
+.nav-icon { font-size:0.9rem; width:16px; text-align:center; }
+.nav-badge { margin-left:auto; background:var(--gold-dim); color:var(--gold); font-family:var(--font-mono); font-size:0.62rem; padding:2px 7px; border:1px solid var(--border-gold); }
+.sidebar-footer { margin-top:auto; padding:16px 20px; border-top:1px solid var(--border); }
+.user-card { display:flex; align-items:center; gap:10px; }
+.user-avatar { width:32px; height:32px; border:1px solid var(--gold); display:flex; align-items:center; justify-content:center; font-family:var(--font-nexus); font-size:0.75rem; font-weight:700; color:var(--gold); background:var(--gold-dim); }
+.user-name { font-size:0.8rem; font-weight:600; font-family:var(--font-nexus); letter-spacing:0.04em; text-transform:uppercase; }
+.user-role { font-family:var(--font-mono); font-size:0.6rem; color:var(--muted); letter-spacing:0.06em; }
+
+/* ══ MAIN ══ */
+.main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+.topbar { height:56px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 24px; background:var(--bg-1); flex-shrink:0; }
+.topbar-left { display:flex; align-items:center; gap:16px; }
+.page-title { font-family:var(--font-nexus); font-size:1rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
+.breadcrumb { font-family:var(--font-mono); font-size:0.6rem; color:var(--muted); letter-spacing:0.06em; }
+.topbar-right { display:flex; align-items:center; gap:10px; }
+
+.period-selector { display:flex; gap:2px; background:var(--bg-2); border:1px solid var(--border); padding:3px; }
+.period-btn { font-family:var(--font-nexus); font-size:0.75rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:5px 12px; color:var(--muted); cursor:pointer; transition:all 0.15s; }
+.period-btn:hover { color:var(--text); }
+.period-btn.active { color:var(--bg-0); background:var(--gold); }
+
+.topbar-btn { display:flex; align-items:center; gap:7px; padding:7px 16px; background:var(--gold-dim); border:1px solid var(--border-gold); color:var(--gold); font-family:var(--font-nexus); font-size:0.82rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; }
+.topbar-btn:hover { background:rgba(255,215,0,0.18); box-shadow:0 0 16px var(--gold-glow); }
+
+.page-nav { display:flex; gap:2px; border-bottom:1px solid var(--border); padding:0 24px; background:var(--bg-1); }
+.page-tab { font-family:var(--font-nexus); font-size:0.78rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); padding:10px 18px 11px; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.15s; }
+.page-tab:hover { color:var(--text); }
+.page-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+/* ══ CONTENT ══ */
+.content { flex:1; overflow-y:auto; padding:20px 24px; display:flex; flex-direction:column; gap:16px; }
+.content::-webkit-scrollbar { width:4px; }
+.content::-webkit-scrollbar-thumb { background:var(--border-gold); }
+
+/* ══ KPI STRIP ══ */
+.kpi-strip { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
+
+.kpi-card {
+  background:var(--bg-2); border:1px solid var(--border); padding:14px 16px;
+  position:relative; overflow:hidden; transition:border-color 0.2s;
+  animation:fadeUp 0.4s ease both;
+}
+.kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; }
+.kpi-card.gold::before   { background:var(--gold); box-shadow:0 0 10px var(--gold-glow); }
+.kpi-card.green::before  { background:var(--green); }
+.kpi-card.blue::before   { background:var(--blue); }
+.kpi-card.purple::before { background:var(--purple); }
+.kpi-card.orange::before { background:var(--orange); }
+.kpi-card.red::before    { background:var(--red); }
+.kpi-card:hover { border-color:var(--border-gold); }
+
+.kpi-label { font-family:var(--font-mono); font-size:0.56rem; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; }
+.kpi-value { font-family:var(--font-nexus); font-size:1.6rem; font-weight:700; line-height:1; margin-bottom:4px; }
+.kpi-value.gold   { color:var(--gold); text-shadow:0 0 16px var(--gold-glow); }
+.kpi-value.green  { color:var(--green); }
+.kpi-value.blue   { color:var(--blue); }
+.kpi-value.purple { color:var(--purple); }
+.kpi-value.orange { color:var(--orange); }
+.kpi-delta { font-family:var(--font-mono); font-size:0.58rem; display:flex; align-items:center; gap:4px; }
+.delta-up   { color:var(--green); }
+.delta-down { color:var(--red); }
+.delta-flat { color:var(--muted); }
+
+/* ══ MAIN GRID ══ */
+.main-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.main-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+.full-width { grid-column:1/-1; }
+
+/* ══ PANEL ══ */
+.panel { background:var(--bg-2); border:1px solid var(--border); animation:fadeUp 0.4s ease 0.1s both; }
+.panel-header { padding:12px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.panel-title { font-family:var(--font-nexus); font-size:0.85rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+.title-dot { width:5px; height:5px; background:var(--gold); box-shadow:0 0 6px var(--gold-glow); }
+.panel-action { font-family:var(--font-mono); font-size:0.58rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:color 0.15s; }
+.panel-action:hover { color:var(--gold); }
+
+/* ══ CHART — LINHA VGV ══ */
+.chart-wrap { padding:16px; }
+.chart-area { position:relative; height:140px; }
+
+.chart-svg { width:100%; height:100%; overflow:visible; }
+
+.chart-grid-line { stroke:rgba(255,255,255,0.04); stroke-width:1; }
+.chart-line-gold { fill:none; stroke:var(--gold); stroke-width:2; filter:drop-shadow(0 0 4px var(--gold-glow)); }
+.chart-line-blue { fill:none; stroke:var(--blue); stroke-width:2; opacity:0.6; }
+.chart-area-gold { fill:url(#goldGrad); }
+.chart-area-blue { fill:url(#blueGrad); opacity:0.3; }
+.chart-dot { r:3; fill:var(--gold); stroke:var(--bg-0); stroke-width:2; }
+.chart-dot:hover { r:5; cursor:pointer; }
+
+.chart-labels { display:flex; justify-content:space-between; padding:6px 0 0; }
+.chart-label { font-family:var(--font-mono); font-size:0.54rem; color:var(--muted); letter-spacing:0.06em; text-align:center; }
+
+.chart-legend { display:flex; gap:16px; padding:8px 16px 12px; }
+.legend-item { display:flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:0.58rem; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
+.legend-dot { width:8px; height:2px; }
+
+/* ══ BAR CHART ══ */
+.bar-chart { padding:14px 16px; }
+.bar-chart-area { display:flex; align-items:flex-end; gap:6px; height:100px; margin-bottom:8px; }
+.bar-col { display:flex; flex-direction:column; align-items:center; gap:3px; flex:1; }
+.bar-val { font-family:var(--font-nexus); font-size:0.7rem; font-weight:700; color:var(--text); }
+.bar-body { width:100%; border-radius:1px 1px 0 0; transition:height 0.8s ease; position:relative; overflow:hidden; }
+.bar-body::after { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:rgba(255,255,255,0.3); }
+.bar-lbl { font-family:var(--font-mono); font-size:0.52rem; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
+
+/* ══ FUNIL ══ */
+.funil-wrap { padding:14px 16px; display:flex; flex-direction:column; gap:6px; }
+
+.funil-step { position:relative; }
+.funil-bar-bg { height:32px; background:var(--bg-3); border:1px solid var(--border); position:relative; overflow:hidden; display:flex; align-items:center; }
+.funil-bar-fill { position:absolute; left:0; top:0; bottom:0; transition:width 1s ease; }
+.funil-content { position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; padding:0 12px; width:100%; }
+.funil-label { font-family:var(--font-nexus); font-size:0.78rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; }
+.funil-count { font-family:var(--font-nexus); font-size:0.82rem; font-weight:700; }
+.funil-pct { font-family:var(--font-mono); font-size:0.58rem; color:var(--muted); letter-spacing:0.06em; }
+.funil-arrow { text-align:center; font-size:0.65rem; color:var(--muted); margin:1px 0; }
+
+/* ══ TABELA CORRETORES ══ */
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; }
+thead th { font-family:var(--font-mono); font-size:0.58rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; padding:10px 14px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; }
+tbody td { padding:11px 14px; font-size:0.82rem; border-bottom:1px solid rgba(255,255,255,0.03); vertical-align:middle; }
+tbody tr:hover td { background:rgba(255,255,255,0.02); }
+tbody tr:last-child td { border-bottom:none; }
+
+.td-name { font-family:var(--font-nexus); font-size:0.88rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+.td-av { width:24px; height:24px; border:1px solid var(--border-gold); display:flex; align-items:center; justify-content:center; font-family:var(--font-nexus); font-size:0.6rem; font-weight:700; color:var(--gold); background:var(--gold-dim); flex-shrink:0; }
+.td-gold   { color:var(--gold); font-family:var(--font-nexus); font-weight:700; }
+.td-green  { color:var(--green); font-family:var(--font-nexus); font-weight:700; }
+.td-muted  { color:var(--muted); font-family:var(--font-mono); font-size:0.72rem; }
+.td-mono   { font-family:var(--font-mono); font-size:0.7rem; letter-spacing:0.04em; }
+
+.rank-num { font-family:var(--font-nexus); font-size:0.9rem; font-weight:700; }
+.r1 { color:var(--gold); text-shadow:0 0 8px var(--gold-glow); }
+.r2 { color:#c0c0c0; }
+.r3 { color:#cd7f32; }
+
+.progress-cell { display:flex; align-items:center; gap:8px; }
+.prog-bar { flex:1; height:3px; background:var(--bg-3); position:relative; min-width:60px; }
+.prog-fill { position:absolute; left:0; top:0; height:100%; border-radius:1px; }
+.prog-pct { font-family:var(--font-nexus); font-size:0.78rem; font-weight:700; width:36px; text-align:right; flex-shrink:0; }
+
+/* ══ FONTES ══ */
+.fonte-item { padding:10px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+.fonte-item:last-child { border-bottom:none; }
+.fonte-icon { font-size:1rem; width:28px; height:28px; display:flex; align-items:center; justify-content:center; background:var(--bg-3); border:1px solid var(--border); flex-shrink:0; }
+.fonte-info { flex:1; min-width:0; }
+.fonte-name { font-family:var(--font-nexus); font-size:0.82rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:3px; }
+.fonte-bar-wrap { height:3px; background:var(--bg-3); position:relative; }
+.fonte-fill { position:absolute; left:0; top:0; height:100%; border-radius:1px; }
+.fonte-stats { text-align:right; flex-shrink:0; }
+.fonte-leads { font-family:var(--font-nexus); font-size:0.9rem; font-weight:700; color:var(--text); }
+.fonte-pct { font-family:var(--font-mono); font-size:0.56rem; color:var(--muted); letter-spacing:0.06em; }
+
+/* ══ IMOVEIS TOP ══ */
+.imovel-top-row { display:flex; align-items:center; gap:10px; padding:9px 16px; border-bottom:1px solid var(--border); transition:background 0.15s; cursor:pointer; }
+.imovel-top-row:hover { background:rgba(255,255,255,0.02); }
+.imovel-top-row:last-child { border-bottom:none; }
+.imovel-pos { font-family:var(--font-nexus); font-size:1rem; font-weight:700; width:20px; flex-shrink:0; }
+.imovel-thumb { width:36px; height:28px; background:var(--bg-3); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex-shrink:0; }
+.imovel-info { flex:1; min-width:0; }
+.imovel-name { font-family:var(--font-nexus); font-size:0.8rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.imovel-meta { font-family:var(--font-mono); font-size:0.56rem; color:var(--muted); letter-spacing:0.04em; }
+.imovel-vgv { text-align:right; }
+.imovel-price { font-family:var(--font-nexus); font-size:0.85rem; font-weight:700; color:var(--gold); }
+.imovel-views { font-family:var(--font-mono); font-size:0.54rem; color:var(--muted); letter-spacing:0.04em; }
+
+/* ══ AGENDAMENTO RELATORIO ══ */
+.schedule-item { display:flex; align-items:center; gap:10px; padding:10px 16px; border-bottom:1px solid var(--border); }
+.schedule-item:last-child { border-bottom:none; }
+.sched-icon { font-size:0.9rem; width:28px; height:28px; display:flex; align-items:center; justify-content:center; background:var(--bg-3); border:1px solid var(--border); flex-shrink:0; }
+.sched-info { flex:1; }
+.sched-name { font-family:var(--font-nexus); font-size:0.82rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:2px; }
+.sched-detail { font-family:var(--font-mono); font-size:0.58rem; color:var(--muted); letter-spacing:0.04em; }
+.sched-status { font-family:var(--font-mono); font-size:0.56rem; letter-spacing:0.06em; padding:2px 7px; border:1px solid; }
+.sched-ok   { color:var(--green); border-color:rgba(0,255,136,0.25); background:var(--green-dim); }
+.sched-next { color:var(--gold); border-color:var(--border-gold); background:var(--gold-dim); }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+.kpi-card:nth-child(1){animation-delay:0.04s;} .kpi-card:nth-child(2){animation-delay:0.08s;}
+.kpi-card:nth-child(3){animation-delay:0.12s;} .kpi-card:nth-child(4){animation-delay:0.16s;}
+.kpi-card:nth-child(5){animation-delay:0.20s;} .kpi-card:nth-child(6){animation-delay:0.24s;}
+
+.glow-cursor { position:fixed; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,rgba(255,215,0,0.04) 0%,transparent 70%); pointer-events:none; transform:translate(-50%,-50%); transition:left 0.1s,top 0.1s; z-index:1; }
+</style>
+</head>
+<body>
+<div class="glow-cursor" id="glow"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo"><div class="logo-icon"><div class="logo-icon-inner"></div></div>NEXUS</div>
+    <span class="logo-sub">Imob Platform</span>
+  </div>
+  <div class="status-badge"><div class="status-dot"></div>SISTEMA ONLINE</div>
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬡</span> Dashboard</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◈</span> Pipeline CRM<span class="nav-badge">47</span></div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◻</span> Imóveis</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◎</span> Leads<span class="nav-badge">12</span></div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◷</span> Agenda</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Gestão</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">△</span> Corretores</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬙</span> Automações</div>
+    <div class="nav-item active" onclick="setActive(this)"><span class="nav-icon">▦</span> Relatórios</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">RG</div>
+      <div><div class="user-name">Riguetti</div><div class="user-role">ADMIN · NEXUS IMOB</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title">Relatórios</div>
+      <div class="breadcrumb">NEXUS IMOB / RELATÓRIOS / MARÇO 2026</div>
+    </div>
+    <div class="topbar-right">
+      <div class="period-selector">
+        <div class="period-btn">7D</div>
+        <div class="period-btn active">MÊS</div>
+        <div class="period-btn">TRIM.</div>
+        <div class="period-btn">ANO</div>
+      </div>
+      <button class="topbar-btn">⬇ Exportar PDF</button>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <div class="page-tab active">Visão Geral</div>
+    <div class="page-tab">Corretores</div>
+    <div class="page-tab">Imóveis</div>
+    <div class="page-tab">Leads & Fontes</div>
+    <div class="page-tab">Financeiro</div>
+  </div>
+
+  <div class="content">
+
+    <!-- KPI STRIP -->
+    <div class="kpi-strip">
+      <div class="kpi-card gold">
+        <div class="kpi-label">VGV do Mês</div>
+        <div class="kpi-value gold">R$2.4M</div>
+        <div class="kpi-delta delta-up">▲ +18% vs fev.</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Fechamentos</div>
+        <div class="kpi-value green">6</div>
+        <div class="kpi-delta delta-down">▼ -2 vs fev.</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">Leads Captados</div>
+        <div class="kpi-value blue">147</div>
+        <div class="kpi-delta delta-up">▲ +23 esta semana</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">Taxa de Conversão</div>
+        <div class="kpi-value purple">4.1%</div>
+        <div class="kpi-delta delta-up">▲ +0.8% vs fev.</div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-label">Ticket Médio</div>
+        <div class="kpi-value orange">R$400k</div>
+        <div class="kpi-delta delta-up">▲ +12% vs fev.</div>
+      </div>
+      <div class="kpi-card" style="border-left:3px solid var(--green);">
+        <div class="kpi-label">Tempo Médio Fech.</div>
+        <div class="kpi-value" style="color:var(--text);font-size:1.4rem;">28 dias</div>
+        <div class="kpi-delta delta-up">▲ -4 dias vs fev.</div>
+      </div>
+    </div>
+
+    <!-- VGV + LEADS CHART -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><div class="title-dot"></div>VGV & Leads — Evolução Mensal</div>
+        <div class="panel-action">detalhes →</div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-area">
+          <svg class="chart-svg" viewBox="0 0 800 140" preserveAspectRatio="none" id="mainChart">
+            <defs>
+              <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ffd700" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#4f9cf9" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#4f9cf9" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid lines -->
+            <line x1="0" y1="35" x2="800" y2="35" class="chart-grid-line"/>
+            <line x1="0" y1="70" x2="800" y2="70" class="chart-grid-line"/>
+            <line x1="0" y1="105" x2="800" y2="105" class="chart-grid-line"/>
+            <!-- Gold area (VGV) -->
+            <path class="chart-area-gold" d="M0,120 L114,100 L228,85 L342,95 L456,75 L570,60 L684,45 L800,28 L800,140 L0,140 Z"/>
+            <!-- Blue area (Leads) -->
+            <path class="chart-area-blue" d="M0,110 L114,95 L228,105 L342,80 L456,90 L570,72 L684,58 L800,42 L800,140 L0,140 Z"/>
+            <!-- Gold line (VGV) -->
+            <polyline class="chart-line-gold" points="0,120 114,100 228,85 342,95 456,75 570,60 684,45 800,28"/>
+            <!-- Blue line (Leads) -->
+            <polyline class="chart-line-blue" points="0,110 114,95 228,105 342,80 456,90 570,72 684,58 800,42"/>
+            <!-- Dots -->
+            <circle class="chart-dot" cx="0" cy="120" r="3"/>
+            <circle class="chart-dot" cx="114" cy="100" r="3"/>
+            <circle class="chart-dot" cx="228" cy="85" r="3"/>
+            <circle class="chart-dot" cx="342" cy="95" r="3"/>
+            <circle class="chart-dot" cx="456" cy="75" r="3"/>
+            <circle class="chart-dot" cx="570" cy="60" r="3"/>
+            <circle class="chart-dot" cx="684" cy="45" r="3"/>
+            <circle class="chart-dot" cx="800" cy="28" r="4" fill="#ffd700" filter="url(#glow)"/>
+            <!-- Value labels -->
+            <text x="800" y="20" font-family="Share Tech Mono" font-size="10" fill="#ffd700" text-anchor="middle">R$2.4M</text>
+          </svg>
+        </div>
+        <div class="chart-labels">
+          <span class="chart-label">AGO</span><span class="chart-label">SET</span>
+          <span class="chart-label">OUT</span><span class="chart-label">NOV</span>
+          <span class="chart-label">DEZ</span><span class="chart-label">JAN</span>
+          <span class="chart-label">FEV</span><span class="chart-label">MAR</span>
+        </div>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--gold);height:2px;"></div>VGV Mensal</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--blue);height:2px;"></div>Volume de Leads</div>
+      </div>
+    </div>
+
+    <!-- GRID: FUNIL + FONTES + IMÓVEIS -->
+    <div class="main-grid">
+
+      <!-- FUNIL DE CONVERSÃO -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><div class="title-dot"></div>Funil de Conversão</div>
+          <div class="panel-action">este mês</div>
+        </div>
+        <div class="funil-wrap">
+          <div class="funil-step">
+            <div class="funil-bar-bg">
+              <div class="funil-bar-fill" style="width:100%;background:rgba(79,156,249,0.15);"></div>
+              <div class="funil-content">
+                <div class="funil-label" style="color:var(--blue);">Leads Captados</div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div class="funil-pct">100%</div>
+                  <div class="funil-count" style="color:var(--blue);">147</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="funil-arrow">▼</div>
+          <div class="funil-step">
+            <div class="funil-bar-bg">
+              <div class="funil-bar-fill" style="width:75%;background:rgba(167,139,250,0.15);"></div>
+              <div class="funil-content">
+                <div class="funil-label" style="color:var(--purple);">Qualificados IA</div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div class="funil-pct">75%</div>
+                  <div class="funil-count" style="color:var(--purple);">110</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="funil-arrow">▼</div>
+          <div class="funil-step">
+            <div class="funil-bar-bg">
+              <div class="funil-bar-fill" style="width:40%;background:rgba(255,215,0,0.12);"></div>
+              <div class="funil-content">
+                <div class="funil-label" style="color:var(--gold);">Visitas Realizadas</div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div class="funil-pct">40%</div>
+                  <div class="funil-count" style="color:var(--gold);">59</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="funil-arrow">▼</div>
+          <div class="funil-step">
+            <div class="funil-bar-bg">
+              <div class="funil-bar-fill" style="width:18%;background:rgba(255,123,0,0.12);"></div>
+              <div class="funil-content">
+                <div class="funil-label" style="color:var(--orange);">Propostas</div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div class="funil-pct">18%</div>
+                  <div class="funil-count" style="color:var(--orange);">26</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="funil-arrow">▼</div>
+          <div class="funil-step">
+            <div class="funil-bar-bg">
+              <div class="funil-bar-fill" style="width:4%;background:rgba(0,255,136,0.15);"></div>
+              <div class="funil-content">
+                <div class="funil-label" style="color:var(--green);">Fechamentos</div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div class="funil-pct">4.1%</div>
+                  <div class="funil-count" style="color:var(--green);">6</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FONTES DE LEADS -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><div class="title-dot" style="background:var(--purple);box-shadow:0 0 6px var(--purple);"></div>Fontes de Leads</div>
+          <div class="panel-action">ver todas →</div>
+        </div>
+        <div>
+          <div class="fonte-item">
+            <div class="fonte-icon">🏠</div>
+            <div class="fonte-info">
+              <div class="fonte-name">ZAP Imóveis</div>
+              <div class="fonte-bar-wrap"><div class="fonte-fill" style="width:42%;background:var(--gold);"></div></div>
+            </div>
+            <div class="fonte-stats">
+              <div class="fonte-leads">62</div>
+              <div class="fonte-pct">42%</div>
+            </div>
+          </div>
+          <div class="fonte-item">
+            <div class="fonte-icon">📱</div>
+            <div class="fonte-info">
+              <div class="fonte-name">Meta Ads</div>
+              <div class="fonte-bar-wrap"><div class="fonte-fill" style="width:27%;background:var(--blue);"></div></div>
+            </div>
+            <div class="fonte-stats">
+              <div class="fonte-leads">40</div>
+              <div class="fonte-pct">27%</div>
+            </div>
+          </div>
+          <div class="fonte-item">
+            <div class="fonte-icon">💬</div>
+            <div class="fonte-info">
+              <div class="fonte-name">WhatsApp Direto</div>
+              <div class="fonte-bar-wrap"><div class="fonte-fill" style="width:18%;background:var(--green);"></div></div>
+            </div>
+            <div class="fonte-stats">
+              <div class="fonte-leads">26</div>
+              <div class="fonte-pct">18%</div>
+            </div>
+          </div>
+          <div class="fonte-item">
+            <div class="fonte-icon">🔍</div>
+            <div class="fonte-info">
+              <div class="fonte-name">VivaReal</div>
+              <div class="fonte-bar-wrap"><div class="fonte-fill" style="width:9%;background:var(--purple);"></div></div>
+            </div>
+            <div class="fonte-stats">
+              <div class="fonte-leads">13</div>
+              <div class="fonte-pct">9%</div>
+            </div>
+          </div>
+          <div class="fonte-item">
+            <div class="fonte-icon">🛒</div>
+            <div class="fonte-info">
+              <div class="fonte-name">OLX Imóveis</div>
+              <div class="fonte-bar-wrap"><div class="fonte-fill" style="width:4%;background:var(--orange);"></div></div>
+            </div>
+            <div class="fonte-stats">
+              <div class="fonte-leads">6</div>
+              <div class="fonte-pct">4%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FECHAMENTOS POR MÊS (BAR) + IMÓVEIS TOP -->
+    <div class="main-grid">
+
+      <!-- BAR CHART FECHAMENTOS -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><div class="title-dot" style="background:var(--green);box-shadow:0 0 6px var(--green);"></div>Fechamentos por Mês</div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-chart-area">
+            <div class="bar-col">
+              <div class="bar-val">4</div>
+              <div class="bar-body" style="height:40%;background:linear-gradient(180deg,rgba(79,156,249,0.6),rgba(79,156,249,0.2));border-top:1px solid var(--blue);"></div>
+              <div class="bar-lbl">AGO</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">6</div>
+              <div class="bar-body" style="height:60%;background:linear-gradient(180deg,rgba(79,156,249,0.6),rgba(79,156,249,0.2));border-top:1px solid var(--blue);"></div>
+              <div class="bar-lbl">SET</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">5</div>
+              <div class="bar-body" style="height:50%;background:linear-gradient(180deg,rgba(79,156,249,0.6),rgba(79,156,249,0.2));border-top:1px solid var(--blue);"></div>
+              <div class="bar-lbl">OUT</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">9</div>
+              <div class="bar-body" style="height:90%;background:linear-gradient(180deg,rgba(255,215,0,0.6),rgba(255,215,0,0.1));border-top:1px solid var(--gold);"></div>
+              <div class="bar-lbl">NOV</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">11</div>
+              <div class="bar-body" style="height:100%;background:linear-gradient(180deg,rgba(255,215,0,0.7),rgba(255,215,0,0.1));border-top:2px solid var(--gold);box-shadow:0 0 12px var(--gold-glow);"></div>
+              <div class="bar-lbl">DEZ</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">7</div>
+              <div class="bar-body" style="height:70%;background:linear-gradient(180deg,rgba(79,156,249,0.6),rgba(79,156,249,0.2));border-top:1px solid var(--blue);"></div>
+              <div class="bar-lbl">JAN</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val">8</div>
+              <div class="bar-body" style="height:80%;background:linear-gradient(180deg,rgba(79,156,249,0.6),rgba(79,156,249,0.2));border-top:1px solid var(--blue);"></div>
+              <div class="bar-lbl">FEV</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val" style="color:var(--gold);">6</div>
+              <div class="bar-body" style="height:60%;background:linear-gradient(180deg,rgba(0,255,136,0.5),rgba(0,255,136,0.1));border-top:2px solid var(--green);"></div>
+              <div class="bar-lbl" style="color:var(--gold);">MAR</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP IMÓVEIS -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><div class="title-dot"></div>Imóveis Mais Visualizados</div>
+          <div class="panel-action">catálogo →</div>
+        </div>
+        <div class="imovel-top-row">
+          <div class="imovel-pos r1">01</div>
+          <div class="imovel-thumb">🏢</div>
+          <div class="imovel-info">
+            <div class="imovel-name">Apto Moema 120m²</div>
+            <div class="imovel-meta">Venda · 4 leads ativos</div>
+          </div>
+          <div class="imovel-vgv">
+            <div class="imovel-price">R$1.1M</div>
+            <div class="imovel-views">84 views</div>
+          </div>
+        </div>
+        <div class="imovel-top-row">
+          <div class="imovel-pos r2">02</div>
+          <div class="imovel-thumb">🏗</div>
+          <div class="imovel-info">
+            <div class="imovel-name">Cobertura Itaim 280m²</div>
+            <div class="imovel-meta">Venda · 3 leads ativos</div>
+          </div>
+          <div class="imovel-vgv">
+            <div class="imovel-price">R$4.5M</div>
+            <div class="imovel-views">61 views</div>
+          </div>
+        </div>
+        <div class="imovel-top-row">
+          <div class="imovel-pos r3">03</div>
+          <div class="imovel-thumb">🏘</div>
+          <div class="imovel-info">
+            <div class="imovel-name">Apto Pinheiros Aluguel</div>
+            <div class="imovel-meta">Aluguel · 6 leads ativos</div>
+          </div>
+          <div class="imovel-vgv">
+            <div class="imovel-price">R$4.2k/m</div>
+            <div class="imovel-views">57 views</div>
+          </div>
+        </div>
+        <div class="imovel-top-row">
+          <div class="imovel-pos" style="color:var(--muted);">04</div>
+          <div class="imovel-thumb">🏠</div>
+          <div class="imovel-info">
+            <div class="imovel-name">Casa Vila Olímpia</div>
+            <div class="imovel-meta">Venda · proposta aberta</div>
+          </div>
+          <div class="imovel-vgv">
+            <div class="imovel-price">R$2.8M</div>
+            <div class="imovel-views">43 views</div>
+          </div>
+        </div>
+        <div class="imovel-top-row">
+          <div class="imovel-pos" style="color:var(--muted);">05</div>
+          <div class="imovel-thumb">🏡</div>
+          <div class="imovel-info">
+            <div class="imovel-name">Casa Paraíso 135m²</div>
+            <div class="imovel-meta">Venda · 1 lead ativo</div>
+          </div>
+          <div class="imovel-vgv">
+            <div class="imovel-price">R$1.38M</div>
+            <div class="imovel-views">38 views</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TABELA CORRETORES + RELATÓRIOS AUTOMÁTICOS -->
+    <div class="main-grid">
+
+      <!-- TABELA RANKING -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><div class="title-dot" style="background:var(--gold);"></div>Ranking de Corretores — Março</div>
+          <div class="panel-action">exportar →</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Corretor</th>
+                <th>Fechamentos</th>
+                <th>VGV</th>
+                <th>Conversão</th>
+                <th>Visitas</th>
+                <th>Leads</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="rank-num r1">01</span></td>
+                <td><div class="td-name"><div class="td-av">LC</div>Lucas C.</div></td>
+                <td><span class="td-green">3</span></td>
+                <td><span class="td-gold">R$ 5.1M</span></td>
+                <td>
+                  <div class="progress-cell">
+                    <div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--green);box-shadow:0 0 4px rgba(0,255,136,0.3);"></div></div>
+                    <span class="prog-pct" style="color:var(--green);">68%</span>
+                  </div>
+                </td>
+                <td class="td-mono">11</td>
+                <td class="td-mono">18</td>
+              </tr>
+              <tr>
+                <td><span class="rank-num r2">02</span></td>
+                <td><div class="td-name"><div class="td-av" style="border-color:rgba(167,139,250,0.4);color:#a78bfa;background:rgba(167,139,250,0.08);">AC</div>Ana C.</div></td>
+                <td><span class="td-green">2</span></td>
+                <td><span class="td-gold">R$ 1.3M</span></td>
+                <td>
+                  <div class="progress-cell">
+                    <div class="prog-bar"><div class="prog-fill" style="width:54%;background:var(--blue);"></div></div>
+                    <span class="prog-pct" style="color:var(--blue);">54%</span>
+                  </div>
+                </td>
+                <td class="td-mono">9</td>
+                <td class="td-mono">14</td>
+              </tr>
+              <tr>
+                <td><span class="rank-num r3">03</span></td>
+                <td><div class="td-name"><div class="td-av" style="border-color:rgba(79,156,249,0.4);color:#4f9cf9;background:rgba(79,156,249,0.08);">CF</div>Carla F.</div></td>
+                <td><span class="td-green">1</span></td>
+                <td><span class="td-gold">R$ 780k</span></td>
+                <td>
+                  <div class="progress-cell">
+                    <div class="prog-bar"><div class="prog-fill" style="width:42%;background:var(--gold);"></div></div>
+                    <span class="prog-pct" style="color:var(--gold);">42%</span>
+                  </div>
+                </td>
+                <td class="td-mono">8</td>
+                <td class="td-mono">12</td>
+              </tr>
+              <tr>
+                <td><span class="rank-num" style="color:var(--muted);">04</span></td>
+                <td><div class="td-name"><div class="td-av">PM</div>Pedro M.</div></td>
+                <td class="td-muted">0</td>
+                <td class="td-muted">—</td>
+                <td>
+                  <div class="progress-cell">
+                    <div class="prog-bar"><div class="prog-fill" style="width:28%;background:var(--orange);"></div></div>
+                    <span class="prog-pct" style="color:var(--orange);">28%</span>
+                  </div>
+                </td>
+                <td class="td-mono">4</td>
+                <td class="td-mono">8</td>
+              </tr>
+              <tr>
+                <td><span class="rank-num" style="color:var(--muted);">05</span></td>
+                <td><div class="td-name"><div class="td-av">RN</div>Rafael N.</div></td>
+                <td class="td-muted">0</td>
+                <td class="td-muted">—</td>
+                <td>
+                  <div class="progress-cell">
+                    <div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--muted);"></div></div>
+                    <span class="prog-pct" style="color:var(--muted);">—</span>
+                  </div>
+                </td>
+                <td class="td-mono">2</td>
+                <td class="td-mono">5</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RELATÓRIOS AUTOMÁTICOS -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><div class="title-dot" style="background:var(--purple);box-shadow:0 0 6px var(--purple);"></div>Relatórios Automáticos</div>
+          <div class="panel-action">configurar →</div>
+        </div>
+        <div>
+          <div class="schedule-item">
+            <div class="sched-icon">📧</div>
+            <div class="sched-info">
+              <div class="sched-name">Relatório Semanal</div>
+              <div class="sched-detail">Toda segunda às 07h · E-mail para gestores · N8N Fluxo 5</div>
+            </div>
+            <div class="sched-status sched-ok">✓ ativo</div>
+          </div>
+          <div class="schedule-item">
+            <div class="sched-icon">📊</div>
+            <div class="sched-info">
+              <div class="sched-name">KPIs Diários</div>
+              <div class="sched-detail">Todo dia às 08h · WhatsApp do gestor · resumo rápido</div>
+            </div>
+            <div class="sched-status sched-ok">✓ ativo</div>
+          </div>
+          <div class="schedule-item">
+            <div class="sched-icon">🏆</div>
+            <div class="sched-info">
+              <div class="sched-name">Ranking Corretores</div>
+              <div class="sched-detail">Toda sexta às 17h · WhatsApp grupo equipe</div>
+            </div>
+            <div class="sched-status sched-ok">✓ ativo</div>
+          </div>
+          <div class="schedule-item">
+            <div class="sched-icon">📅</div>
+            <div class="sched-info">
+              <div class="sched-name">Fechamento Mensal</div>
+              <div class="sched-detail">Dia 1 às 09h · PDF completo por e-mail</div>
+            </div>
+            <div class="sched-status sched-next">⏰ 01/Abr</div>
+          </div>
+          <div class="schedule-item">
+            <div class="sched-icon">💰</div>
+            <div class="sched-info">
+              <div class="sched-name">Comissões</div>
+              <div class="sched-detail">Dia 5 de cada mês · individual por corretor</div>
+            </div>
+            <div class="sched-status sched-next">⏰ 05/Abr</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => { glow.style.left=e.clientX+'px'; glow.style.top=e.clientY+'px'; });
+
+function setActive(el) { document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
+
+document.querySelectorAll('.page-tab').forEach(t => {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('.page-tab').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+document.querySelectorAll('.period-btn').forEach(b => {
+  b.addEventListener('click', function() {
+    document.querySelectorAll('.period-btn').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

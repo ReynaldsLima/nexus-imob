@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Imob — Agenda & Visitas</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0:        #060709;
+  --bg-1:        #0c0e13;
+  --bg-2:        #111520;
+  --bg-3:        #161b28;
+  --bg-4:        #1c2235;
+  --border:      rgba(255,255,255,0.06);
+  --border-gold: rgba(255,215,0,0.22);
+
+  --gold:        #ffd700;
+  --gold-dim:    rgba(255,215,0,0.10);
+  --gold-glow:   rgba(255,215,0,0.40);
+  --gold-soft:   rgba(255,215,0,0.06);
+
+  --green:       #00ff88;
+  --green-dim:   rgba(0,255,136,0.08);
+  --yellow:      #ffcc00;
+  --yellow-dim:  rgba(255,204,0,0.08);
+  --orange:      #ff7b00;
+  --orange-dim:  rgba(255,123,0,0.08);
+  --red:         #ff4757;
+  --red-dim:     rgba(255,71,87,0.08);
+  --purple:      #a78bfa;
+  --purple-dim:  rgba(167,139,250,0.08);
+  --blue:        #4f9cf9;
+  --blue-dim:    rgba(79,156,249,0.08);
+
+  --text:        #e2e8f4;
+  --muted:       #4a5568;
+
+  --font-main:   'Exo 2', sans-serif;
+  --font-nexus:  'Rajdhani', sans-serif;
+  --font-mono:   'Share Tech Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-0);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar {
+  width: 220px;
+  min-height: 100vh;
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.sidebar::after {
+  content: '';
+  position: absolute;
+  right: -1px; top: 80px; bottom: 80px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  opacity: 0.3;
+}
+
+.logo-wrap {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: var(--font-nexus);
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+}
+
+.logo-icon {
+  width: 28px; height: 28px;
+  border: 1.5px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px var(--gold-glow);
+  flex-shrink: 0;
+}
+
+.logo-icon-inner {
+  width: 10px; height: 10px;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+}
+
+.logo-sub {
+  font-family: var(--font-nexus);
+  font-size: 0.65rem;
+  color: var(--gold);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  display: block;
+}
+
+.status-badge {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--green);
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--border);
+}
+
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse-g 2s ease infinite;
+}
+
+@keyframes pulse-g {
+  0%,100% { box-shadow: 0 0 8px var(--green); }
+  50%      { box-shadow: 0 0 18px var(--green); }
+}
+
+.nav-section { padding: 16px 0 8px; }
+
+.nav-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0 20px;
+  margin-bottom: 6px;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px;
+  font-family: var(--font-nexus);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+
+.nav-item.active {
+  color: var(--gold);
+  background: var(--gold-dim);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 4px; bottom: 4px;
+  width: 2px;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+
+.nav-icon { font-size: 0.9rem; width: 16px; text-align: center; }
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--gold-dim);
+  color: var(--gold);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  padding: 2px 7px;
+  border: 1px solid var(--border-gold);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.user-card { display: flex; align-items: center; gap: 10px; }
+
+.user-avatar {
+  width: 32px; height: 32px;
+  border: 1px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-nexus);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gold);
+  background: var(--gold-dim);
+}
+
+.user-name {
+  font-size: 0.8rem; font-weight: 600;
+  font-family: var(--font-nexus);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.user-role {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ═══ MAIN ═══ */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  height: 56px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  background: var(--bg-1);
+  flex-shrink: 0;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+
+.page-title {
+  font-family: var(--font-nexus);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.breadcrumb {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.topbar-pill {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  letter-spacing: 0.08em;
+}
+
+.topbar-pill.active-pill {
+  color: var(--gold);
+  border-color: var(--border-gold);
+  background: var(--gold-dim);
+}
+
+.topbar-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 16px;
+  background: var(--gold-dim);
+  border: 1px solid var(--border-gold);
+  color: var(--gold);
+  font-family: var(--font-nexus);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.topbar-btn:hover {
+  background: rgba(255,215,0,0.18);
+  box-shadow: 0 0 16px var(--gold-glow);
+}
+
+/* PAGE NAV */
+.page-nav {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  background: var(--bg-1);
+}
+
+.page-tab {
+  font-family: var(--font-nexus);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 18px 11px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+
+.page-tab:hover { color: var(--text); }
+.page-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ═══ CONTENT ═══ */
+.content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ═══ LEFT — CALENDÁRIO ═══ */
+.cal-panel {
+  width: 320px;
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.cal-panel::-webkit-scrollbar { width: 3px; }
+.cal-panel::-webkit-scrollbar-thumb { background: var(--border-gold); }
+
+/* MONTH NAV */
+.month-nav {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.month-name {
+  font-family: var(--font-nexus);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.month-year {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+
+.month-arrow {
+  font-size: 0.9rem;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  transition: all 0.15s;
+}
+
+.month-arrow:hover { color: var(--gold); border-color: var(--border-gold); }
+
+/* CALENDAR GRID */
+.cal-grid-wrap { padding: 14px 16px; }
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 6px;
+}
+
+.cal-wd {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 0;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-nexus);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  gap: 2px;
+}
+
+.cal-day:hover { color: var(--text); background: rgba(255,255,255,0.03); border-color: var(--border); }
+
+.cal-day.other-month { opacity: 0.25; }
+
+.cal-day.today {
+  color: var(--gold);
+  border-color: var(--border-gold);
+  background: var(--gold-dim);
+  font-weight: 700;
+}
+
+.cal-day.selected {
+  color: var(--bg-0);
+  background: var(--gold);
+  border-color: var(--gold);
+  font-weight: 700;
+}
+
+.cal-day.has-visits { color: var(--text); }
+
+/* Visit dots */
+.day-dots {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+}
+
+.day-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+}
+
+.day-dot.confirmed  { background: var(--green); }
+.day-dot.pending    { background: var(--gold); }
+.day-dot.cancelled  { background: var(--red); }
+
+/* MINI STATS */
+.cal-stats {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.cal-stat {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+}
+
+.cal-stat-val {
+  font-family: var(--font-nexus);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.cal-stat-val.gold  { color: var(--gold); text-shadow: 0 0 12px var(--gold-glow); }
+.cal-stat-val.green { color: var(--green); }
+.cal-stat-val.red   { color: var(--red); }
+.cal-stat-val.muted { color: var(--muted); }
+
+.cal-stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* CORRETORES FILTER */
+.corretor-filter {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.filter-title {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.corretor-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.corretor-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.corretor-chip:hover { border-color: var(--border-gold); }
+.corretor-chip.active-chip { border-color: var(--border-gold); background: var(--gold-soft); }
+
+.chip-color {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chip-name {
+  font-family: var(--font-nexus);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex: 1;
+}
+
+.chip-count {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ═══ CENTER — AGENDA DO DIA ═══ */
+.day-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+
+.day-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.day-title-wrap {}
+
+.day-title {
+  font-family: var(--font-nexus);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--gold);
+}
+
+.day-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.day-kpis {
+  display: flex;
+  gap: 10px;
+}
+
+.day-kpi {
+  text-align: center;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+}
+
+.day-kpi-val {
+  font-family: var(--font-nexus);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.day-kpi-val.g { color: var(--green); }
+.day-kpi-val.y { color: var(--gold); }
+.day-kpi-val.r { color: var(--red); }
+.day-kpi-val.p { color: var(--purple); }
+
+.day-kpi-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* TIME SLOTS */
+.time-slots {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.time-slots::-webkit-scrollbar { width: 3px; }
+.time-slots::-webkit-scrollbar-thumb { background: var(--border-gold); }
+
+.time-row {
+  display: flex;
+  gap: 14px;
+  min-height: 52px;
+  position: relative;
+}
+
+.time-row::before {
+  content: '';
+  position: absolute;
+  left: 46px;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+
+.time-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  width: 36px;
+  flex-shrink: 0;
+  padding-top: 4px;
+  text-align: right;
+}
+
+.time-label.now { color: var(--gold); font-weight: 700; }
+
+.time-content {
+  flex: 1;
+  padding: 4px 0 4px 14px;
+  position: relative;
+}
+
+/* CURRENT TIME INDICATOR */
+.now-line {
+  position: absolute;
+  left: 46px;
+  width: calc(100% - 60px);
+  height: 1px;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold-glow);
+  z-index: 2;
+}
+
+.now-line::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: -3px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+}
+
+/* VISIT CARD */
+.visit-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  animation: fadeUp 0.35s ease both;
+  position: relative;
+  overflow: hidden;
+}
+
+.visit-card::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.01));
+  pointer-events: none;
+}
+
+.visit-card:hover { transform: translateX(3px); }
+
+.visit-card.confirmed  { border-left-color: var(--green); }
+.visit-card.confirmed:hover  { border-color: rgba(0,255,136,0.3); }
+.visit-card.pending    { border-left-color: var(--gold); }
+.visit-card.pending:hover    { border-color: var(--border-gold); }
+.visit-card.done       { border-left-color: var(--blue); opacity: 0.7; }
+.visit-card.cancelled  { border-left-color: var(--red); opacity: 0.5; }
+
+.visit-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.visit-time-range {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+}
+
+.visit-status-badge {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid;
+}
+
+.visit-status-badge.confirmed { color: var(--green); border-color: rgba(0,255,136,0.3); background: var(--green-dim); }
+.visit-status-badge.pending   { color: var(--gold); border-color: var(--border-gold); background: var(--gold-dim); }
+.visit-status-badge.done      { color: var(--blue); border-color: rgba(79,156,249,0.3); background: var(--blue-dim); }
+.visit-status-badge.cancelled { color: var(--red); border-color: rgba(255,71,87,0.3); background: var(--red-dim); }
+
+.visit-lead-name {
+  font-family: var(--font-nexus);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.visit-imovel {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.visit-imovel span { color: var(--text); }
+
+.visit-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.visit-corretor {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.visit-av {
+  width: 20px; height: 20px;
+  border: 1px solid var(--border-gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-nexus);
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: var(--gold);
+  background: var(--gold-dim);
+}
+
+.visit-corretor-name {
+  font-family: var(--font-nexus);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* N8N indicators */
+.n8n-tags {
+  display: flex;
+  gap: 4px;
+}
+
+.n8n-tag {
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.n8n-tag.sent   { color: var(--green); border-color: rgba(0,255,136,0.2); background: var(--green-dim); }
+.n8n-tag.sched  { color: var(--purple); border-color: rgba(167,139,250,0.2); background: var(--purple-dim); }
+.n8n-tag.missed { color: var(--red); border-color: rgba(255,71,87,0.2); background: var(--red-dim); }
+
+/* EMPTY SLOT */
+.empty-slot {
+  height: 44px;
+  border: 1px dashed rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 4px;
+}
+
+.empty-slot:hover {
+  border-color: var(--border-gold);
+  background: var(--gold-soft);
+}
+
+.empty-slot-text {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: rgba(255,255,255,0.1);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.empty-slot:hover .empty-slot-text { color: var(--gold); }
+
+/* ═══ RIGHT — DETALHES DA VISITA ═══ */
+.detail-panel {
+  width: 280px;
+  background: var(--bg-1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.detail-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-title {
+  font-family: var(--font-nexus);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-dot {
+  width: 5px; height: 5px;
+  background: var(--gold);
+  box-shadow: 0 0 6px var(--gold-glow);
+}
+
+.detail-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.detail-scroll::-webkit-scrollbar { width: 3px; }
+.detail-scroll::-webkit-scrollbar-thumb { background: var(--border-gold); }
+
+/* SELECTED VISIT DETAIL */
+.selected-visit {
+  background: var(--bg-2);
+  border: 1px solid var(--border-gold);
+  padding: 14px;
+  margin-bottom: 14px;
+  position: relative;
+}
+
+.selected-visit::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+
+.sv-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.sv-name {
+  font-family: var(--font-nexus);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.sv-time {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  text-align: right;
+}
+
+.sv-date {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-align: right;
+  margin-top: 2px;
+}
+
+.sv-section {
+  margin-bottom: 12px;
+}
+
+.sv-section-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.sv-imovel-card {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sv-imovel-icon {
+  font-size: 1.2rem;
+  width: 30px;
+  text-align: center;
+}
+
+.sv-imovel-name {
+  font-family: var(--font-nexus);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.sv-imovel-meta {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.sv-imovel-price {
+  font-family: var(--font-nexus);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-left: auto;
+}
+
+/* CONTACT ROW */
+.sv-contact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  margin-bottom: 6px;
+}
+
+.sv-contact-icon { font-size: 0.8rem; width: 16px; color: var(--muted); }
+.sv-contact-val {
+  font-family: var(--font-nexus);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.sv-contact-val.gold { color: var(--gold); }
+
+/* N8N AUTOMATION STATUS */
+.n8n-status-box {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  margin-bottom: 6px;
+}
+
+.n8n-status-title {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.n8n-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--purple);
+  box-shadow: 0 0 6px var(--purple);
+}
+
+.n8n-flow-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.n8n-flow-row:last-child { border-bottom: none; }
+
+.n8n-flow-name {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.n8n-flow-status {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border: 1px solid;
+}
+
+.n8n-flow-status.ok     { color: var(--green); border-color: rgba(0,255,136,0.2); background: var(--green-dim); }
+.n8n-flow-status.sched  { color: var(--purple); border-color: rgba(167,139,250,0.2); background: var(--purple-dim); }
+.n8n-flow-status.wait   { color: var(--gold); border-color: var(--border-gold); background: var(--gold-dim); }
+
+/* ACTION BUTTONS */
+.detail-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.det-btn {
+  font-family: var(--font-nexus);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--bg-2);
+}
+
+.det-btn:hover { color: var(--text); border-color: var(--border-gold); }
+.det-btn.primary { color: var(--gold); border-color: var(--border-gold); background: var(--gold-dim); }
+.det-btn.primary:hover { background: rgba(255,215,0,0.18); box-shadow: 0 0 12px var(--gold-glow); }
+.det-btn.danger { color: var(--red); border-color: rgba(255,71,87,0.2); }
+.det-btn.danger:hover { background: var(--red-dim); }
+
+/* PRÓXIMAS VISITAS */
+.upcoming-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.upcoming-item:hover { background: rgba(255,255,255,0.02); margin: 0 -16px; padding: 8px 16px; }
+.upcoming-item:last-child { border-bottom: none; }
+
+.upcoming-date {
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.upcoming-day {
+  font-family: var(--font-nexus);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.upcoming-mon {
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.upcoming-bar {
+  width: 2px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
+.upcoming-info { flex: 1; min-width: 0; }
+
+.upcoming-name {
+  font-family: var(--font-nexus);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upcoming-detail {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.upcoming-time {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.visit-card:nth-child(1) { animation-delay: 0.05s; }
+.visit-card:nth-child(2) { animation-delay: 0.10s; }
+.visit-card:nth-child(3) { animation-delay: 0.15s; }
+.visit-card:nth-child(4) { animation-delay: 0.20s; }
+.visit-card:nth-child(5) { animation-delay: 0.25s; }
+
+.glow-cursor {
+  position: fixed;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,215,0,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  transform: translate(-50%,-50%);
+  transition: left 0.1s, top 0.1s;
+  z-index: 1;
+}
+</style>
+</head>
+<body>
+
+<div class="glow-cursor" id="glow"></div>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo">
+      <div class="logo-icon"><div class="logo-icon-inner"></div></div>
+      NEXUS
+    </div>
+    <span class="logo-sub">Imob Platform</span>
+  </div>
+
+  <div class="status-badge">
+    <div class="status-dot"></div>
+    SISTEMA ONLINE
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬡</span> Dashboard</div>
+    <div class="nav-item" onclick="setActive(this)">
+      <span class="nav-icon">◈</span> Pipeline CRM
+      <span class="nav-badge">47</span>
+    </div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">◻</span> Imóveis</div>
+    <div class="nav-item" onclick="setActive(this)">
+      <span class="nav-icon">◎</span> Leads
+      <span class="nav-badge">12</span>
+    </div>
+    <div class="nav-item active" onclick="setActive(this)"><span class="nav-icon">◷</span> Agenda</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Gestão</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">△</span> Corretores</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">⬙</span> Automações N8N</div>
+    <div class="nav-item" onclick="setActive(this)"><span class="nav-icon">▦</span> Relatórios</div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">RG</div>
+      <div>
+        <div class="user-name">Riguetti</div>
+        <div class="user-role">ADMIN · NEXUS IMOB</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title">Agenda & Visitas</div>
+      <div class="breadcrumb">NEXUS IMOB / AGENDA / MARÇO 2026</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-pill active-pill">⚡ N8N: lembretes ativos</div>
+      <div class="topbar-pill">28 visitas este mês</div>
+      <button class="topbar-btn">＋ Agendar Visita</button>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <div class="page-tab active">Dia</div>
+    <div class="page-tab">Semana</div>
+    <div class="page-tab">Mês</div>
+    <div class="page-tab">Lista</div>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══ CALENDÁRIO ═══ -->
+    <div class="cal-panel">
+
+      <div class="month-nav">
+        <div class="month-arrow">‹</div>
+        <div>
+          <div class="month-name">Março</div>
+          <div class="month-year">2026</div>
+        </div>
+        <div class="month-arrow">›</div>
+      </div>
+
+      <div class="cal-grid-wrap">
+        <div class="cal-weekdays">
+          <div class="cal-wd">D</div><div class="cal-wd">S</div>
+          <div class="cal-wd">T</div><div class="cal-wd">Q</div>
+          <div class="cal-wd">Q</div><div class="cal-wd">S</div>
+          <div class="cal-wd">S</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <div class="cal-stats">
+        <div class="cal-stat">
+          <div class="cal-stat-val gold">28</div>
+          <div class="cal-stat-label">Total Mês</div>
+        </div>
+        <div class="cal-stat">
+          <div class="cal-stat-val green">19</div>
+          <div class="cal-stat-label">Confirmadas</div>
+        </div>
+        <div class="cal-stat">
+          <div class="cal-stat-val muted">6</div>
+          <div class="cal-stat-label">Pendentes</div>
+        </div>
+        <div class="cal-stat">
+          <div class="cal-stat-val red">3</div>
+          <div class="cal-stat-label">Canceladas</div>
+        </div>
+      </div>
+
+      <div class="corretor-filter">
+        <div class="filter-title">Filtrar por Corretor</div>
+        <div class="corretor-chips">
+          <div class="corretor-chip active-chip" onclick="toggleChip(this)">
+            <div class="chip-color" style="background:#ffd700;box-shadow:0 0 6px #ffd700;"></div>
+            <div class="chip-name">Todos</div>
+            <div class="chip-count">28 visitas</div>
+          </div>
+          <div class="corretor-chip" onclick="toggleChip(this)">
+            <div class="chip-color" style="background:#00ff88;"></div>
+            <div class="chip-name">Lucas C.</div>
+            <div class="chip-count">11 visitas</div>
+          </div>
+          <div class="corretor-chip" onclick="toggleChip(this)">
+            <div class="chip-color" style="background:#a78bfa;"></div>
+            <div class="chip-name">Ana C.</div>
+            <div class="chip-count">9 visitas</div>
+          </div>
+          <div class="corretor-chip" onclick="toggleChip(this)">
+            <div class="chip-color" style="background:#4f9cf9;"></div>
+            <div class="chip-name">Carla F.</div>
+            <div class="chip-count">8 visitas</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ AGENDA DO DIA ═══ -->
+    <div class="day-panel">
+
+      <div class="day-header">
+        <div class="day-title-wrap">
+          <div class="day-title">Segunda-feira, 30</div>
+          <div class="day-subtitle">Março 2026 · Hoje · 5 visitas agendadas</div>
+        </div>
+        <div class="day-kpis">
+          <div class="day-kpi">
+            <div class="day-kpi-val g">3</div>
+            <div class="day-kpi-lbl">Confirm.</div>
+          </div>
+          <div class="day-kpi">
+            <div class="day-kpi-val y">1</div>
+            <div class="day-kpi-lbl">Pendente</div>
+          </div>
+          <div class="day-kpi">
+            <div class="day-kpi-val p">1</div>
+            <div class="day-kpi-lbl">Realizada</div>
+          </div>
+          <div class="day-kpi">
+            <div class="day-kpi-val r">0</div>
+            <div class="day-kpi-lbl">Cancelada</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slots" id="timeSlots">
+
+        <!-- 08h -->
+        <div class="time-row">
+          <div class="time-label">08:00</div>
+          <div class="time-content">
+            <div class="empty-slot"><div class="empty-slot-text">+ agendar visita</div></div>
+          </div>
+        </div>
+
+        <!-- 09h -->
+        <div class="time-row">
+          <div class="time-label">09:00</div>
+          <div class="time-content">
+            <!-- VISITA REALIZADA -->
+            <div class="visit-card done" onclick="selectVisit('carlos')">
+              <div class="visit-card-top">
+                <div class="visit-time-range">09:00 — 09:45</div>
+                <div class="visit-status-badge done">✓ Realizada</div>
+              </div>
+              <div class="visit-lead-name">Carlos Mendes</div>
+              <div class="visit-imovel">🏢 <span>Apto Perdizes 90m² · R$ 750k</span></div>
+              <div class="visit-footer">
+                <div class="visit-corretor">
+                  <div class="visit-av" style="border-color:rgba(79,156,249,0.4);color:#4f9cf9;background:rgba(79,156,249,0.08);">CF</div>
+                  <div class="visit-corretor-name">Carla F.</div>
+                </div>
+                <div class="n8n-tags">
+                  <div class="n8n-tag sent">✓ 24h enviado</div>
+                  <div class="n8n-tag sent">✓ 1h enviado</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10h -->
+        <div class="time-row">
+          <div class="time-label now">10:00</div>
+          <div class="time-content" style="position:relative;">
+            <div class="now-line" style="top:8px;"></div>
+            <!-- VISITA CONFIRMADA -->
+            <div class="visit-card confirmed" onclick="selectVisit('fernanda')" style="margin-top:18px;">
+              <div class="visit-card-top">
+                <div class="visit-time-range">10:30 — 11:30</div>
+                <div class="visit-status-badge confirmed">● Confirmada</div>
+              </div>
+              <div class="visit-lead-name">Fernanda Rocha</div>
+              <div class="visit-imovel">🏢 <span>Apto Moema 120m² · R$ 1.1M</span></div>
+              <div class="visit-footer">
+                <div class="visit-corretor">
+                  <div class="visit-av">LC</div>
+                  <div class="visit-corretor-name">Lucas C.</div>
+                </div>
+                <div class="n8n-tags">
+                  <div class="n8n-tag sent">✓ 24h enviado</div>
+                  <div class="n8n-tag sched">⏰ 1h agendado</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 11h -->
+        <div class="time-row">
+          <div class="time-label">11:00</div>
+          <div class="time-content">
+            <div class="empty-slot"><div class="empty-slot-text">+ agendar visita</div></div>
+          </div>
+        </div>
+
+        <!-- 14h -->
+        <div class="time-row">
+          <div class="time-label">14:00</div>
+          <div class="time-content">
+            <!-- VISITA CONFIRMADA -->
+            <div class="visit-card confirmed" onclick="selectVisit('roberto')">
+              <div class="visit-card-top">
+                <div class="visit-time-range">14:00 — 15:00</div>
+                <div class="visit-status-badge confirmed">● Confirmada</div>
+              </div>
+              <div class="visit-lead-name">Roberto Alves</div>
+              <div class="visit-imovel">🏠 <span>Casa Vila Olímpia · Aluguel R$ 8k/m</span></div>
+              <div class="visit-footer">
+                <div class="visit-corretor">
+                  <div class="visit-av" style="border-color:rgba(167,139,250,0.4);color:#a78bfa;background:rgba(167,139,250,0.08);">AC</div>
+                  <div class="visit-corretor-name">Ana C.</div>
+                </div>
+                <div class="n8n-tags">
+                  <div class="n8n-tag sent">✓ 24h enviado</div>
+                  <div class="n8n-tag sched">⏰ 1h agendado</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 15h -->
+        <div class="time-row">
+          <div class="time-label">15:00</div>
+          <div class="time-content">
+            <div class="empty-slot"><div class="empty-slot-text">+ agendar visita</div></div>
+          </div>
+        </div>
+
+        <!-- 16h -->
+        <div class="time-row">
+          <div class="time-label">16:00</div>
+          <div class="time-content">
+            <!-- VISITA PENDENTE -->
+            <div class="visit-card pending" onclick="selectVisit('joao')">
+              <div class="visit-card-top">
+                <div class="visit-time-range">16:30 — 17:30</div>
+                <div class="visit-status-badge pending">◌ Pendente</div>
+              </div>
+              <div class="visit-lead-name">João Lima</div>
+              <div class="visit-imovel">🏗 <span>Cobertura Itaim 280m² · R$ 4.5M</span></div>
+              <div class="visit-footer">
+                <div class="visit-corretor">
+                  <div class="visit-av">LC</div>
+                  <div class="visit-corretor-name">Lucas C.</div>
+                </div>
+                <div class="n8n-tags">
+                  <div class="n8n-tag missed">⚠ 24h pendente</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 17h -->
+        <div class="time-row">
+          <div class="time-label">17:00</div>
+          <div class="time-content">
+            <!-- VISITA CONFIRMADA -->
+            <div class="visit-card confirmed" onclick="selectVisit('lucia')">
+              <div class="visit-card-top">
+                <div class="visit-time-range">17:30 — 18:15</div>
+                <div class="visit-status-badge confirmed">● Confirmada</div>
+              </div>
+              <div class="visit-lead-name">Lúcia Martins</div>
+              <div class="visit-imovel">🏘 <span>Apto Pinheiros 65m² · Aluguel R$ 4.2k</span></div>
+              <div class="visit-footer">
+                <div class="visit-corretor">
+                  <div class="visit-av" style="border-color:rgba(167,139,250,0.4);color:#a78bfa;background:rgba(167,139,250,0.08);">AC</div>
+                  <div class="visit-corretor-name">Ana C.</div>
+                </div>
+                <div class="n8n-tags">
+                  <div class="n8n-tag sent">✓ 24h enviado</div>
+                  <div class="n8n-tag sent">✓ 1h enviado</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 18h -->
+        <div class="time-row">
+          <div class="time-label">18:00</div>
+          <div class="time-content">
+            <div class="empty-slot"><div class="empty-slot-text">+ agendar visita</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ DETALHE DA VISITA ═══ -->
+    <div class="detail-panel">
+
+      <div class="detail-header">
+        <div class="panel-title">
+          <div class="title-dot"></div>
+          Detalhes da Visita
+        </div>
+        <div style="font-family:var(--font-mono);font-size:0.58rem;color:var(--gold);letter-spacing:0.08em;">#V-0031</div>
+      </div>
+
+      <div class="detail-scroll">
+
+        <!-- VISITA SELECIONADA: FERNANDA -->
+        <div class="selected-visit" id="selectedVisit">
+          <div class="sv-header">
+            <div class="sv-name">Fernanda Rocha</div>
+            <div>
+              <div class="sv-time">10:30 — 11:30</div>
+              <div class="sv-date">Hoje, 30 Mar 2026</div>
+            </div>
+          </div>
+
+          <div class="sv-section">
+            <div class="sv-section-label">Imóvel</div>
+            <div class="sv-imovel-card">
+              <div class="sv-imovel-icon">🏢</div>
+              <div>
+                <div class="sv-imovel-name">Apto Moema 120m²</div>
+                <div class="sv-imovel-meta">3 dorm · 2 vagas · 8º andar</div>
+              </div>
+              <div class="sv-imovel-price">R$1.1M</div>
+            </div>
+          </div>
+
+          <div class="sv-section">
+            <div class="sv-section-label">Contato</div>
+            <div class="sv-contact">
+              <div class="sv-contact-icon">📱</div>
+              <div class="sv-contact-val gold">(11) 98765-4321</div>
+            </div>
+            <div class="sv-contact">
+              <div class="sv-contact-icon">📍</div>
+              <div class="sv-contact-val" style="font-size:0.72rem;">R. Abílio Soares, 150 — Moema</div>
+            </div>
+            <div class="sv-contact">
+              <div class="sv-contact-icon">👤</div>
+              <div class="sv-contact-val">Lucas Carvalho</div>
+            </div>
+          </div>
+
+          <div class="sv-section">
+            <div class="sv-section-label">Automation Status</div>
+            <div class="n8n-status-box">
+              <div class="n8n-status-title">
+                <div class="n8n-dot"></div>
+                Fluxo 3 · Confirmação & Lembretes
+              </div>
+              <div class="n8n-flow-row">
+                <div class="n8n-flow-name">Confirmação inicial</div>
+                <div class="n8n-flow-status ok">✓ enviado</div>
+              </div>
+              <div class="n8n-flow-row">
+                <div class="n8n-flow-name">Lembrete 24h antes</div>
+                <div class="n8n-flow-status ok">✓ enviado</div>
+              </div>
+              <div class="n8n-flow-row">
+                <div class="n8n-flow-name">Lembrete 1h antes</div>
+                <div class="n8n-flow-status sched">⏰ 09:30h</div>
+              </div>
+              <div class="n8n-flow-row">
+                <div class="n8n-flow-name">Follow-up pós-visita</div>
+                <div class="n8n-flow-status wait">aguardando</div>
+              </div>
+              <div class="n8n-flow-row">
+                <div class="n8n-flow-name">NPS automático</div>
+                <div class="n8n-flow-status wait">2h após visita</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-actions">
+            <div class="det-btn primary">💬 WhatsApp</div>
+            <div class="det-btn">📍 Ver Mapa</div>
+            <div class="det-btn">✏️ Editar</div>
+            <div class="det-btn danger">✕ Cancelar</div>
+          </div>
+        </div>
+
+        <!-- PRÓXIMAS VISITAS -->
+        <div style="margin-top:4px;">
+          <div style="font-family:var(--font-mono);font-size:0.58rem;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;">Próximas Visitas</div>
+
+          <div class="upcoming-item">
+            <div class="upcoming-date">
+              <div class="upcoming-day">31</div>
+              <div class="upcoming-mon">Mar</div>
+            </div>
+            <div class="upcoming-bar" style="background:var(--green);"></div>
+            <div class="upcoming-info">
+              <div class="upcoming-name">Patricia C.</div>
+              <div class="upcoming-detail">Apto Moema 120m²</div>
+            </div>
+            <div class="upcoming-time">10:00</div>
+          </div>
+
+          <div class="upcoming-item">
+            <div class="upcoming-date">
+              <div class="upcoming-day">01</div>
+              <div class="upcoming-mon">Abr</div>
+            </div>
+            <div class="upcoming-bar" style="background:#a78bfa;"></div>
+            <div class="upcoming-info">
+              <div class="upcoming-name">Marcos P.</div>
+              <div class="upcoming-detail">Apto Pinheiros 65m²</div>
+            </div>
+            <div class="upcoming-time">14:30</div>
+          </div>
+
+          <div class="upcoming-item">
+            <div class="upcoming-date">
+              <div class="upcoming-day">02</div>
+              <div class="upcoming-mon">Abr</div>
+            </div>
+            <div class="upcoming-bar" style="background:#4f9cf9;"></div>
+            <div class="upcoming-info">
+              <div class="upcoming-name">Sílvia B.</div>
+              <div class="upcoming-detail">Casa V. Olímpia</div>
+            </div>
+            <div class="upcoming-time">09:00</div>
+          </div>
+
+          <div class="upcoming-item">
+            <div class="upcoming-date">
+              <div class="upcoming-day">03</div>
+              <div class="upcoming-mon">Abr</div>
+            </div>
+            <div class="upcoming-bar" style="background:var(--gold);"></div>
+            <div class="upcoming-info">
+              <div class="upcoming-name">Eduardo N.</div>
+              <div class="upcoming-detail">Cobertura Itaim</div>
+            </div>
+            <div class="upcoming-time">11:00</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Cursor glow
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top  = e.clientY + 'px';
+});
+
+// Sidebar nav
+function setActive(el) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Page tabs
+document.querySelectorAll('.page-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Corretor chip toggle
+function toggleChip(el) {
+  document.querySelectorAll('.corretor-chip').forEach(c => c.classList.remove('active-chip'));
+  el.classList.add('active-chip');
+}
+
+// Visit select highlight
+function selectVisit(id) {
+  document.querySelectorAll('.visit-card').forEach(c => {
+    c.style.background = '';
+    c.style.borderTopColor = '';
+  });
+  event.currentTarget.style.background = 'rgba(255,215,0,0.04)';
+}
+
+// Build calendar — March 2026
+const calGrid = document.getElementById('calGrid');
+const visits = {
+  2: ['confirmed'], 3: ['confirmed','pending'],
+  5: ['confirmed'], 7: ['confirmed','confirmed','pending'],
+  9: ['confirmed'], 10: ['cancelled'],
+  12: ['confirmed','confirmed'], 14: ['pending','confirmed'],
+  16: ['confirmed'], 17: ['confirmed','pending'],
+  19: ['confirmed','confirmed','confirmed'],
+  21: ['cancelled','confirmed'], 23: ['confirmed'],
+  24: ['confirmed','pending'], 26: ['confirmed'],
+  28: ['confirmed','confirmed'],
+  30: ['done','confirmed','confirmed','pending','confirmed'],
+  31: ['confirmed']
+};
+
+// March 2026 starts on Sunday (day 0)
+const startDay = 0; // Sunday
+const daysInMonth = 31;
+
+// Fill leading empty cells
+for(let i = 0; i < startDay; i++) {
+  const empty = document.createElement('div');
+  empty.className = 'cal-day other-month';
+  empty.textContent = 31 - startDay + i + 1 - (startDay > 0 ? 0 : 31);
+  // previous month days
+  const prevDays = [22,23,24,25,26,27,28];
+  empty.textContent = prevDays[i] || '';
+  calGrid.appendChild(empty);
+}
+
+for(let d = 1; d <= daysInMonth; d++) {
+  const cell = document.createElement('div');
+  cell.className = 'cal-day has-visits';
+  if(d === 30) cell.classList.add('today', 'selected');
+
+  const num = document.createElement('div');
+  num.textContent = d;
+  cell.appendChild(num);
+
+  if(visits[d]) {
+    const dots = document.createElement('div');
+    dots.className = 'day-dots';
+    visits[d].slice(0,3).forEach(type => {
+      const dot = document.createElement('div');
+      dot.className = `day-dot ${type}`;
+      dots.appendChild(dot);
+    });
+    cell.appendChild(dots);
+  }
+
+  cell.addEventListener('click', function() {
+    document.querySelectorAll('.cal-day').forEach(c => {
+      c.classList.remove('selected');
+      if(c.classList.contains('today')) {
+        // keep today styling but not selected
+      }
+    });
+    this.classList.add('selected');
+  });
+
+  calGrid.appendChild(cell);
+}
+
+// Fill trailing
+const totalCells = startDay + daysInMonth;
+const remaining = (7 - (totalCells % 7)) % 7;
+for(let i = 1; i <= remaining; i++) {
+  const empty = document.createElement('div');
+  empty.className = 'cal-day other-month';
+  empty.innerHTML = `<div>${i}</div>`;
+  calGrid.appendChild(empty);
+}
+</script>
+</body>
+</html>

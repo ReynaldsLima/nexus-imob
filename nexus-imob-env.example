@@ -1,0 +1,78 @@
+# ============================================================
+#  NEXUS IMOB — VARIÁVEIS DE AMBIENTE
+#  Copie este arquivo para .env e preencha os valores
+#  NUNCA commite o .env no repositório!
+# ============================================================
+
+# ----------------------------------------------------------
+# DOMÍNIO
+# ----------------------------------------------------------
+DOMAIN=nexusimob.com.br
+# Subdomínios gerados automaticamente:
+# n8n.nexusimob.com.br     → N8N
+# wpp.nexusimob.com.br     → Evolution API
+# api.nexusimob.com.br     → Backend
+# db.nexusimob.com.br      → PgAdmin (dev)
+
+# ----------------------------------------------------------
+# POSTGRESQL
+# ----------------------------------------------------------
+POSTGRES_USER=nexus
+POSTGRES_PASSWORD=TROQUE_POR_SENHA_FORTE_AQUI
+POSTGRES_DB=nexus_imob
+
+# ----------------------------------------------------------
+# REDIS
+# ----------------------------------------------------------
+REDIS_PASSWORD=TROQUE_POR_SENHA_FORTE_AQUI
+
+# ----------------------------------------------------------
+# N8N
+# ----------------------------------------------------------
+N8N_USER=admin
+N8N_PASSWORD=TROQUE_POR_SENHA_FORTE_AQUI
+N8N_ENCRYPTION_KEY=GERE_UMA_CHAVE_DE_32_CHARS_AQUI
+
+# ----------------------------------------------------------
+# EVOLUTION API (WhatsApp)
+# ----------------------------------------------------------
+EVOLUTION_API_KEY=TROQUE_POR_API_KEY_FORTE_AQUI
+
+# ----------------------------------------------------------
+# ANTHROPIC (Claude IA)
+# ----------------------------------------------------------
+ANTHROPIC_API_KEY=sk-ant-XXXXXXXXXXXXXXXXXXXX
+
+# ----------------------------------------------------------
+# PGADMIN (dev only)
+# ----------------------------------------------------------
+PGADMIN_EMAIL=admin@nexusimob.com.br
+PGADMIN_PASSWORD=TROQUE_POR_SENHA_FORTE_AQUI
+
+# ----------------------------------------------------------
+# SENDGRID (e-mail)
+# ----------------------------------------------------------
+SENDGRID_API_KEY=SG.XXXXXXXXXXXXXXXXXXXX
+EMAIL_FROM=noreply@nexusimob.com.br
+
+# ----------------------------------------------------------
+# CLOUDFLARE R2 (fotos de imóveis)
+# ----------------------------------------------------------
+R2_ACCOUNT_ID=XXXXXXXXXXXXXXXXXXXX
+R2_ACCESS_KEY_ID=XXXXXXXXXXXXXXXXXXXX
+R2_SECRET_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXX
+R2_BUCKET_NAME=nexus-imoveis
+
+# ----------------------------------------------------------
+# STRIPE (billing)
+# ----------------------------------------------------------
+STRIPE_SECRET_KEY=sk_live_XXXXXXXXXXXXXXXXXXXX
+STRIPE_WEBHOOK_SECRET=whsec_XXXXXXXXXXXXXXXXXXXX
+
+# ----------------------------------------------------------
+# PORTAIS IMOBILIÁRIOS
+# ----------------------------------------------------------
+ZAP_IMOVEIS_API_KEY=XXXXXXXXXXXXXXXXXXXX
+VIVAREAL_API_KEY=XXXXXXXXXXXXXXXXXXXX
+OLX_CLIENT_ID=XXXXXXXXXXXXXXXXXXXX
+OLX_CLIENT_SECRET=XXXXXXXXXXXXXXXXXXXX

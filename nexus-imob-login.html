@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS Imob — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0:       #060709;
+  --bg-1:       #0c0e13;
+  --bg-2:       #111520;
+  --bg-3:       #161b28;
+  --border:     rgba(255,255,255,0.06);
+  --border-gold:rgba(255,215,0,0.22);
+
+  --gold:       #ffd700;
+  --gold-dim:   rgba(255,215,0,0.10);
+  --gold-glow:  rgba(255,215,0,0.40);
+  --gold-soft:  rgba(255,215,0,0.05);
+
+  --green:      #00ff88;
+  --green-dim:  rgba(0,255,136,0.08);
+  --red:        #ff4757;
+  --red-dim:    rgba(255,71,87,0.08);
+  --muted:      #4a5568;
+  --text:       #e2e8f4;
+
+  --font-main:  'Exo 2', sans-serif;
+  --font-nexus: 'Rajdhani', sans-serif;
+  --font-mono:  'Share Tech Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-0);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── SCANLINES ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ════════════════════════════
+   CANVAS BACKGROUND
+════════════════════════════ */
+#bgCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+/* ════════════════════════════
+   SPLIT LAYOUT
+════════════════════════════ */
+.split-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  padding: 48px;
+}
+
+.split-right {
+  width: 460px;
+  min-height: 100vh;
+  background: var(--bg-1);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+/* RIGHT glow edge */
+.split-right::before {
+  content: '';
+  position: absolute;
+  left: -1px; top: 10%; bottom: 10%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  opacity: 0.4;
+}
+
+/* ════════════════════════════
+   LEFT — BRAND HERO
+════════════════════════════ */
+.brand-hero {
+  text-align: center;
+  animation: fadeUp 0.8s ease both;
+}
+
+.hero-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.hero-diamond {
+  width: 52px; height: 52px;
+  border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  transform: rotate(45deg);
+  box-shadow: 0 0 30px var(--gold-glow), inset 0 0 20px rgba(255,215,0,0.08);
+  position: relative;
+}
+
+.hero-diamond::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(255,215,0,0.3);
+}
+
+.hero-diamond-inner {
+  width: 16px; height: 16px;
+  background: var(--gold);
+  box-shadow: 0 0 16px var(--gold), 0 0 32px var(--gold-glow);
+}
+
+.hero-wordmark {
+  font-family: var(--font-nexus);
+  font-size: 3.6rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text);
+  line-height: 1;
+  text-shadow: 0 0 40px rgba(255,255,255,0.1);
+}
+
+.hero-sub {
+  font-family: var(--font-nexus);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 40px;
+  text-shadow: 0 0 20px var(--gold-glow);
+}
+
+.hero-desc {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 420px;
+  margin: 0 auto 48px;
+  font-weight: 300;
+}
+
+/* FEATURES LIST */
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 360px;
+  margin: 0 auto;
+  animation: fadeUp 0.8s ease 0.2s both;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.feature-item:hover {
+  border-color: var(--border-gold);
+  background: var(--gold-soft);
+}
+
+.feat-icon {
+  width: 32px; height: 32px;
+  border: 1px solid var(--border-gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem;
+  background: var(--gold-dim);
+  flex-shrink: 0;
+}
+
+.feat-text { flex: 1; }
+
+.feat-title {
+  font-family: var(--font-nexus);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 1px;
+}
+
+.feat-desc {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* VERSION BADGE */
+.version-badge {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  padding: 4px 14px;
+}
+
+/* ════════════════════════════
+   RIGHT — FORMS
+════════════════════════════ */
+.form-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 36px;
+  overflow-y: auto;
+}
+
+.form-area::-webkit-scrollbar { width: 3px; }
+.form-area::-webkit-scrollbar-thumb { background: var(--border-gold); }
+
+/* FORM TABS */
+.form-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 36px;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-tab {
+  font-family: var(--font-nexus);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 24px 12px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  margin-bottom: -1px;
+}
+
+.form-tab:hover { color: var(--text); }
+.form-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* PANELS */
+.form-panel { display: none; }
+.form-panel.active { display: block; animation: fadeUp 0.3s ease both; }
+
+/* FORM HEADER */
+.form-header { margin-bottom: 28px; }
+
+.form-title {
+  font-family: var(--font-nexus);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.form-title span { color: var(--gold); }
+
+.form-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* INPUTS */
+.field {
+  margin-bottom: 16px;
+}
+
+.field-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.field-input {
+  width: 100%;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-main);
+  font-size: 0.88rem;
+  padding: 11px 14px;
+  outline: none;
+  transition: all 0.15s;
+  -webkit-appearance: none;
+}
+
+.field-input:focus {
+  border-color: var(--border-gold);
+  background: var(--bg-3);
+  box-shadow: 0 0 0 3px rgba(255,215,0,0.05);
+}
+
+.field-input::placeholder { color: var(--muted); font-size: 0.82rem; }
+
+.field-input.error { border-color: var(--red); }
+
+.field-hint {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-top: 4px;
+}
+
+.field-hint.error { color: var(--red); }
+
+/* SELECT */
+.field-select {
+  width: 100%;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-main);
+  font-size: 0.88rem;
+  padding: 11px 14px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234a5568'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.field-select:focus { border-color: var(--border-gold); }
+
+.field-select option { background: var(--bg-2); }
+
+/* GRID FIELDS */
+.fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* SUBMIT BTN */
+.submit-btn {
+  width: 100%;
+  background: var(--gold);
+  border: none;
+  color: var(--bg-0);
+  font-family: var(--font-nexus);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.submit-btn:hover {
+  box-shadow: 0 0 24px var(--gold-glow), 0 4px 16px rgba(255,215,0,0.3);
+  transform: translateY(-1px);
+}
+
+.submit-btn:hover::before { opacity: 1; }
+.submit-btn:active { transform: translateY(0); }
+
+/* DIVIDER */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.or-text {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* FORGOT */
+.form-link {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: right;
+  display: block;
+  margin-top: -8px;
+  margin-bottom: 20px;
+  transition: opacity 0.15s;
+}
+
+.form-link:hover { opacity: 0.7; }
+
+/* SWITCH PROMPT */
+.switch-prompt {
+  text-align: center;
+  margin-top: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.switch-link {
+  color: var(--gold);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ── ONBOARDING STEPS ── */
+.steps-header {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 32px;
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.step-circle {
+  width: 28px; height: 28px;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.step-circle.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-dim);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+.step-circle.done {
+  border-color: var(--green);
+  color: var(--green);
+  background: var(--green-dim);
+}
+
+.step-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  transition: background 0.3s;
+}
+
+.step-line.done { background: var(--green); box-shadow: 0 0 6px rgba(0,255,136,0.3); }
+.step-line.active { background: linear-gradient(90deg, var(--green), var(--gold)); }
+
+.step-labels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 6px;
+  margin-bottom: 24px;
+}
+
+.step-label {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.step-label.active { color: var(--gold); }
+.step-label.done   { color: var(--green); }
+
+/* STEP PANELS */
+.step-panel { display: none; }
+.step-panel.active { display: block; animation: fadeUp 0.3s ease both; }
+
+/* PLAN CARDS */
+.plan-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.plan-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.plan-card:hover { border-color: var(--border-gold); background: var(--bg-3); }
+
+.plan-card.selected {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+
+.plan-card.selected::before {
+  content: '✓';
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  font-family: var(--font-nexus);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.plan-card.featured {
+  border-color: var(--border-gold);
+}
+
+.plan-card.featured::after {
+  content: 'POPULAR';
+  position: absolute;
+  top: -1px; right: 16px;
+  background: var(--gold);
+  color: var(--bg-0);
+  font-family: var(--font-nexus);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+}
+
+.plan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.plan-name {
+  font-family: var(--font-nexus);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.plan-price {
+  font-family: var(--font-nexus);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.plan-price span {
+  font-size: 0.6rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+}
+
+.plan-features {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  line-height: 1.8;
+}
+
+/* STEP NAV BUTTONS */
+.step-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.step-nav.single { grid-template-columns: 1fr; }
+
+.step-btn {
+  font-family: var(--font-nexus);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--bg-2);
+}
+
+.step-btn:hover { color: var(--text); border-color: var(--border-gold); }
+
+.step-btn.primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg-0);
+  font-weight: 700;
+}
+
+.step-btn.primary:hover {
+  box-shadow: 0 0 20px var(--gold-glow);
+  transform: translateY(-1px);
+}
+
+/* SUCCESS STATE */
+.success-state {
+  text-align: center;
+  padding: 20px 0;
+  animation: fadeUp 0.5s ease both;
+}
+
+.success-diamond {
+  width: 64px; height: 64px;
+  border: 2px solid var(--green);
+  display: flex; align-items: center; justify-content: center;
+  transform: rotate(45deg);
+  margin: 0 auto 24px;
+  box-shadow: 0 0 24px rgba(0,255,136,0.3);
+}
+
+.success-diamond-inner {
+  font-size: 1.2rem;
+  transform: rotate(-45deg);
+}
+
+.success-title {
+  font-family: var(--font-nexus);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+  text-shadow: 0 0 20px rgba(0,255,136,0.4);
+}
+
+.success-sub {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glow-pulse {
+  0%,100% { box-shadow: 0 0 30px var(--gold-glow), inset 0 0 20px rgba(255,215,0,0.08); }
+  50%      { box-shadow: 0 0 50px var(--gold-glow), inset 0 0 30px rgba(255,215,0,0.14); }
+}
+
+.hero-diamond { animation: glow-pulse 3s ease infinite; }
+
+.glow-cursor {
+  position: fixed;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,215,0,0.03) 0%, transparent 70%);
+  pointer-events: none;
+  transform: translate(-50%,-50%);
+  transition: left 0.15s, top 0.15s;
+  z-index: 1;
+}
+</style>
+</head>
+<body>
+
+<div class="glow-cursor" id="glow"></div>
+<canvas id="bgCanvas"></canvas>
+
+<!-- ════ LEFT — BRAND ════ -->
+<div class="split-left">
+
+  <div class="brand-hero">
+    <div class="hero-logo-wrap">
+      <div class="hero-diamond"><div class="hero-diamond-inner"></div></div>
+      <div class="hero-wordmark">NEXUS</div>
+    </div>
+    <div class="hero-sub">Imob Platform</div>
+    <div class="hero-desc">
+      A plataforma definitiva para imobiliárias que querem escalar com inteligência.
+      CRM, automação, IA e WhatsApp em um único sistema.
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature-item">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-text">
+        <div class="feat-title">Automação N8N</div>
+        <div class="feat-desc">8+ fluxos prontos · leads · visitas · reengajamento</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feat-icon">🤖</div>
+      <div class="feat-text">
+        <div class="feat-title">IA Conversacional</div>
+        <div class="feat-desc">Atendimento 24h · qualificação automática · match de imóveis</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feat-icon">📊</div>
+      <div class="feat-text">
+        <div class="feat-title">Pipeline Visual</div>
+        <div class="feat-desc">Kanban · timeline · KPIs em tempo real · ranking corretores</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feat-icon">💬</div>
+      <div class="feat-text">
+        <div class="feat-title">WhatsApp Integrado</div>
+        <div class="feat-desc">Evolution API · lembretes automáticos · NPS pós-visita</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="version-badge">NEXUS IMOB · v1.0 · BETA</div>
+
+</div>
+
+<!-- ════ RIGHT — FORMS ════ -->
+<div class="split-right">
+  <div class="form-area">
+
+    <!-- TABS -->
+    <div class="form-tabs">
+      <div class="form-tab active" id="tab-login" onclick="switchTab('login')">Entrar</div>
+      <div class="form-tab" id="tab-onboard" onclick="switchTab('onboard')">Nova Imobiliária</div>
+    </div>
+
+    <!-- ══ LOGIN PANEL ══ -->
+    <div class="form-panel active" id="panel-login">
+
+      <div class="form-header">
+        <div class="form-title">Bem-vindo ao <span>NEXUS</span></div>
+        <div class="form-subtitle">Entre com suas credenciais para acessar</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Identificador da Imobiliária</label>
+        <input class="field-input" type="text" placeholder="imobiliaria-exemplo">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Usuário</label>
+        <input class="field-input" type="text" placeholder="seu.usuario">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Senha</label>
+        <input class="field-input" type="password" placeholder="••••••••">
+      </div>
+
+      <span class="form-link">Esqueci minha senha →</span>
+
+      <button class="submit-btn" onclick="handleLogin()">
+        Acessar o NEXUS →
+      </button>
+
+      <div class="or-divider">
+        <span class="or-text">ou</span>
+      </div>
+
+      <div class="switch-prompt">
+        Ainda não tem conta?
+        <span class="switch-link" onclick="switchTab('onboard')">Cadastre sua imobiliária</span>
+      </div>
+
+      <!-- DEMO HINT -->
+      <div style="margin-top:24px; padding:12px 14px; background:var(--gold-soft); border:1px solid var(--border-gold);">
+        <div style="font-family:var(--font-mono);font-size:0.58rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Demo</div>
+        <div style="font-family:var(--font-mono);font-size:0.62rem;color:var(--muted);letter-spacing:0.06em;">ID: nexus-demo · Usuário: admin · Senha: nexus2026</div>
+      </div>
+
+    </div>
+
+    <!-- ══ ONBOARDING PANEL ══ -->
+    <div class="form-panel" id="panel-onboard">
+
+      <div class="form-header">
+        <div class="form-title">Cadastrar <span>Imobiliária</span></div>
+        <div class="form-subtitle">Configure sua conta em 3 passos simples</div>
+      </div>
+
+      <!-- STEP INDICATORS -->
+      <div class="steps-header">
+        <div class="step-indicator">
+          <div class="step-circle done" id="sc1">1</div>
+          <div class="step-line done" id="sl1"></div>
+        </div>
+        <div class="step-indicator">
+          <div class="step-circle active" id="sc2">2</div>
+          <div class="step-line" id="sl2"></div>
+        </div>
+        <div class="step-indicator" style="flex:0;">
+          <div class="step-circle" id="sc3">3</div>
+        </div>
+      </div>
+
+      <div class="step-labels">
+        <div class="step-label done" id="sl-1">Empresa</div>
+        <div class="step-label active" id="sl-2">Acesso</div>
+        <div class="step-label" id="sl-3">Plano</div>
+      </div>
+
+      <!-- STEP 1: EMPRESA -->
+      <div class="step-panel" id="step1">
+        <div class="fields-row">
+          <div class="field">
+            <label class="field-label">Nome da Imobiliária *</label>
+            <input class="field-input" type="text" placeholder="Ex: Imóveis Premium SP">
+          </div>
+          <div class="field">
+            <label class="field-label">CRECI *</label>
+            <input class="field-input" type="text" placeholder="J-000000">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Identificador único (slug) *</label>
+          <input class="field-input" type="text" placeholder="imoveis-premium-sp" id="slugInput" oninput="updateSlug(this)">
+          <div class="field-hint" id="slugHint">nexus-imob.com.br/<span id="slugPreview">seu-identificador</span></div>
+        </div>
+        <div class="fields-row">
+          <div class="field">
+            <label class="field-label">Cidade *</label>
+            <input class="field-input" type="text" placeholder="São Paulo">
+          </div>
+          <div class="field">
+            <label class="field-label">Estado *</label>
+            <select class="field-select">
+              <option value="">Selecione</option>
+              <option value="SP" selected>SP</option>
+              <option value="RJ">RJ</option>
+              <option value="MG">MG</option>
+              <option value="PR">PR</option>
+              <option value="RS">RS</option>
+            </select>
+          </div>
+        </div>
+        <div class="fields-row">
+          <div class="field">
+            <label class="field-label">Qtd. Corretores</label>
+            <select class="field-select">
+              <option>1 – 5</option>
+              <option>6 – 15</option>
+              <option selected>16 – 30</option>
+              <option>30+</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Foco Principal</label>
+            <select class="field-select">
+              <option>Venda</option>
+              <option>Aluguel</option>
+              <option selected>Venda + Aluguel</option>
+            </select>
+          </div>
+        </div>
+        <div class="step-nav single">
+          <div class="step-btn primary" onclick="goStep(2)">Continuar →</div>
+        </div>
+      </div>
+
+      <!-- STEP 2: ACESSO (ACTIVE) -->
+      <div class="step-panel active" id="step2">
+        <div class="field">
+          <label class="field-label">Nome Completo (Admin) *</label>
+          <input class="field-input" type="text" placeholder="Seu nome completo">
+        </div>
+        <div class="field">
+          <label class="field-label">E-mail *</label>
+          <input class="field-input" type="email" placeholder="admin@suaimobiliaria.com.br">
+        </div>
+        <div class="field">
+          <label class="field-label">WhatsApp (Admin) *</label>
+          <input class="field-input" type="tel" placeholder="(11) 9 9999-9999">
+        </div>
+        <div class="fields-row">
+          <div class="field">
+            <label class="field-label">Senha *</label>
+            <input class="field-input" type="password" placeholder="Mínimo 8 caracteres" id="pwdInput" oninput="checkPwd(this)">
+          </div>
+          <div class="field">
+            <label class="field-label">Confirmar Senha *</label>
+            <input class="field-input" type="password" placeholder="Repita a senha">
+          </div>
+        </div>
+        <!-- PASSWORD STRENGTH -->
+        <div style="margin-bottom:16px;">
+          <div style="font-family:var(--font-mono);font-size:0.56rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;">Força da senha</div>
+          <div style="display:flex;gap:3px;">
+            <div class="pwd-bar" id="pb1" style="flex:1;height:3px;background:var(--border);transition:background 0.3s;"></div>
+            <div class="pwd-bar" id="pb2" style="flex:1;height:3px;background:var(--border);transition:background 0.3s;"></div>
+            <div class="pwd-bar" id="pb3" style="flex:1;height:3px;background:var(--border);transition:background 0.3s;"></div>
+            <div class="pwd-bar" id="pb4" style="flex:1;height:3px;background:var(--border);transition:background 0.3s;"></div>
+          </div>
+        </div>
+        <div class="step-nav">
+          <div class="step-btn" onclick="goStep(1)">← Voltar</div>
+          <div class="step-btn primary" onclick="goStep(3)">Continuar →</div>
+        </div>
+      </div>
+
+      <!-- STEP 3: PLANO -->
+      <div class="step-panel" id="step3">
+        <div class="plan-cards">
+
+          <div class="plan-card" onclick="selectPlan(this)">
+            <div class="plan-header">
+              <div class="plan-name">Starter</div>
+              <div class="plan-price">R$ 297 <span>/mês</span></div>
+            </div>
+            <div class="plan-features">
+              Até 5 corretores · 1 instância WhatsApp<br>
+              CRM + Agenda + 3 fluxos N8N<br>
+              Suporte por e-mail
+            </div>
+          </div>
+
+          <div class="plan-card featured selected" onclick="selectPlan(this)">
+            <div class="plan-header">
+              <div class="plan-name">Profissional</div>
+              <div class="plan-price">R$ 597 <span>/mês</span></div>
+            </div>
+            <div class="plan-features">
+              Até 15 corretores · 2 instâncias WhatsApp<br>
+              Todos os módulos + 8 fluxos N8N + IA<br>
+              Match automático · Relatórios · Suporte prioritário
+            </div>
+          </div>
+
+          <div class="plan-card" onclick="selectPlan(this)">
+            <div class="plan-header">
+              <div class="plan-name">Enterprise</div>
+              <div class="plan-price">R$ 997 <span>/mês</span></div>
+            </div>
+            <div class="plan-features">
+              Corretores ilimitados · White-label<br>
+              Automações customizadas · API dedicada<br>
+              Gerente de conta · SLA 99.9%
+            </div>
+          </div>
+
+        </div>
+
+        <div style="font-family:var(--font-mono);font-size:0.58rem;color:var(--muted);letter-spacing:0.06em;text-align:center;margin-bottom:14px;">
+          ✓ 14 dias grátis · sem cartão de crédito · cancele quando quiser
+        </div>
+
+        <div class="step-nav">
+          <div class="step-btn" onclick="goStep(2)">← Voltar</div>
+          <div class="step-btn primary" onclick="handleRegister()">Criar Conta →</div>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="step-panel" id="stepSuccess">
+        <div class="success-state">
+          <div class="success-diamond"><div class="success-diamond-inner">✓</div></div>
+          <div class="success-title">Conta Criada!</div>
+          <div class="success-sub">
+            Sua imobiliária foi cadastrada com sucesso.<br>
+            Enviamos as credenciais para seu e-mail.<br><br>
+            Nossa equipe entrará em contato em até<br>
+            <span style="color:var(--gold);">24 horas</span> para o setup inicial.
+          </div>
+          <button class="submit-btn" onclick="switchTab('login')">
+            Acessar o NEXUS →
+          </button>
+        </div>
+      </div>
+
+      <div class="switch-prompt" style="margin-top:16px;">
+        Já tem conta?
+        <span class="switch-link" onclick="switchTab('login')">Fazer login</span>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Cursor glow
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top  = e.clientY + 'px';
+});
+
+// ── ANIMATED BACKGROUND GRID ──
+const canvas = document.getElementById('bgCanvas');
+const ctx    = canvas.getContext('2d');
+
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Nodes
+const nodes = [];
+const NODE_COUNT = 60;
+
+for(let i = 0; i < NODE_COUNT; i++) {
+  nodes.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    size: Math.random() * 1.5 + 0.5,
+    opacity: Math.random() * 0.4 + 0.1
+  });
+}
+
+function drawBg() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,215,0,0.025)';
+  ctx.lineWidth = 1;
+  const gridSize = 60;
+  for(let x = 0; x < canvas.width; x += gridSize) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+  }
+  for(let y = 0; y < canvas.height; y += gridSize) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+  }
+
+  // Connections
+  for(let i = 0; i < nodes.length; i++) {
+    for(let j = i + 1; j < nodes.length; j++) {
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[i].y - nodes[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < 120) {
+        const alpha = (1 - dist/120) * 0.12;
+        ctx.strokeStyle = `rgba(255,215,0,${alpha})`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x, nodes[i].y);
+        ctx.lineTo(nodes[j].x, nodes[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // Nodes
+  nodes.forEach(n => {
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,215,0,${n.opacity})`;
+    ctx.fill();
+
+    n.x += n.vx;
+    n.y += n.vy;
+
+    if(n.x < 0 || n.x > canvas.width)  n.vx *= -1;
+    if(n.y < 0 || n.y > canvas.height) n.vy *= -1;
+  });
+
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+
+// ── FORM TABS ──
+function switchTab(tab) {
+  document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+// ── ONBOARDING STEPS ──
+let currentStep = 2;
+
+function goStep(step) {
+  // Hide all step panels
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step' + step).classList.add('active');
+  currentStep = step;
+  updateStepUI(step);
+}
+
+function updateStepUI(step) {
+  for(let i = 1; i <= 3; i++) {
+    const circle = document.getElementById('sc' + i);
+    const label  = document.getElementById('sl-' + i);
+
+    if(i < step) {
+      circle.className = 'step-circle done';
+      label.className  = 'step-label done';
+    } else if(i === step) {
+      circle.className = 'step-circle active';
+      label.className  = 'step-label active';
+    } else {
+      circle.className = 'step-circle';
+      label.className  = 'step-label';
+    }
+
+    if(i < 3) {
+      const line = document.getElementById('sl' + i);
+      if(i < step)      line.className = 'step-line done';
+      else if(i < step) line.className = 'step-line active';
+      else              line.className = 'step-line';
+    }
+  }
+
+  // Update lines
+  if(step === 2) {
+    document.getElementById('sl1').className = 'step-line done';
+    document.getElementById('sl2').className = 'step-line';
+  } else if(step === 3) {
+    document.getElementById('sl1').className = 'step-line done';
+    document.getElementById('sl2').className = 'step-line done';
+  } else {
+    document.getElementById('sl1').className = 'step-line';
+    document.getElementById('sl2').className = 'step-line';
+  }
+}
+
+function handleRegister() {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('stepSuccess').classList.add('active');
+  // Hide step indicators on success
+  document.querySelector('.steps-header').style.opacity = '0.3';
+  document.querySelector('.step-labels').style.opacity  = '0.3';
+}
+
+// ── SLUG PREVIEW ──
+function updateSlug(input) {
+  const slug = input.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/--+/g, '-');
+  document.getElementById('slugPreview').textContent = slug || 'seu-identificador';
+}
+
+// ── PASSWORD STRENGTH ──
+function checkPwd(input) {
+  const val = input.value;
+  let score = 0;
+  if(val.length >= 8)  score++;
+  if(/[A-Z]/.test(val)) score++;
+  if(/[0-9]/.test(val)) score++;
+  if(/[^A-Za-z0-9]/.test(val)) score++;
+
+  const colors = ['var(--red)', 'var(--orange)', 'var(--yellow)', 'var(--green)'];
+  for(let i = 1; i <= 4; i++) {
+    const bar = document.getElementById('pb' + i);
+    bar.style.background = i <= score ? colors[score - 1] : 'var(--border)';
+    if(i <= score && score === 4) bar.style.boxShadow = '0 0 6px rgba(0,255,136,0.4)';
+    else bar.style.boxShadow = 'none';
+  }
+}
+
+// ── PLAN SELECT ──
+function selectPlan(el) {
+  document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ── LOGIN ──
+function handleLogin() {
+  const btn = document.querySelector('#panel-login .submit-btn');
+  btn.textContent = 'Autenticando...';
+  btn.style.opacity = '0.7';
+  setTimeout(() => {
+    btn.textContent = 'Acessar o NEXUS →';
+    btn.style.opacity = '1';
+  }, 1500);
+}
+</script>
+</body>
+</html>
