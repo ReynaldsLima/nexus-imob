@@ -1,19 +1,16 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
     { "source": "/",             "destination": "/index.html" },
-    { "source": "/index",        "destination": "/index.html" },
-    { "source": "/dashboard",   "destination": "/nexus-imob-prototype.html" },
-    { "source": "/login",       "destination": "/nexus-imob-login.html" },
-    { "source": "/crm",         "destination": "/nexus-imob-crm-lead.html" },
-    { "source": "/catalogo",    "destination": "/nexus-imob-catalogo.html" },
-    { "source": "/agenda",      "destination": "/nexus-imob-agenda.html" },
-    { "source": "/corretores",  "destination": "/nexus-imob-corretores.html" },
-    { "source": "/automacoes",  "destination": "/nexus-imob-automacoes.html" },
-    { "source": "/relatorios",  "destination": "/nexus-imob-relatorios.html" },
-    { "source": "/integracoes", "destination": "/nexus-imob-integracoes.html" },
-    { "source": "/pricing",     "destination": "/nexus-imob-pricing.html" },
-    { "source": "/canvas",      "destination": "/imobiliaria-project-canvas.html" }
+    { "source": "/dashboard",    "destination": "/nexus-imob-prototype.html" },
+    { "source": "/login",        "destination": "/nexus-imob-login.html" },
+    { "source": "/crm",          "destination": "/nexus-imob-crm-lead.html" },
+    { "source": "/catalogo",     "destination": "/nexus-imob-catalogo.html" },
+    { "source": "/agenda",       "destination": "/nexus-imob-agenda.html" },
+    { "source": "/corretores",   "destination": "/nexus-imob-corretores.html" },
+    { "source": "/automacoes",   "destination": "/nexus-imob-automacoes.html" },
+    { "source": "/relatorios",   "destination": "/nexus-imob-relatorios.html" },
+    { "source": "/integracoes",  "destination": "/nexus-imob-integracoes.html" },
+    { "source": "/pricing",      "destination": "/nexus-imob-pricing.html" },
+    { "source": "/canvas",       "destination": "/imobiliaria-project-canvas.html" }
   ]
 }
