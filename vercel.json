@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/",             "destination": "/index.html" },
     { "source": "/dashboard",    "destination": "/nexus-imob-prototype.html" },
+    { "source": "/leads",        "destination": "/nexus-imob-leads.html" },
     { "source": "/login",        "destination": "/nexus-imob-login.html" },
     { "source": "/crm",          "destination": "/nexus-imob-crm-lead.html" },
     { "source": "/catalogo",     "destination": "/nexus-imob-catalogo.html" },
